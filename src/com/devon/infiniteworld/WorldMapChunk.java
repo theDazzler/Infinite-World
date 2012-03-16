@@ -146,7 +146,7 @@ public class WorldMapChunk implements Serializable
 		
 	}
 
-	//determine what type each tile will be on the worldMap(ex. WATER, GRASS, SNOW)
+	//determine what type each tile will be on the worldMap(ex. WATER, GRASS, SNOW, etc)
 	private void initTileTypes() 
 	{
 		for(int i = 0; i < this.terrain.length; i++)

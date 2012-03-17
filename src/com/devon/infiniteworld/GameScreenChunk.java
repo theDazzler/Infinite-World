@@ -71,11 +71,11 @@ public class GameScreenChunk implements Renderable
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.parentWorldMapChunkPosition = this.getParentWorldMapChunkPosition();
 		
-		//noise = new PerlinNoise(GameSettings.seed);
+		//this.initObjectNoise();
 		
 		this.createChunk();
 	}
-	
+		
 	//generate terrain data for the chunk
 	private void createChunk() 
 	{	
@@ -91,7 +91,8 @@ public class GameScreenChunk implements Renderable
 	
 	private void generateObjectLayer() 
 	{
-		Random rand = new Random();
+		//generate new random seed for each gameScreenChunk so objects will be placed in different spots in each GameScreenChunk
+		Random rand = new Random((long) (GameSettings.seed + ((this.getX() + this.getY()) / 100)));
 		
 		//for each row in the chunk
 		for(int i = 0; i < this.objectLayer.length; i++)
@@ -109,8 +110,7 @@ public class GameScreenChunk implements Renderable
 					}
 				}
 			}
-		}
-		
+		}	
 	}
 
 	//generate tiles for the chunk

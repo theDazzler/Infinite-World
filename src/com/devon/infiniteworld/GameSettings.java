@@ -2,7 +2,7 @@ package com.devon.infiniteworld;
 
 public class GameSettings 
 {
-	public static int seed = 175459;
+	public static int seed = 17559;
 	public static final int SCREEN_WIDTH = 1024; //width of screen in pixels 960
 	public static final int SCREEN_HEIGHT = 768; //height of screen in pixels 576
 	public static final int TILE_WIDTH = 64; //width of tiles in pixels

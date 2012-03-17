@@ -34,7 +34,7 @@ public class Main extends BasicGame
 		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox.getX() + (player.boundingBox.getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox.getY() + (player.boundingBox.getHeight() / 2)));
 
 		drawGameScreenChunks();
-		drawMiniMap();
+		//drawMiniMap();
 		drawDebugInformation(g);
 		//waterTile.draw(400, 300);
 		drawPlayer();	
@@ -54,8 +54,6 @@ public class Main extends BasicGame
 		
 	}
 	
-	
-
 	//draw position information
 	private void drawDebugInformation(Graphics g)
 	{
@@ -85,7 +83,7 @@ public class Main extends BasicGame
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();
-		miniMap = new MiniMap(300, 50);
+		//miniMap = new MiniMap(300, 50);
 		
 		//String key = "x" + Integer.toString((int)player.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)player.getWorldMapChunkPosition().y);
 		//WorldChunkWriter.writeWorldChunk(WorldMap.map.get(key), key);

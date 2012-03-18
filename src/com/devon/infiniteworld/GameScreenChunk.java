@@ -7,6 +7,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.TileType;
 
 /**
@@ -28,7 +29,7 @@ public class GameScreenChunk implements Renderable
 	private Vector2f worldMapPosition; //position of chunk on the WorldMap
 	Player player;
 	WorldMap worldMap;
-	int worldMapTileValue; //value of tile from worldMap, if worldMap tile is TileType.WATER, then GameScreenTrunk will use this value to fill screen with water
+	int worldMapBiomeValue; //value of biome from worldMap, if worldMap biome is BiomeType.OCEAN, then GameScreenChunk will use this value to fill screen with forest tiles and forest objects
 	Vector2f parentWorldMapChunkPosition; //get coordinates of the WorldMapChunk the GameScreenChunk is in
 	
 	public int[][] tileLayer; //holds tile data for each GameScreenChunk(which tile should be placed)
@@ -47,7 +48,7 @@ public class GameScreenChunk implements Renderable
 	Image deepWater;
 	Image tree;
 	Image snow;
-	Image volcanic;
+	Image lava;
 	
 	public GameScreenChunk(Vector2f position) throws SlickException
 	{
@@ -59,12 +60,15 @@ public class GameScreenChunk implements Renderable
 		deepWater = new Image("assets/images/tiles/deep_water.png");
 		tree = new Image("assets/images/tiles/tree.png");
 		snow = new Image("assets/images/tiles/snow.png");
-		volcanic = new Image("assets/images/tiles/volcanic.png");
+		lava = new Image("assets/images/tiles/lava.png");
 		
 		water = water.getScaledCopy(0.5f);
 		grass = grass.getScaledCopy(0.5f);
 		deepWater = deepWater.getScaledCopy(0.5f);
 		dirt = dirt.getScaledCopy(0.5f);
+		tree = tree.getScaledCopy(0.5f);
+		snow = snow.getScaledCopy(0.5f);
+		lava = lava.getScaledCopy(0.5f);
 		
 		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
@@ -82,7 +86,7 @@ public class GameScreenChunk implements Renderable
 		String key = "x" + Integer.toString((int)this.parentWorldMapChunkPosition.x) + "y" + Integer.toString((int)this.parentWorldMapChunkPosition.y);
 		
 		//get tile terrain value
-		this.worldMapTileValue = WorldMap.map.get(key).tileTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
+		this.worldMapBiomeValue = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		
 		generateTileLayer();
 		generateObjectLayer();
@@ -100,8 +104,8 @@ public class GameScreenChunk implements Renderable
 			//for each column in the chunk
 			for(int j = 0; j < this.objectLayer[i].length; j++)
 			{
-				//if it is a land tile
-				if(this.worldMapTileValue == TileType.GRASS)
+				
+				if(this.worldMapBiomeValue == BiomeType.FOREST)
 				{
 					//place tree
 					if(rand.nextInt(10) == 1)
@@ -122,19 +126,22 @@ public class GameScreenChunk implements Renderable
 			{
 				int tileValue = 0;
 				
-				switch(this.worldMapTileValue)
+				switch(this.worldMapBiomeValue)
 				{
-					case TileType.WATER:
+					case BiomeType.OCEAN:
 						tileValue = TileType.WATER;
 						break;
-					case TileType.GRASS:
+					case BiomeType.PLAIN:
 						tileValue = TileType.GRASS;
 						break;
-					case TileType.SNOW:
+					case BiomeType.FOREST:
+						tileValue = TileType.GRASS;
+						break;
+					case BiomeType.SNOW:
 						tileValue = TileType.SNOW;
 						break;
-					case TileType.VOLCANIC:
-						tileValue = TileType.VOLCANIC;
+					case BiomeType.VOLCANIC:
+						tileValue = TileType.LAVA;
 						break;
 				}
 				
@@ -242,9 +249,9 @@ public class GameScreenChunk implements Renderable
 						snow.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
 						break;
 						
-					//draw volcanic biome
-					case TileType.VOLCANIC:
-						snow.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
+					//draw lava
+					case TileType.LAVA:
+						lava.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
 						break;
 						
 				}

@@ -8,6 +8,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.TileType;
 import com.devon.infiniteworld.tiles.VisibleTile;
 import com.devon.infiniteworld.tiles.WaterTile;
@@ -35,10 +36,10 @@ public class WorldMapChunk implements Serializable
 	float xPos; //top left x coordinate of the chunk
 	float yPos; //top left y coordinate of the chunk
 	
-	public double[][] terrain; //holds terrain data(which tile should be placed)
+	public double[][] terrain; //holds terrain noise data(which tile should be placed)
 	public double[][] temperature; //temperature data for each tile(GameScreenChunk) on the worldMap. It can be a value from 0-100
 	public double[][] rainfall; //rainfall data
-	public int[][] tileTypes;
+	public int[][] biomeTypes; //holds biome data for each WorldMapChunk
 	PerlinNoise terrainNoise;
 	
 	
@@ -61,16 +62,16 @@ public class WorldMapChunk implements Serializable
 		this.temperature = new double[this.HEIGHT][this.WIDTH];
 		this.rainfall = new double[this.HEIGHT][this.WIDTH];
 		this.terrainNoise = new PerlinNoise(GameSettings.seed);
-		this.tileTypes = new int[this.HEIGHT][this.WIDTH];
+		this.biomeTypes = new int[this.HEIGHT][this.WIDTH];
 
 		generateTerrainNoise();
 
-		ChunkGenerator.cleanUpWorldChunkWater();
+		//ChunkGenerator.cleanUpWorldChunkWater();
 		
 		generateTemperatureNoise();
 		generateRainfallNoise();
 		
-		initTileTypes();
+		initBiomeTypes();
 		
 		System.out.println();
 		System.out.println("DONE");
@@ -143,11 +144,10 @@ public class WorldMapChunk implements Serializable
 			}
 			y += .314f;	
 		}
-		
 	}
 
-	//determine what type each tile will be on the worldMap(ex. WATER, GRASS, SNOW, etc)
-	private void initTileTypes() 
+	//determine what biome type each tile will be on the worldMap(ex. FOREST, VOLCANIC, PLAIN, etc)
+	private void initBiomeTypes() 
 	{
 		for(int i = 0; i < this.terrain.length; i++)
 		{
@@ -160,7 +160,7 @@ public class WorldMapChunk implements Serializable
 				//water
 				if(terrainValue <= GameSettings.WATER_THRESHOLD)
 				{
-					this.tileTypes[i][j] = TileType.WATER;
+					this.biomeTypes[i][j] = BiomeType.OCEAN;
 				}
 				
 				//land
@@ -169,18 +169,23 @@ public class WorldMapChunk implements Serializable
 					//snow
 					if(tempValue <= -0.4f)
 					{
-						this.tileTypes[i][j] = TileType.SNOW;
+						this.biomeTypes[i][j] = BiomeType.SNOW;
 					}
 					
-					else if(tempValue > 0.5)
+					else if(tempValue < 0.2 && tempValue > 0 && rainValue > 0 && rainValue < 0.4)
 					{
-						if(rainValue < 0)
-							this.tileTypes[i][j] = TileType.VOLCANIC;
+						this.biomeTypes[i][j] = BiomeType.FOREST;
+					}
+					
+					else if(tempValue > 0.3 && rainValue < 0)
+					{
+						this.biomeTypes[i][j] = BiomeType.VOLCANIC;
 						
 					}
+					
 					else
 					{
-						this.tileTypes[i][j] = TileType.GRASS;
+						this.biomeTypes[i][j] = BiomeType.PLAIN;
 					}
 				}
 			}

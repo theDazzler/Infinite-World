@@ -7,6 +7,8 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.tiles.BiomeType;
+
 public class Player
 {
 	Image image;
@@ -52,6 +54,38 @@ public class Player
 		coordinates.set(x, y);
 		
 		return coordinates;
+	}
+	
+	public int getCurrentBiomeType()
+	{
+		String key = "x" + Integer.toString((int)this.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)this.getWorldMapChunkPosition().y);
+		
+		int biomeType = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapTerrainIndices().x][(int)this.getWorldMapTerrainIndices().y];
+		
+		/**
+		String result = "";
+		
+		switch(biomeType)
+		{
+			case BiomeType.FOREST:
+				result =  "Forest";
+				break;
+			case BiomeType.OCEAN:
+				result = "Ocean";
+				break;
+			case BiomeType.PLAIN:
+				result = "Plain";
+				break;
+			case BiomeType.SNOW:
+				result = "Snow";
+				break;
+			case BiomeType.VOLCANIC:
+				result = "Volcanic";
+				break;
+		}
+		**/
+		
+		return biomeType;
 	}
 	
 	/**this method returns the array indices of the terrain the player is currently in 

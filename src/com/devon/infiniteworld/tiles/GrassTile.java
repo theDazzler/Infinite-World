@@ -10,7 +10,7 @@ public class GrassTile extends VisibleTile
 {
 	public GrassTile(Vector2f position) throws SlickException
 	{
-		super(position, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT, new Image("assets/images/tiles/grass.png"), false);
+		super(position, GameSettings.TILE_WIDTH * 2, GameSettings.TILE_HEIGHT * 2, new Image("assets/images/tiles/grass.png"), false);
 	}
 
 }

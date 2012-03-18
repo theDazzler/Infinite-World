@@ -61,6 +61,8 @@ public class Main extends BasicGame
 		g.drawString("Position X:" + player.getX() + "Y:" + player.getY(), player.getX() - 380, player.getY() - 322);
 		g.drawString("Screen X:" + player.getCurrentGameScreenChunkTopLeftPosition().x + "Y:" + player.getCurrentGameScreenChunkTopLeftPosition().y, player.getX() - 380, player.getY() - 302);
 		g.drawString("Chunk X:" + player.getWorldMapChunkPosition().x+ "Y:" + player.getWorldMapChunkPosition().y, player.getX() - 380, player.getY() - 282);
+		//g.drawString("Biome:" + player.getCurrentBiomeType(), player.getX() - 380, player.getY() - 262);
+		
 		
 	}
 

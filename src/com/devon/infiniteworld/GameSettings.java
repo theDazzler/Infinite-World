@@ -7,10 +7,10 @@ public class GameSettings
 	public static final int SCREEN_HEIGHT = 1080; //height of screen in pixels 576
 	public static final int TILE_WIDTH = 64; //width of tiles in pixels
 	public static final int TILE_HEIGHT = 64; //height of tiles in pixels
-	public static final int CHUNK_PIXEL_WIDTH = 1024; //number of horizontal tiles 1024 / 64 = 16
-	public static final int CHUNK_PIXEL_HEIGHT = 768; //number of vertical tiles 768 / 64 = 12
-	public static final int CHUNK_WIDTH = CHUNK_PIXEL_WIDTH / TILE_WIDTH; //number of horizontal tiles 1024 / 64 = 16
-	public static final int CHUNK_HEIGHT = CHUNK_PIXEL_HEIGHT / TILE_HEIGHT; //number of vertical tiles 768 / 64 = 12
+	public static final int CHUNK_PIXEL_WIDTH = 1024; //width of a GameScreenChunk in pixels
+	public static final int CHUNK_PIXEL_HEIGHT = 768; //height of a GameScreenChunk in pixels
+	public static final int CHUNK_WIDTH = CHUNK_PIXEL_WIDTH / TILE_WIDTH; //number of tiles wide a GameScreenChunk is (1024 / 64 = 16)
+	public static final int CHUNK_HEIGHT = CHUNK_PIXEL_HEIGHT / TILE_HEIGHT; //number of tiles high a GameScreenChunk is(768 / 64 = 12)
 	
 	
 	public static final int FBM_OCTAVES = 6;

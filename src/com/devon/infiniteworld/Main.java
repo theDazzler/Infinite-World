@@ -8,6 +8,7 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.tiles.WaterTile;
@@ -18,6 +19,7 @@ public class Main extends BasicGame
 	WorldMap worldMap;
 	MiniMap miniMap;
 	WaterTile waterTile;
+	Sound bg;
 	
 	Player player;
 	
@@ -82,9 +84,13 @@ public class Main extends BasicGame
 		player = new Player(512, 384, 64, 64);
 		worldMap = WorldMap.getWorldMap(player);
 		//waterTile = new WaterTile(new Vector2f(400f, 300f));
+		bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();
+		
+		bg.play();
+
 		//miniMap = new MiniMap(300, 50);
 		
 		//String key = "x" + Integer.toString((int)player.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)player.getWorldMapChunkPosition().y);

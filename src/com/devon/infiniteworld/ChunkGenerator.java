@@ -41,8 +41,8 @@ public class ChunkGenerator
 		String xKey = "x"; //used for hashmap key(x32y32)
 		String yKey = "y"; //used for hashmap key(x32y32)
 		
-		float startPosX = currentWorldMapChunkPosition.x - GameSettings.SCREEN_WIDTH; //start one WorldMapChunk above and to the left of player
-		float startPosY = currentWorldMapChunkPosition.y - GameSettings.SCREEN_HEIGHT;
+		float startPosX = currentWorldMapChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH; //start one WorldMapChunk above and to the left of player
+		float startPosY = currentWorldMapChunkPosition.y - GameSettings.CHUNK_PIXEL_HEIGHT;
 		
 		
 		//for each worldMapChunk in 3x3 section around player
@@ -54,11 +54,11 @@ public class ChunkGenerator
 				System.out.println("STARTX: " + startPosX + "STARTY: " + startPosY);
 				//place WorldMapChunk into hashmap
 				WorldMap.map.put(key, new WorldMapChunk(new Vector2f(startPosX, startPosY), key));
-				startPosX += GameSettings.SCREEN_WIDTH;
+				startPosX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			
-			startPosX -= GameSettings.SCREEN_WIDTH * 3;
-			startPosY += GameSettings.SCREEN_HEIGHT;
+			startPosX -= GameSettings.CHUNK_PIXEL_WIDTH * 3;
+			startPosY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 	}
 	
@@ -78,14 +78,14 @@ public class ChunkGenerator
 		//top left corner
 		
 		//get top left diagonal chunk 
-		String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.SCREEN_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.SCREEN_HEIGHT));
+		String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.CHUNK_PIXEL_HEIGHT));
 		WorldMapChunk topLeftChunk = WorldMap.map.get(key);
 
 		//bottom right corner of top left diagonal chunk(top left diagonal of the tile)
 		if(topLeftChunk.terrain[GameSettings.CHUNK_HEIGHT][GameSettings.CHUNK_WIDTH] > GameSettings.WATER_THRESHOLD)
 		{
 			//get above chunk 
-			String key2 = "x" + Integer.toString((int)(chunk.xPos)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.SCREEN_HEIGHT));
+			String key2 = "x" + Integer.toString((int)(chunk.xPos)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.CHUNK_PIXEL_HEIGHT));
 			WorldMapChunk topChunk = WorldMap.map.get(key2);
 
 			if(topChunk.terrain[GameSettings.CHUNK_HEIGHT][0] > GameSettings.WATER_THRESHOLD)
@@ -94,7 +94,7 @@ public class ChunkGenerator
 				if(topChunk.terrain[GameSettings.CHUNK_HEIGHT][1] > GameSettings.WATER_THRESHOLD)
 				{
 					//check left tile
-					String key3 = "x" + Integer.toString((int)(chunk.xPos - GameSettings.SCREEN_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos));
+					String key3 = "x" + Integer.toString((int)(chunk.xPos - GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos));
 					WorldMapChunk leftChunk = WorldMap.map.get(key3);
 
 					if(leftChunk.terrain[1][GameSettings.CHUNK_WIDTH] > GameSettings.WATER_THRESHOLD)
@@ -173,7 +173,7 @@ public class ChunkGenerator
 				if(y == 0)
 				{
 					//get top left diagonal chunk 
-					String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.SCREEN_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.SCREEN_HEIGHT));
+					String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.CHUNK_PIXEL_HEIGHT));
 					WorldMapChunk topLeftChunk = WorldMap.map.get(key);
 					
 					//bottom right corner of top left diagonal chunk(top left diagonal of the tile)
@@ -185,7 +185,7 @@ public class ChunkGenerator
 				else if(y == chunk.terrain[x].length - 1)
 				{
 					//get top right diagonal chunk 
-					String key = "x" + Integer.toString((int)(chunk.xPos + GameSettings.SCREEN_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.SCREEN_HEIGHT));
+					String key = "x" + Integer.toString((int)(chunk.xPos + GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.CHUNK_PIXEL_HEIGHT));
 					
 					WorldMapChunk topRightChunk = WorldMap.map.get(key);
 					
@@ -201,7 +201,7 @@ public class ChunkGenerator
 				if(y == 0)
 				{
 					//get bottom left diagonal chunk 
-					String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.SCREEN_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos + GameSettings.SCREEN_HEIGHT));
+					String key = "x" + Integer.toString((int)(chunk.xPos - GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos + GameSettings.CHUNK_PIXEL_HEIGHT));
 					WorldMapChunk bottomLeftChunk = WorldMap.map.get(key);
 					
 					//top right corner of bottom left diagonal chunk(bottom left diagonal of the tile)
@@ -227,8 +227,8 @@ public class ChunkGenerator
 		Vector2f currentChunk = player.getCurrentGameScreenChunkTopLeftPosition();
 		
 		//start adding chunk from top left diagonal to be rendered
-		float startX = currentChunk.getX() - GameSettings.SCREEN_WIDTH;
-		float startY = currentChunk.getY() - GameSettings.SCREEN_HEIGHT;
+		float startX = currentChunk.getX() - GameSettings.CHUNK_PIXEL_WIDTH;
+		float startY = currentChunk.getY() - GameSettings.CHUNK_PIXEL_HEIGHT;
 		
 		//for each GameScreenChunk in 3x3 section around player
 		for(int i = 0; i < 3; i++)
@@ -237,11 +237,11 @@ public class ChunkGenerator
 			{
 				//place GameScreenChunk into hashmap to be rendered
 				ChunkManager.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), new GameScreenChunk(new Vector2f(startX, startY)));
-				startX += GameSettings.SCREEN_WIDTH;
+				startX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			
-			startX -= GameSettings.SCREEN_WIDTH * 3;
-			startY += GameSettings.SCREEN_HEIGHT;
+			startX -= GameSettings.CHUNK_PIXEL_WIDTH * 3;
+			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}		
 	}
 }

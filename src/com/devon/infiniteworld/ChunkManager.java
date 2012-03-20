@@ -17,11 +17,11 @@ public class ChunkManager
 		float startX = 0;
 		
 		if(side == "left")
-			startX  = playerPreviousGameScreenChunkPosition.x - (2 * GameSettings.SCREEN_WIDTH);
+			startX  = playerPreviousGameScreenChunkPosition.x - (2 * GameSettings.CHUNK_PIXEL_WIDTH);
 		else if(side == "right")
-			startX = playerPreviousGameScreenChunkPosition.x + (2 * GameSettings.SCREEN_WIDTH);
+			startX = playerPreviousGameScreenChunkPosition.x + (2 * GameSettings.CHUNK_PIXEL_WIDTH);
 		
-		float startY = playerPreviousGameScreenChunkPosition.y - (GameSettings.SCREEN_HEIGHT);
+		float startY = playerPreviousGameScreenChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		//generate one column
 		for(int i = 0; i < 3; i++)
@@ -40,7 +40,7 @@ public class ChunkManager
 				}
 			}
 
-			startY += GameSettings.SCREEN_HEIGHT;
+			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 		
 		if(side == "left")
@@ -59,18 +59,18 @@ public class ChunkManager
 		float startX = 0;
 		
 		if(side == "left")
-			startX = playerPreviousGameScreenChunkPosition.x - GameSettings.SCREEN_WIDTH;
+			startX = playerPreviousGameScreenChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH;
 		else if(side == "right")
-			startX = playerPreviousGameScreenChunkPosition.x + GameSettings.SCREEN_WIDTH;
+			startX = playerPreviousGameScreenChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH;
 		
-		float startY = playerPreviousGameScreenChunkPosition.y - (GameSettings.SCREEN_HEIGHT);
+		float startY = playerPreviousGameScreenChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		//remove column
 		for(int i = 0; i < 3; i++)
 		{
 			//remove column so it wont get rendered
 			visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
-			startY += GameSettings.SCREEN_HEIGHT;
+			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 	}	
 	
@@ -80,11 +80,11 @@ public class ChunkManager
 		float startY = 0;
 		
 		if(side == "top")
-			startY  = playerPreviousGameScreenChunkPosition.y - (2 * GameSettings.SCREEN_HEIGHT);
+			startY  = playerPreviousGameScreenChunkPosition.y - (2 * GameSettings.CHUNK_PIXEL_HEIGHT);
 		else if(side == "bottom")
-			startY = playerPreviousGameScreenChunkPosition.y + (2 * GameSettings.SCREEN_HEIGHT);
+			startY = playerPreviousGameScreenChunkPosition.y + (2 * GameSettings.CHUNK_PIXEL_HEIGHT);
 		
-		float startX = playerPreviousGameScreenChunkPosition.x - GameSettings.SCREEN_WIDTH;
+		float startX = playerPreviousGameScreenChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH;
 		
 		//generate one row
 		for(int i = 0; i < 3; i++)
@@ -104,7 +104,7 @@ public class ChunkManager
 				}
 			}
 
-			startX += GameSettings.SCREEN_WIDTH;
+			startX += GameSettings.CHUNK_PIXEL_WIDTH;
 		}
 		
 		if(side == "top")
@@ -122,18 +122,18 @@ public class ChunkManager
 		float startY = 0;
 		
 		if(side == "top")
-			startY = playerPreviousGameScreenChunkPosition.y - GameSettings.SCREEN_HEIGHT;
+			startY = playerPreviousGameScreenChunkPosition.y - GameSettings.CHUNK_PIXEL_HEIGHT;
 		else if(side == "bottom")
-			startY = playerPreviousGameScreenChunkPosition.y + GameSettings.SCREEN_HEIGHT;
+			startY = playerPreviousGameScreenChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT;
 		
-		float startX = playerPreviousGameScreenChunkPosition.x - (GameSettings.SCREEN_WIDTH);
+		float startX = playerPreviousGameScreenChunkPosition.x - (GameSettings.CHUNK_PIXEL_WIDTH);
 		
 		//remove row
 		for(int i = 0; i < 3; i++)
 		{
 			//remove row so it wont get rendered
 			visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
-			startX += GameSettings.SCREEN_WIDTH;
+			startX += GameSettings.CHUNK_PIXEL_WIDTH;
 		}
 		
 	}
@@ -145,14 +145,14 @@ public class ChunkManager
 		//generate new row *********************************************************************************************
 		if(side == "top")
 		{
-			startY  = playerCurrentGameScreenChunkPosition.y - GameSettings.SCREEN_HEIGHT;
+			startY  = playerCurrentGameScreenChunkPosition.y - GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 		else if(side == "bottom")
 		{
-			startY  = playerCurrentGameScreenChunkPosition.y + GameSettings.SCREEN_HEIGHT;
+			startY  = playerCurrentGameScreenChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 		
-		float startX = playerCurrentGameScreenChunkPosition.x - GameSettings.SCREEN_WIDTH;
+		float startX = playerCurrentGameScreenChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH;
 		
 		//generate one row
 		for(int i = 0; i < 3; i++)
@@ -190,7 +190,7 @@ public class ChunkManager
 				}
 			}
 			
-			startX += GameSettings.SCREEN_WIDTH;			
+			startX += GameSettings.CHUNK_PIXEL_WIDTH;			
 		}
 		
 		//***************************************************************************************************************
@@ -217,11 +217,11 @@ public class ChunkManager
 		float startY = 0;
 		
 		if(side == "top")
-			startY = playerCurrentWorldMapChunkPosition.y - (2 * GameSettings.SCREEN_HEIGHT);
+			startY = playerCurrentWorldMapChunkPosition.y - (2 * GameSettings.CHUNK_PIXEL_HEIGHT);
 		else if(side == "bottom")
-			startY = playerCurrentWorldMapChunkPosition.y + (2 * GameSettings.SCREEN_HEIGHT);
+			startY = playerCurrentWorldMapChunkPosition.y + (2 * GameSettings.CHUNK_PIXEL_HEIGHT);
 		
-		float startX = playerCurrentWorldMapChunkPosition.x - (GameSettings.SCREEN_WIDTH);
+		float startX = playerCurrentWorldMapChunkPosition.x - (GameSettings.CHUNK_PIXEL_WIDTH);
 		
 		//write the row to file before removing it
 		for(int i = 0; i < 3; i++)
@@ -237,7 +237,7 @@ public class ChunkManager
 			//remove chunk from worldMap
 			//WorldMap.map.remove(key);
 			
-			startX += GameSettings.SCREEN_WIDTH;
+			startX += GameSettings.CHUNK_PIXEL_WIDTH;
 		}
 		
 		new Thread(new WorldChunkWriter(chunks)).start();
@@ -250,11 +250,11 @@ public class ChunkManager
 		float startX = 0;
 		
 		if(side == "left")
-			startX  = playerCurrentWorldMapChunkPosition.x - GameSettings.SCREEN_WIDTH;
+			startX  = playerCurrentWorldMapChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH;
 		else if(side == "right")
-			startX = playerCurrentWorldMapChunkPosition.x + GameSettings.SCREEN_WIDTH;
+			startX = playerCurrentWorldMapChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH;
 		
-		float startY = playerCurrentWorldMapChunkPosition.y - (GameSettings.SCREEN_HEIGHT);
+		float startY = playerCurrentWorldMapChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		//generate one column
 		for(int i = 0; i < 3; i++)
@@ -292,7 +292,7 @@ public class ChunkManager
 				}
 			}
 
-			startY += GameSettings.SCREEN_HEIGHT;
+			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 		
 		if(side == "left")
@@ -310,11 +310,11 @@ public class ChunkManager
 		float startX = 0;
 		
 		if(side == "left")
-			startX = playerCurrentWorldMapChunkPosition.x - (2 * GameSettings.SCREEN_WIDTH);
+			startX = playerCurrentWorldMapChunkPosition.x - (2 * GameSettings.CHUNK_PIXEL_WIDTH);
 		else if(side == "right")
-			startX = playerCurrentWorldMapChunkPosition.x + (2 * GameSettings.SCREEN_WIDTH);
+			startX = playerCurrentWorldMapChunkPosition.x + (2 * GameSettings.CHUNK_PIXEL_WIDTH);
 		
-		float startY = playerCurrentWorldMapChunkPosition.y - (GameSettings.SCREEN_HEIGHT);
+		float startY = playerCurrentWorldMapChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		//write the column to file before removing it
 		for(int i = 0; i < 3; i++)
@@ -324,7 +324,7 @@ public class ChunkManager
 
 			chunks.put(key, chunk);
 
-			startY += GameSettings.SCREEN_HEIGHT;
+			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 		
 		new Thread(new WorldChunkWriter(chunks)).start();

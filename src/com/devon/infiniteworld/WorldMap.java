@@ -35,7 +35,7 @@ public class WorldMap
 	public Vector2f getWorldMapArrayIndices(float xPos, float yPos)
 	{
 		Vector2f indices = new Vector2f();
-		indices.set(Math.abs((float)(Math.floor(yPos / GameSettings.SCREEN_HEIGHT))), Math.abs((float)(Math.floor(xPos / GameSettings.SCREEN_WIDTH))));
+		indices.set(Math.abs((float)(Math.floor(yPos / GameSettings.CHUNK_PIXEL_HEIGHT))), Math.abs((float)(Math.floor(xPos / GameSettings.CHUNK_PIXEL_WIDTH))));
 		
 		return indices;
 	}

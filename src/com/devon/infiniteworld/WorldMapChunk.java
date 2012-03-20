@@ -177,7 +177,7 @@ public class WorldMapChunk implements Serializable
 						this.biomeTypes[i][j] = BiomeType.FOREST;
 					}
 					
-					else if(tempValue > 0.3 && rainValue < 0)
+					else if(tempValue > 0.5 && rainValue < 0)
 					{
 						this.biomeTypes[i][j] = BiomeType.VOLCANIC;
 						
@@ -187,6 +187,7 @@ public class WorldMapChunk implements Serializable
 					{
 						this.biomeTypes[i][j] = BiomeType.PLAIN;
 					}
+					
 				}
 			}
 		}
@@ -206,6 +207,7 @@ public class WorldMapChunk implements Serializable
 			{
 				//place noise value into chunk array
 				this.terrain[i][j] = this.terrainNoise.noise(x  + (x * .472), y + (y * .472), .77);
+				//this.terrain[i][j] = this.terrainNoise.fBm(x  + (x * .472), y + (y * .472), .77, GameSettings.FBM_OCTAVES, GameSettings.FBM_LACUNARITY, GameSettings.FBM_H);
 				x += .314f; //arbitrary number
 
 				System.out.print(this.terrain[i][j] + " ");

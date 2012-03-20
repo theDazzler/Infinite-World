@@ -23,8 +23,8 @@ public class GameScreenChunk implements Renderable
 {
 	final int NUM_TILES_X = GameSettings.CHUNK_WIDTH;  //number of tiles in horizontal direction
 	final int NUM_TILES_Y = GameSettings.CHUNK_HEIGHT; //number of tiles in vertical direction
-	final int WIDTH = GameSettings.SCREEN_WIDTH;   
-	final int HEIGHT = GameSettings.SCREEN_HEIGHT;
+	final int WIDTH = GameSettings.CHUNK_PIXEL_WIDTH;   
+	final int HEIGHT = GameSettings.CHUNK_PIXEL_HEIGHT;
 	Vector2f position; //top left coordinates of the chunk
 	private Vector2f worldMapPosition; //position of chunk on the WorldMap
 	Player player;
@@ -70,7 +70,7 @@ public class GameScreenChunk implements Renderable
 		snow = snow.getScaledCopy(0.5f);
 		lava = lava.getScaledCopy(0.5f);
 		
-		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.parentWorldMapChunkPosition = this.getParentWorldMapChunkPosition();
@@ -157,9 +157,9 @@ public class GameScreenChunk implements Renderable
 		float x = 0;
 		float y = 0;
 		
-		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.SCREEN_WIDTH) * GameSettings.SCREEN_WIDTH);
+		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
 		
-		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.SCREEN_HEIGHT) * GameSettings.SCREEN_HEIGHT);
+		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		coordinates.set(x, y);
 		

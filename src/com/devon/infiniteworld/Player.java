@@ -25,7 +25,7 @@ public class Player
 	{
 		this.boundingBox = new Rectangle(x, y, width, height);
 		this.position = new Vector2f(x, y);
-		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
 		this.worldMapChunkPosition = this.getWorldMapChunkPosition();
 
@@ -47,9 +47,9 @@ public class Player
 		float x = 0;
 		float y = 0;
 		
-		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.SCREEN_WIDTH) * GameSettings.SCREEN_WIDTH);
+		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
 		
-		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.SCREEN_HEIGHT) * GameSettings.SCREEN_HEIGHT);
+		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		coordinates.set(x, y);
 		
@@ -143,8 +143,8 @@ public class Player
 	{
 		Vector2f coordinates = new Vector2f();
 		
-		float x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.TILE_WIDTH) * GameSettings.SCREEN_WIDTH);
-		float y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.TILE_WIDTH) * GameSettings.SCREEN_HEIGHT);
+		float x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.TILE_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
+		float y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.TILE_WIDTH) * GameSettings.CHUNK_PIXEL_HEIGHT);
 		
 		coordinates.set(x, y);
 		
@@ -175,7 +175,7 @@ public class Player
 		}
 		
 		//if player moves to the right of the center GameScreenChunk(currently the player's position is the top left corner of the bounding box, so when moving right the player's whole body must pass the center chunk for this method to be called)
-		if(this.position.x > this.currentGameScreenChunkPosition.x + GameSettings.SCREEN_WIDTH)
+		if(this.position.x > this.currentGameScreenChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
 		{
 			//add column of GameScreenChunks to the left of player's new GameScreenChunk position to get rendered
 			ChunkManager.addRenderColumn("right", this, this.currentGameScreenChunkPosition);
@@ -195,7 +195,7 @@ public class Player
 		}
 		
 		//if player moves below center GameScreenChunk, add new bottom row to be rendered
-		if(this.position.y > this.currentGameScreenChunkPosition.y + GameSettings.SCREEN_HEIGHT)
+		if(this.position.y > this.currentGameScreenChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
 		{
 			//add row of GameScreenChunks below the player's new GameScreenChunk position
 			ChunkManager.addRenderRow("bottom", this, this.currentGameScreenChunkPosition);
@@ -215,6 +215,11 @@ public class Player
 		float y = this.boundingBox.getY();
 		
 		Input input = gc.getInput();
+		
+		if(input.isKeyDown(Input.KEY_ESCAPE))
+		{
+			gc.exit();
+		}
 		
 		//move left
 		if(input.isKeyDown(Input.KEY_A))
@@ -259,7 +264,7 @@ public class Player
 	{
 		this.boundingBox.setX(position.x);
 		this.boundingBox.setY(position.y);
-		this.worldMapPosition.set(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 	}
 
 	public void moveDown(int delta)
@@ -271,7 +276,7 @@ public class Player
 		this.position.y = y;
 		this.direction.y = 1.0f;
 		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		
 	}
 
@@ -284,7 +289,7 @@ public class Player
 		this.position.y = y;
 		this.direction.y = -1.0f;			
 		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		
 	}
 
@@ -297,7 +302,7 @@ public class Player
 		this.position.x = x;
 		this.direction.x = 1.0f;
 		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		
 	}
 
@@ -310,7 +315,7 @@ public class Player
 		this.position.x = x;
 		this.direction.x = -1.0f;
 		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.SCREEN_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.SCREEN_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		
 	}
 
@@ -327,7 +332,7 @@ public class Player
 		}
 		
 		//if player has moved below the center WorldMapChunk, generate more WorldMapChunks below the player
-		if(this.worldMapPosition.y > this.worldMapChunkPosition.y + GameSettings.SCREEN_HEIGHT)
+		if(this.worldMapPosition.y > this.worldMapChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
 		{
 			ChunkManager.addWorldChunkRow("bottom", this, this.getWorldMapChunkPosition());
 			
@@ -336,7 +341,7 @@ public class Player
 		}
 		
 		//if player has moved to the right of the center WorldMapChunk, generate more WorldMapChunks to the right of player
-		if(this.worldMapPosition.x > this.worldMapChunkPosition.x + GameSettings.SCREEN_WIDTH)
+		if(this.worldMapPosition.x > this.worldMapChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
 		{
 			ChunkManager.addWorldChunkColumn("right", this, this.getWorldMapChunkPosition());
 			

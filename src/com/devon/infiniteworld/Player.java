@@ -6,7 +6,10 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.particles.ParticleSystem;
+import org.newdawn.slick.particles.effects.FireEmitter;
 
+import com.devon.infiniteworld.particles.SnowEmitter;
 import com.devon.infiniteworld.tiles.BiomeType;
 
 public class Player
@@ -21,6 +24,9 @@ public class Player
 	public Vector2f currentGameScreenChunkPosition; //top left coordinates of the current GameScreenChunk the player is in
 	public Vector2f worldMapChunkPosition; //position of WorldMapChunk player is currently on
 	
+	ParticleSystem pSystem;
+	SnowEmitter snowEmitter;
+	
 	public Player(float x, float y, float width, float height) throws SlickException 
 	{
 		this.boundingBox = new Rectangle(x, y, width, height);
@@ -31,6 +37,11 @@ public class Player
 
 		this.image = new Image("assets/images/sprites/player.png");
 		this.direction = new Vector2f(0f, 0f);
+		Image fireImage = new Image("assets/images/particles/snow.png");
+		fireImage = fireImage.getScaledCopy(0.5f);
+		//pSystem = new ParticleSystem(fireImage, 500);
+		//snowEmitter = new SnowEmitter();
+		//pSystem.addEmitter(snowEmitter);
 
 	}
 	
@@ -159,6 +170,9 @@ public class Player
 		//manage GameScreenChunks around player
 		manageGameScreenChunks();
 		
+		//this.pSystem.setPosition(this.getX() - (GameSettings.SCREEN_WIDTH / 2), this.getY() - (GameSettings.SCREEN_HEIGHT / 2));
+		//snowEmitter.update(pSystem, delta);
+		
 	}	
 	
 	//manage GameScreenChunks to render surrounding the player
@@ -219,6 +233,11 @@ public class Player
 		if(input.isKeyDown(Input.KEY_ESCAPE))
 		{
 			gc.exit();
+		}
+		
+		if(input.isKeyDown(Input.KEY_SPACE))
+		{
+			System.out.println(this.pSystem.getParticleCount());
 		}
 		
 		//move left

@@ -1,5 +1,6 @@
 package com.devon.infiniteworld;
 
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -7,10 +8,14 @@ import java.util.Random;
  *
  * 
  */
-public class PerlinNoise
+public class PerlinNoise implements Serializable
 {
 
-    private final int[] _noisePermutations, _noiseTable;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1426810125943687310L;
+	private final int[] _noisePermutations, _noiseTable;
 
     public PerlinNoise(int seed)
     {

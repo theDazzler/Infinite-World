@@ -10,6 +10,8 @@ import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.particles.ParticleSystem;
+import org.newdawn.slick.particles.effects.FireEmitter;
 
 import com.devon.infiniteworld.tiles.WaterTile;
 
@@ -20,6 +22,7 @@ public class Main extends BasicGame
 	MiniMap miniMap;
 	WaterTile waterTile;
 	Sound bg;
+	
 	
 	Player player;
 	
@@ -39,7 +42,9 @@ public class Main extends BasicGame
 		//drawMiniMap();
 		drawDebugInformation(g);
 		//waterTile.draw(400, 300);
-		drawPlayer();	
+		drawPlayer();
+		//player.pSystem.render();
+		
 	}
 
 	private void drawMiniMap() 
@@ -54,15 +59,16 @@ public class Main extends BasicGame
 		//display player
 		player.image.draw(player.boundingBox.getX(), player.boundingBox.getY());
 		
+		
 	}
 	
 	//draw position information
 	private void drawDebugInformation(Graphics g)
 	{
-		g.drawString("WorldMap X:" + player.getWorldMapPosition().x + "Y:" + player.getWorldMapPosition().y, player.getX() - 380, player.getY() - 342);
-		g.drawString("Position X:" + player.getX() + "Y:" + player.getY(), player.getX() - 380, player.getY() - 322);
-		g.drawString("Screen X:" + player.getCurrentGameScreenChunkTopLeftPosition().x + "Y:" + player.getCurrentGameScreenChunkTopLeftPosition().y, player.getX() - 380, player.getY() - 302);
-		g.drawString("Chunk X:" + player.getWorldMapChunkPosition().x+ "Y:" + player.getWorldMapChunkPosition().y, player.getX() - 380, player.getY() - 282);
+		g.drawString("WorldMap X:" + player.getWorldMapPosition().x + " Y:" + player.getWorldMapPosition().y, player.getX() - 380, player.getY() - 342);
+		g.drawString("Position X:" + player.getX() + " Y:" + player.getY(), player.getX() - 380, player.getY() - 322);
+		g.drawString("Screen X:" + player.getCurrentGameScreenChunkTopLeftPosition().x + " Y:" + player.getCurrentGameScreenChunkTopLeftPosition().y, player.getX() - 380, player.getY() - 302);
+		g.drawString("Chunk X:" + player.getWorldMapChunkPosition().x+ " Y:" + player.getWorldMapChunkPosition().y, player.getX() - 380, player.getY() - 282);
 		//g.drawString("Biome:" + player.getCurrentBiomeType(), player.getX() - 380, player.getY() - 262);
 		
 		
@@ -83,13 +89,14 @@ public class Main extends BasicGame
 	{		
 		player = new Player(512, 384, 64, 64);
 		worldMap = WorldMap.getWorldMap(player);
-		//waterTile = new WaterTile(new Vector2f(400f, 300f));
-		bg = new Sound("assets/sounds/bg_music/test.ogg");
+	    //waterTile = new WaterTile(new Vector2f(400f, 300f));
+		//bg = new Sound("assets/sounds/bg_music/test.ogg");
+		
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();
 		
-		bg.play();
+		//bg.play();
 
 		//miniMap = new MiniMap(300, 50);
 		
@@ -105,6 +112,8 @@ public class Main extends BasicGame
 			player.update(container, delta);
 			//checkCollision(delta);
 		}
+		
+		//player.pSystem.update(delta);
 	}
 	
 	private void checkCollision(int delta)

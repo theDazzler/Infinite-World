@@ -8,4 +8,5 @@ public class TileType
 	public static final int GRASS = 13;
 	public static final int SNOW = 14;
 	public static final int LAVA = 15;
+	public static final int ICE = 16;
 }

@@ -39,7 +39,7 @@ public class Main extends BasicGame
 		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox.getX() + (player.boundingBox.getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox.getY() + (player.boundingBox.getHeight() / 2)));
 
 		drawGameScreenChunks();
-		//drawMiniMap();
+		//adrawMiniMap();
 		drawDebugInformation(g);
 		//waterTile.draw(400, 300);
 		drawPlayer();
@@ -87,7 +87,7 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
-		player = new Player(512, 384, 64, 64);
+		player = new Player(-16900, 384, 64, 64);
 		worldMap = WorldMap.getWorldMap(player);
 	    //waterTile = new WaterTile(new Vector2f(400f, 300f));
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");

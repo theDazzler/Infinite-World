@@ -49,6 +49,7 @@ public class GameScreenChunk implements Renderable
 	Image tree;
 	Image snow;
 	Image lava;
+	Image ice;
 	
 	public GameScreenChunk(Vector2f position) throws SlickException
 	{
@@ -61,6 +62,7 @@ public class GameScreenChunk implements Renderable
 		tree = new Image("assets/images/tiles/tree.png");
 		snow = new Image("assets/images/tiles/snow.png");
 		lava = new Image("assets/images/tiles/lava.png");
+		ice = new Image("assets/images/tiles/ice.png");
 		
 		water = water.getScaledCopy(0.5f);
 		grass = grass.getScaledCopy(0.5f);
@@ -69,6 +71,7 @@ public class GameScreenChunk implements Renderable
 		tree = tree.getScaledCopy(0.5f);
 		snow = snow.getScaledCopy(0.5f);
 		lava = lava.getScaledCopy(0.5f);
+		ice = ice.getScaledCopy(0.5f);
 		
 		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
@@ -84,13 +87,52 @@ public class GameScreenChunk implements Renderable
 	private void createChunk() 
 	{	
 		String key = "x" + Integer.toString((int)this.parentWorldMapChunkPosition.x) + "y" + Integer.toString((int)this.parentWorldMapChunkPosition.y);
+		System.out.println("WORLD X: " + this.worldMapPosition.x + "WORLD Y: " + this.worldMapPosition.y);
 		System.out.println("INDICES X: " + (int)this.getWorldMapIndices().x + " INDICES Y: " + (int)this.getWorldMapIndices().y);
 		//get tile terrain value
 		this.worldMapBiomeValue = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		
-		generateTileLayer();
+		generateTileLayer(); //generate initial tiles
+		modifyTileLayer(); //makes GameScreenChunks less square (some water tiles will go into forest chunks etc.)
 		generateObjectLayer();
 			
+	}
+	
+	//connect oceans that are diagonal to each other by placing tiles on the land chunks next to them
+	private void modifyTileLayer()
+	{	
+		//modify the chunk if it isn't water
+		if(this.worldMapBiomeValue != BiomeType.OCEAN)
+		{
+			new Thread(new GameScreenChunkModifier(this)).start();
+		}
+				/**
+				//if ocean is above the chunk
+				if(ChunkManager.getBiomeValueAbove(this) == BiomeType.OCEAN)
+				{		
+					Random rand = new Random((long) (GameSettings.seed + ((this.getX() + this.getY()) / 100)));
+					
+					//start in top right corner
+					int startX = 0;
+					int startY = GameSettings.CHUNK_WIDTH - 1;
+					
+					int stopY = rand.nextInt(14); //2 column minimum
+					int stopX = startX + (startY - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
+					
+					//spread some water tiles into the land chunks
+					for(int i = startX; i > stopX; i--)
+					{
+						for(int j = startY; j > stopY; j--)
+						{
+							this.tileLayer[i][j] = TileType.WATER;
+						}
+
+						//make water tiles connect Ocean biomes diagonally rather than squares
+						stopY++;
+					}
+				}
+				**/
+		
 	}
 	
 	private void generateObjectLayer() 
@@ -104,7 +146,6 @@ public class GameScreenChunk implements Renderable
 			//for each column in the chunk
 			for(int j = 0; j < this.objectLayer[i].length; j++)
 			{
-				
 				if(this.worldMapBiomeValue == BiomeType.FOREST)
 				{
 					//place tree
@@ -166,18 +207,25 @@ public class GameScreenChunk implements Renderable
 		return coordinates;
 	}
 	
-	//returns array index of the chunk from WorldMapChunk
+	/**
+	 * returns array index of the chunk from WorldMapChunk
+	 * @return Vector2f WorldMap Indices
+	 */
+	
 	public Vector2f getWorldMapIndices()
 	{
-		float x = Math.abs((float)(Math.floor(this.getWorldMapPosition().y / GameSettings.TILE_HEIGHT)));
-		float y = Math.abs((float)(Math.floor(this.getWorldMapPosition().x / GameSettings.TILE_WIDTH)));
+		float x = (float)(Math.floor((this.getWorldMapPosition().y % 768) / GameSettings.TILE_HEIGHT)) + GameSettings.CHUNK_HEIGHT;
+		float y = (float)(Math.floor((this.getWorldMapPosition().x % 1024) / GameSettings.TILE_WIDTH)) + GameSettings.CHUNK_WIDTH;
 		y = y % this.NUM_TILES_X;
 		x = x % this.NUM_TILES_Y;
 		
 		return new Vector2f(x, y);
 	}
 
-	//returns position of the chunk on the WorldMap
+	/**
+	 * returns position of the chunk on the WorldMap
+	 * @return Vector2f WorldMap position
+	 */
 	private Vector2f getWorldMapPosition() 
 	{
 		return this.worldMapPosition;
@@ -237,6 +285,11 @@ public class GameScreenChunk implements Renderable
 					//draw water
 					case TileType.WATER:
 						water.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
+						break;
+						
+						//draw water
+					case TileType.ICE:
+						ice.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
 						break;
 					
 					//draw grass

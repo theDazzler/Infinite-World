@@ -9,7 +9,8 @@ import org.newdawn.slick.geom.Vector2f;
 public class ChunkManager 
 {
 	public static HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)
-
+	public static HashMap<String, GameScreenChunk> generatedChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that are currently generated
+	
 	//adds a column of GameScreenChunksto to be rendered to the right or left of the player's current GameScreenChunk
 	//String side should be "left" to add left column or "right" to add right column
 	public static void addRenderColumn(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
@@ -329,4 +330,131 @@ public class ChunkManager
 		
 		new Thread(new WorldChunkWriter(chunks)).start();
 	}
+
+	//return the BiomeType to the left of the GameScreenChunk passed in
+	public static int getBiomeValueLeftOf(GameScreenChunk chunk)
+	{
+		int xIndex = (int)chunk.getWorldMapIndices().x;
+		int yIndex = (int)chunk.getWorldMapIndices().y;
+		
+		//if chunk is on left edge
+		if(yIndex == 0)
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x - GameSettings.CHUNK_PIXEL_WIDTH) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk leftWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = leftWorldMapChunk.biomeTypes[xIndex][GameSettings.CHUNK_WIDTH - 1];
+			
+			return biomeValue;
+		}
+		
+		else
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk currentWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = currentWorldMapChunk.biomeTypes[xIndex][yIndex - 1];
+			
+			return biomeValue;
+		}	
+	}
+	
+	//return the BiomeType above the GameScreenChunk passed in
+	public static int getBiomeValueAbove(GameScreenChunk chunk)
+	{
+		int xIndex = (int)chunk.getWorldMapIndices().x;
+		int yIndex = (int)chunk.getWorldMapIndices().y;
+		
+		//if chunk is on top edge
+		if(xIndex == 0)
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y - GameSettings.CHUNK_PIXEL_HEIGHT);
+			
+			WorldMapChunk aboveWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = aboveWorldMapChunk.biomeTypes[GameSettings.CHUNK_HEIGHT - 1][yIndex];
+			
+			return biomeValue;
+		}
+		
+		else
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk currentWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = currentWorldMapChunk.biomeTypes[xIndex - 1][yIndex];
+			
+			return biomeValue;
+		}	
+	}
+	
+	//return the BiomeType to the right of the GameScreenChunk passed in
+	public static int getBiomeValueRightOf(GameScreenChunk chunk)
+	{
+		int xIndex = (int)chunk.getWorldMapIndices().x;
+		int yIndex = (int)chunk.getWorldMapIndices().y;
+		
+		//if chunk is on right edge
+		if(yIndex == GameSettings.CHUNK_WIDTH - 1)
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x + GameSettings.CHUNK_PIXEL_WIDTH) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk rightWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = rightWorldMapChunk.biomeTypes[xIndex][0];
+			
+			return biomeValue;
+		}
+		
+		else
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk currentWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = currentWorldMapChunk.biomeTypes[xIndex][yIndex + 1];
+			
+			return biomeValue;
+		}	
+	}
+	
+	//return the BiomeType below the GameScreenChunk passed in
+	public static int getBiomeValueBelow(GameScreenChunk chunk)
+	{
+		int xIndex = (int)chunk.getWorldMapIndices().x;
+		int yIndex = (int)chunk.getWorldMapIndices().y;
+		
+		System.out.println("y index: " + yIndex);
+		
+		//if chunk is on bottom edge
+		if(xIndex == GameSettings.CHUNK_HEIGHT - 1)
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y + GameSettings.CHUNK_PIXEL_HEIGHT);
+			
+
+			WorldMapChunk belowWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = belowWorldMapChunk.biomeTypes[0][yIndex];
+				
+			System.out.println("CX: " + chunk.getX() + " CY: " + chunk.getY() + " BELOW BIOME: " + biomeValue);
+			return biomeValue;
+			
+		}
+		
+		else
+		{
+			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
+			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
+			
+			WorldMapChunk currentWorldMapChunk = WorldMap.map.get(key);
+			int biomeValue = currentWorldMapChunk.biomeTypes[xIndex + 1][yIndex];
+			
+			System.out.println("CX: " + chunk.getX() + " CY: " + chunk.getY() + " BELOW BIOME: " + biomeValue);
+			return biomeValue;
+		}	
+	}
+
 }

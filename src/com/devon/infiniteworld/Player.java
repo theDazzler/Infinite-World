@@ -39,9 +39,9 @@ public class Player
 		this.direction = new Vector2f(0f, 0f);
 		Image fireImage = new Image("assets/images/particles/snow.png");
 		fireImage = fireImage.getScaledCopy(0.5f);
-		//pSystem = new ParticleSystem(fireImage, 500);
-		//snowEmitter = new SnowEmitter();
-		//pSystem.addEmitter(snowEmitter);
+		pSystem = new ParticleSystem(fireImage, 500);
+		snowEmitter = new SnowEmitter();
+		pSystem.addEmitter(snowEmitter);
 
 	}
 	

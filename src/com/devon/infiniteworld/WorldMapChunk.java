@@ -167,22 +167,25 @@ public class WorldMapChunk implements Serializable
 				else
 				{
 					//snow
-					if(tempValue <= -0.4f)
+					if(tempValue <= -0.5f)
 					{
 						this.biomeTypes[i][j] = BiomeType.SNOW;
 					}
 					
+					//forest
 					else if(tempValue < 0.2 && tempValue > 0 && rainValue > 0 && rainValue < 0.4)
 					{
 						this.biomeTypes[i][j] = BiomeType.FOREST;
 					}
 					
-					else if(tempValue > 0.5 && rainValue < 0)
+					//volcanic
+					else if(tempValue > 0.6 && rainValue < 0)
 					{
 						this.biomeTypes[i][j] = BiomeType.VOLCANIC;
 						
 					}
 					
+					//plain
 					else
 					{
 						this.biomeTypes[i][j] = BiomeType.PLAIN;

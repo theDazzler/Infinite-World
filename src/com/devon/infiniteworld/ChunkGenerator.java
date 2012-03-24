@@ -52,6 +52,7 @@ public class ChunkGenerator
 			{
 				String key = xKey + Integer.toString((int)startPosX) + yKey + Integer.toString((int)startPosY);
 				System.out.println("STARTX: " + startPosX + "STARTY: " + startPosY);
+				
 				//place WorldMapChunk into hashmap
 				WorldMap.map.put(key, new WorldMapChunk(new Vector2f(startPosX, startPosY), key));
 				startPosX += GameSettings.CHUNK_PIXEL_WIDTH;
@@ -236,7 +237,9 @@ public class ChunkGenerator
 			for(int j = 0; j < 3; j++)
 			{
 				//place GameScreenChunk into hashmap to be rendered
-				ChunkManager.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), new GameScreenChunk(new Vector2f(startX, startY)));
+				GameScreenChunk chunk = new GameScreenChunk(new Vector2f(startX, startY));
+				ChunkManager.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
+				ChunkManager.generatedChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
 				startX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			

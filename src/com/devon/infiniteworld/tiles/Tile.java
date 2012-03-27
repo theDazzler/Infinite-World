@@ -4,6 +4,8 @@ import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.GameSettings;
+
 /** 
  * SUper class that all other tiles inherit from
  * @author Devon Guinane
@@ -65,5 +67,10 @@ public abstract class Tile
 	public void setBoundingBox(float x, float y, int width, int height)
 	{
 		this.boundingBox = new Rectangle(x, y, width, height);
+	}
+	
+	public Vector2f getWorldMapPosition()
+	{
+		return new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 	}
 }

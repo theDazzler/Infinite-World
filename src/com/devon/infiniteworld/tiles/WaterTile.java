@@ -11,9 +11,9 @@ public class WaterTile extends VisibleTile
 {
 	Rectangle boundingBox;
 	
-	public WaterTile(Vector2f position) throws SlickException
+	public WaterTile(Vector2f position, Image image) throws SlickException
 	{
-		super(position, GameSettings.TILE_WIDTH * 2, GameSettings.TILE_HEIGHT * 2, new Image("assets/images/tiles/water.png"), false);
+		super(position, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT, image, true);
 		
 		this.boundingBox = new Rectangle(position.x, position.y, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT);
 	}

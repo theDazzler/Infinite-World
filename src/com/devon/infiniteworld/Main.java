@@ -13,6 +13,7 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.particles.effects.FireEmitter;
 
+import com.devon.infiniteworld.tiles.VisibleTile;
 import com.devon.infiniteworld.tiles.WaterTile;
 
 public class Main extends BasicGame 
@@ -36,12 +37,11 @@ public class Main extends BasicGame
 	public void render(GameContainer gc, Graphics g) throws SlickException 
 	{		
 		//center player and follow player around
-		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox.getX() + (player.boundingBox.getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox.getY() + (player.boundingBox.getHeight() / 2)));
+		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox().getX() + (player.boundingBox().getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox().getY() + (player.boundingBox().getHeight() / 2)));
 
 		drawGameScreenChunks();
-		//adrawMiniMap();
+		//drawMiniMap();
 		drawDebugInformation(g);
-		//waterTile.draw(400, 300);
 		drawPlayer();
 		//player.pSystem.render();
 		
@@ -49,7 +49,7 @@ public class Main extends BasicGame
 
 	private void drawMiniMap() 
 	{
-		miniMap.draw(300f, 50f);
+		miniMap.draw(1300f, 300f);
 		
 	}
 
@@ -57,8 +57,9 @@ public class Main extends BasicGame
 	private void drawPlayer()
 	{
 		//display player
-		player.image.draw(player.boundingBox.getX(), player.boundingBox.getY());
-		
+		//player.image.draw(player.getX(), player.getY());
+		//player.arm.draw(player.getX() + 100, player.getY());
+		player.draw(player.getX(), player.getY());
 		
 	}
 	
@@ -87,9 +88,9 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
-		player = new Player(-16900, 384, 64, 64);
+		player = new Player(200, 384, 64, 128);
 		worldMap = WorldMap.getWorldMap(player);
-	    //waterTile = new WaterTile(new Vector2f(400f, 300f));
+
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
 		
@@ -110,60 +111,12 @@ public class Main extends BasicGame
 		for(int i = delta; i > 0; i--)
 		{
 			player.update(container, delta);
-			//checkCollision(delta);
 		}
 		
 		//player.pSystem.update(delta);
 	}
 	
-	private void checkCollision(int delta)
-	{
-		if(player.boundingBox.intersects(waterTile.getBoundingBox()))
-		{
-			float x, y;		
-			
-			//player moving right
-			if(player.boundingBox.getX() + player.boundingBox.getWidth() > waterTile.getX() && player.boundingBox.getCenterX() < waterTile.getBoundingBox().getCenterX() && player.direction.x > 0)
-			{
-					while(player.boundingBox.intersects(waterTile.getBoundingBox()))
-					{
-						player.moveLeft(delta);
-					}
 	
-			}
-			
-			//player moving left
-			if(player.boundingBox.getX() < waterTile.getX() + waterTile.getWidth() && player.boundingBox.getCenterX() > waterTile.getBoundingBox().getCenterX() && player.direction.x < 0)
-			{
-				while(player.boundingBox.intersects(waterTile.getBoundingBox()))
-				{
-					player.moveRight(delta);
-				}
-			}
-			
-			//player moving up
-			if(player.boundingBox.getY() < waterTile.getY() + waterTile.getHeight() && player.boundingBox.getCenterY() > waterTile.getBoundingBox().getCenterY() && player.direction.y < 0)
-			{
-				if(player.direction.x != 1)
-				{
-					while(player.boundingBox.intersects(waterTile.getBoundingBox()))
-					{
-						player.moveDown(delta);
-					}
-				}
-			}
-			
-			//player moving down
-			if(player.boundingBox.getY() + player.boundingBox.getHeight()< waterTile.getY() + waterTile.getHeight() && player.boundingBox.getCenterY() > waterTile.getBoundingBox().getCenterY() && player.direction.y < 0)
-			{
-				while(player.boundingBox.intersects(waterTile.getBoundingBox()))
-				{
-					player.moveDown(delta);
-				}
-			}
-		}
-		
-	}
 
 	public static void main(String[] args)
 	{

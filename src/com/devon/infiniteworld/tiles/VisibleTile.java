@@ -20,7 +20,7 @@ public abstract class VisibleTile extends Tile implements Renderable
 	@Override
 	public void draw(float x, float y) 
 	{
-		this.getTexture().draw(x, y, 0.5f);
+		this.getTexture().draw(x, y);
 	}
 	
 }

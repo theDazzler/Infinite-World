@@ -9,6 +9,8 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.TileType;
+import com.devon.infiniteworld.tiles.VisibleTile;
+import com.devon.infiniteworld.tiles.WaterTile;
 
 /**
  * Creates an actual screen sized chunk that the player plays on(fills screen with grass, forests, etc)
@@ -50,6 +52,7 @@ public class GameScreenChunk implements Renderable
 	Image snow;
 	Image lava;
 	Image ice;
+
 	
 	public GameScreenChunk(Vector2f position) throws SlickException
 	{
@@ -92,12 +95,46 @@ public class GameScreenChunk implements Renderable
 		//get tile terrain value
 		this.worldMapBiomeValue = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		
-		generateTileLayer(); //generate initial tiles
+
+		//generate initial tiles
+		generateTileLayer(); 
+		
 		modifyTileLayer(); //makes GameScreenChunks less square (some water tiles will go into forest chunks etc.)
 		generateObjectLayer();
+		
+		/**
+		try 
+		{
+			addWaterTiles();
+		} 
+		catch (SlickException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		**/
 			
 	}
 	
+	private void addWaterTiles() throws SlickException
+	{
+		for(int i = 0; i < this.tileLayer.length; i++)
+		{
+			for(int j = 0; j < this.tileLayer[i].length; j++)
+			{
+				switch(this.worldMapBiomeValue)
+				{
+					case BiomeType.OCEAN:
+						WaterTile waterTile = new WaterTile(new Vector2f((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT))), water);
+						String key = "x" + Integer.toString((int)waterTile.getWorldMapPosition().x) + "y" + Integer.toString((int)waterTile.getWorldMapPosition().y);
+						CollisionManager.collidableTiles.put(key, waterTile);
+						break;
+				}
+			}
+		}
+		
+	}
+
 	//connect oceans that are diagonal to each other by placing tiles on the land chunks next to them
 	private void modifyTileLayer()
 	{	
@@ -106,33 +143,6 @@ public class GameScreenChunk implements Renderable
 		{
 			new Thread(new GameScreenChunkModifier(this)).start();
 		}
-				/**
-				//if ocean is above the chunk
-				if(ChunkManager.getBiomeValueAbove(this) == BiomeType.OCEAN)
-				{		
-					Random rand = new Random((long) (GameSettings.seed + ((this.getX() + this.getY()) / 100)));
-					
-					//start in top right corner
-					int startX = 0;
-					int startY = GameSettings.CHUNK_WIDTH - 1;
-					
-					int stopY = rand.nextInt(14); //2 column minimum
-					int stopX = startX + (startY - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
-					
-					//spread some water tiles into the land chunks
-					for(int i = startX; i > stopX; i--)
-					{
-						for(int j = startY; j > stopY; j--)
-						{
-							this.tileLayer[i][j] = TileType.WATER;
-						}
-
-						//make water tiles connect Ocean biomes diagonally rather than squares
-						stopY++;
-					}
-				}
-				**/
-		
 	}
 	
 	private void generateObjectLayer() 
@@ -148,10 +158,14 @@ public class GameScreenChunk implements Renderable
 			{
 				if(this.worldMapBiomeValue == BiomeType.FOREST)
 				{
-					//place tree
-					if(rand.nextInt(10) == 1)
+					//dont place trees on water tiles
+					if(this.objectLayer[i][j] != TileType.WATER)
 					{
-						this.objectLayer[i][j] = TileType.TREE;
+						//place tree
+						if(rand.nextInt(10) == 1)
+						{
+							this.objectLayer[i][j] = TileType.TREE;
+						}
 					}
 				}
 			}
@@ -159,7 +173,7 @@ public class GameScreenChunk implements Renderable
 	}
 
 	//generate tiles for the chunk
-	private void generateTileLayer() 
+	private void generateTileLayer()
 	{
 		for(int i = 0; i < this.tileLayer.length; i++)
 		{
@@ -246,7 +260,18 @@ public class GameScreenChunk implements Renderable
 	@Override
 	public void draw(float x, float y) 
 	{
-		drawTileLayer();
+		//render tiles
+		try 
+		{
+			drawTileLayer();
+		} 
+		catch (SlickException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//render objects
 		drawObjectLayer();
 		
 	}
@@ -269,7 +294,7 @@ public class GameScreenChunk implements Renderable
 		
 	}
 
-	private void drawTileLayer()
+	private void drawTileLayer() throws SlickException
 	{
 		for(int i = 0; i < this.tileLayer.length; i++)
 		{
@@ -285,6 +310,7 @@ public class GameScreenChunk implements Renderable
 					//draw water
 					case TileType.WATER:
 						water.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
+						//waterTile.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
 						break;
 						
 						//draw water

@@ -3,6 +3,7 @@ package com.devon.infiniteworld;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
@@ -11,37 +12,48 @@ import org.newdawn.slick.particles.effects.FireEmitter;
 
 import com.devon.infiniteworld.particles.SnowEmitter;
 import com.devon.infiniteworld.tiles.BiomeType;
+import com.devon.infiniteworld.tiles.VisibleTile;
 
-public class Player
+public class Player implements Renderable
 {
 	Image image;
+	Image armImage;
+	Rectangle arm;
 	private double speed = 0.02;
-	public Rectangle boundingBox;
+	//public Rectangle boundingBox; //collision box
 	private Vector2f worldMapPosition; //position of player on worldMap(15 pixels of horizontal movement in GameScreenChunk = 1 pixel on worldMap, player must move 960 pixels in GameScreenChunk to move 64 pixels on worldMap)
 									   //9 pixels of vertical movement in GameScreenChunk = 1 pixel on worldMap
-	public Vector2f direction;
+	public Vector2f direction; //direction(velocity) vector ex. 1,1 = moving right and down
 	public Vector2f position; //actual position of player inside the world
 	public Vector2f currentGameScreenChunkPosition; //top left coordinates of the current GameScreenChunk the player is in
 	public Vector2f worldMapChunkPosition; //position of WorldMapChunk player is currently on
+	
+	public float width;
+	public float height;
+	
+	private boolean isPunching = false;
 	
 	ParticleSystem pSystem;
 	SnowEmitter snowEmitter;
 	
 	public Player(float x, float y, float width, float height) throws SlickException 
 	{
-		this.boundingBox = new Rectangle(x, y, width, height);
+		//this.boundingBox = new Rectangle(x, y, width, height);
+		this.width = width;
+		this.height = height;
 		this.position = new Vector2f(x, y);
 		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
 		this.worldMapChunkPosition = this.getWorldMapChunkPosition();
 
 		this.image = new Image("assets/images/sprites/player.png");
+		this.armImage = new Image("assets/images/sprites/arm.png");
 		this.direction = new Vector2f(0f, 0f);
-		Image fireImage = new Image("assets/images/particles/snow.png");
-		fireImage = fireImage.getScaledCopy(0.5f);
-		pSystem = new ParticleSystem(fireImage, 500);
-		snowEmitter = new SnowEmitter();
-		pSystem.addEmitter(snowEmitter);
+		//Image fireImage = new Image("assets/images/particles/snow.png");
+		//fireImage = fireImage.getScaledCopy(0.5f);
+		//pSystem = new ParticleSystem(fireImage, 500);
+		//snowEmitter = new SnowEmitter();
+		//pSystem.addEmitter(snowEmitter);
 
 	}
 	
@@ -166,6 +178,7 @@ public class Player
 	{
 		//handle player input
 		handleInput(gc, delta);
+		checkCollisions(delta);
 		
 		//manage GameScreenChunks around player
 		manageGameScreenChunks();
@@ -175,6 +188,189 @@ public class Player
 		
 	}	
 	
+	private void checkCollisions(int delta)
+	{
+		//check tile collisions
+		for (VisibleTile tile : CollisionManager.collidableTiles.values()) 
+		{
+			if(this.boundingBox().intersects(tile.getBoundingBox()))
+			{
+				if(this.boundingBox().intersects(tile.getBoundingBox()))
+				{
+					float x, y;		
+					//System.out.println("COLLIDE");
+					
+					
+					//player moving right
+					if(this.boundingBox().getX() + this.boundingBox().getWidth() > tile.getX() && this.boundingBox().getCenterX() < tile.getBoundingBox().getCenterX() && this.direction.x == 1 && this.direction.y == 0)
+					{
+						
+						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						{
+							this.moveLeft(delta);
+						}
+							
+			
+					}
+					
+					//player moving left
+					if(this.boundingBox().getX() < tile.getX() + tile.getWidth() && this.boundingBox().getCenterX() > tile.getBoundingBox().getCenterX() && this.direction.x == -1 && this.direction.y == 0)
+					{
+						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						{
+							this.moveRight(delta);
+						}
+					}
+					
+					//player moving up
+					if(this.boundingBox().getY() < tile.getY() + tile.getHeight() && this.boundingBox().getCenterY() > tile.getBoundingBox().getCenterY() && this.direction.y == -1 && this.direction.x == 0)
+					{
+						if(this.direction.x != 1)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveDown(delta);
+							}
+						}
+					}
+					
+					//player moving down
+					if(this.boundingBox().getY() + this.boundingBox().getHeight() > tile.getY() && this.boundingBox().getCenterY() < tile.getBoundingBox().getCenterY() && this.direction.y == 1 && this.direction.x == 0)
+					{
+						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						{
+							this.moveUp(delta);
+						}
+					}
+					
+					//if player moving northeast
+					if(this.direction.x == 1 && this.direction.y == -1)
+					{
+						float playerTopRightCornerX = this.boundingBox().getX() + this.boundingBox().getWidth();
+						float objectBottomLeftCornerX = tile.getBoundingBox().getX();
+						
+						float playerTopRightCornerY = this.boundingBox().getY();
+						float objectBottomLeftCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
+						
+						float xDif = Math.abs(playerTopRightCornerX - objectBottomLeftCornerX);
+						float yDif = Math.abs(playerTopRightCornerY - objectBottomLeftCornerY);
+						
+						//collided with bottom
+						if(xDif > yDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveDown(delta);
+							}
+						}
+						
+						//collided with left side of object
+						else if(yDif > xDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveLeft(delta);
+							}
+						}
+					}
+					
+					//if player moving northwest
+					if(this.direction.x == -1 && this.direction.y == -1)
+					{
+						float playerTopLeftCornerX = this.boundingBox().getX();
+						float objectBottomRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
+						
+						float playerTopLeftCornerY = this.boundingBox().getY();
+						float objectBottomRightCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
+						
+						float xDif = Math.abs(playerTopLeftCornerX - objectBottomRightCornerX);
+						float yDif = Math.abs(playerTopLeftCornerY - objectBottomRightCornerY);
+						
+						//collided with bottom
+						if(xDif > yDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveDown(delta);
+							}
+						}
+						
+						//collided with right side of object
+						else if(yDif > xDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveRight(delta);
+							}
+						}
+					}	
+					
+					//if player moving southeast
+					if(this.direction.x == 1 && this.direction.y == 1)
+					{
+						float playerBottomRightCornerX = this.boundingBox().getX() + this.boundingBox().getWidth();
+						float objectTopLeftCornerX = tile.getBoundingBox().getX();
+						
+						float playerBottomRightCornerY = this.boundingBox().getY() + this.boundingBox().getHeight();
+						float objectTopLeftCornerY = tile.getBoundingBox().getY();
+						
+						float xDif = Math.abs(playerBottomRightCornerX - objectTopLeftCornerX);
+						float yDif = Math.abs(playerBottomRightCornerY - objectTopLeftCornerY);
+						
+						//collided with top of object
+						if(xDif > yDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveUp(delta);
+							}
+						}
+						
+						//collided with left side of object
+						else if(yDif > xDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveLeft(delta);
+							}
+						}
+					}	
+					
+					//if player moving southwest
+					if(this.direction.x == -1 && this.direction.y == 1)
+					{
+						float playerBottomLeftCornerX = this.boundingBox().getX();
+						float objectTopRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
+						
+						float playerBottomLeftCornerY = this.boundingBox().getY() + this.boundingBox().getHeight();
+						float objectTopRightCornerY = tile.getBoundingBox().getY();
+						
+						float xDif = Math.abs(playerBottomLeftCornerX - objectTopRightCornerX);
+						float yDif = Math.abs(playerBottomLeftCornerY - objectTopRightCornerY);
+						
+						//collided with top of object
+						if(xDif > yDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveUp(delta);
+							}
+						}
+						
+						//collided with right side of object
+						else if(yDif > xDif)
+						{
+							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							{
+								this.moveRight(delta);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	//manage GameScreenChunks to render surrounding the player
 	private void manageGameScreenChunks() 
 	{
@@ -225,8 +421,8 @@ public class Player
 	//handle player's input
 	private void handleInput(GameContainer gc, int delta) 
 	{
-		float x = this.boundingBox.getX();
-		float y = this.boundingBox.getY();
+		float x = this.getX();
+		float y = this.getY();
 		
 		Input input = gc.getInput();
 		
@@ -235,9 +431,18 @@ public class Player
 			gc.exit();
 		}
 		
+		//space bar
 		if(input.isKeyDown(Input.KEY_SPACE))
 		{
-			System.out.println(this.pSystem.getParticleCount());
+			//this.setPosition(new Vector2f(this.position.x + 50, this.position.y));
+			punch();
+		}
+		
+		//not punching
+		if(!input.isKeyDown(Input.KEY_SPACE))
+		{
+			//this.setPosition(new Vector2f(this.position.x + 50, this.position.y));
+			this.isPunching = false;
 		}
 		
 		//move left
@@ -251,7 +456,7 @@ public class Player
 		if(input.isKeyDown(Input.KEY_D))
 		{
 			moveRight(delta);
-			
+			System.out.println("WTWTT: " + CollisionManager.collidableTiles.size());
 		}
 		
 		//move down
@@ -279,19 +484,27 @@ public class Player
 		}
 	}
 	
+	
+	
+	private void punch() 
+	{
+		arm = new Rectangle(this.getX() + this.width, this.getY() + this.height / 3, 64, 32);
+		this.isPunching = true;
+		//arm.draw(rect.getX(), rect.getY());
+		
+	}
+
 	public void setPosition(Vector2f position)
 	{
-		this.boundingBox.setX(position.x);
-		this.boundingBox.setY(position.y);
+		this.position = position;
 		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 	}
 
 	public void moveDown(int delta)
 	{
-		float y = this.boundingBox.getY();
+		float y = this.getY();
 		
 		y += speed * delta;
-		this.boundingBox.setY(y);
 		this.position.y = y;
 		this.direction.y = 1.0f;
 		//update player's WorldMap position
@@ -301,10 +514,9 @@ public class Player
 
 	public void moveUp(int delta) 
 	{
-		float y = this.boundingBox.getY();
+		float y = this.getY();
 		
 		y -= speed * delta;
-		this.boundingBox.setY(y);
 		this.position.y = y;
 		this.direction.y = -1.0f;			
 		//update player's WorldMap position
@@ -314,10 +526,9 @@ public class Player
 
 	public void moveRight(int delta) 
 	{
-		float x = this.boundingBox.getX();
+		float x = this.getX();
 		
 		x += speed * delta;
-		this.boundingBox.setX(x);
 		this.position.x = x;
 		this.direction.x = 1.0f;
 		//update player's WorldMap position
@@ -327,10 +538,9 @@ public class Player
 
 	public void moveLeft(int delta) 
 	{
-		float x = this.boundingBox.getX();
+		float x = this.getX();
 		
 		x -= speed * delta;
-		this.boundingBox.setX(x);
 		this.position.x = x;
 		this.direction.x = -1.0f;
 		//update player's WorldMap position
@@ -376,5 +586,23 @@ public class Player
 			//update worldMapChunkPosition
 			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
 		}
+	}
+	
+	public Rectangle boundingBox()
+	{
+		return new Rectangle(this.getX(), this.getY(), this.width, this.height);
+	}
+
+	@Override
+	public void draw(float x, float y) 
+	{
+		//draw player
+		this.image.draw(x, y);
+		
+		if(this.isPunching)
+		{
+			this.armImage.draw(this.arm.getX(), this.arm.getY());
+		}
+		
 	}
 }

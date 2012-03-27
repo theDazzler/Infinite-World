@@ -2,8 +2,12 @@ package com.devon.infiniteworld;
 
 import java.util.Random;
 
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
+
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.TileType;
+import com.devon.infiniteworld.tiles.WaterTile;
 
 /**
  * Modifies GameScreenChunks

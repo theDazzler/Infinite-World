@@ -36,6 +36,7 @@ public class Player extends Mob implements Renderable
 	
 	private boolean isAttacking = false;
 	private Attack currentAttack;
+	private boolean attackEnabled = true;
 	
 	ParticleSystem pSystem;
 	SnowEmitter snowEmitter;
@@ -203,6 +204,7 @@ public class Player extends Mob implements Renderable
 		{
 			this.currentAttack.animation.stop();
 			this.isAttacking = false;
+			this.attackEnabled = true;
 		}
 		
 		/**
@@ -473,8 +475,9 @@ public class Player extends Mob implements Renderable
 		}
 				
 		//space bar
-		if(input.isKeyDown(Input.KEY_SPACE))
+		if(input.isKeyDown(Input.KEY_SPACE) && this.attackEnabled)
 		{
+			this.attackEnabled = false;
 			//this.setPosition(new Vector2f(this.position.x + 50, this.position.y));
 			punch();
 		}
@@ -524,10 +527,11 @@ public class Player extends Mob implements Renderable
 	
 	private void punch()
 	{
-		this.isAttacking = true;
+		
 		//arm = new Rectangle(this.getX() + this.width, this.getY() + this.height / 3, 64, 32);
 		
 		this.currentAttack = new BasicSwordSlashAttack(this);
+		this.isAttacking = true;
 		//arm.draw(rect.getX(), rect.getY());
 	}
 

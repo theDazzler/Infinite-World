@@ -1,5 +1,6 @@
 package com.devon.infiniteworld;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
@@ -12,12 +13,14 @@ import org.newdawn.slick.particles.effects.FireEmitter;
 
 import com.devon.infiniteworld.particles.SnowEmitter;
 import com.devon.infiniteworld.tiles.BiomeType;
-import com.devon.infiniteworld.tiles.VisibleTile;
+import com.devon.infiniteworld.tiles.Tile;
 
-public class Player implements Renderable
+public class Player extends Mob implements Renderable
 {
 	Image image;
 	Image armImage;
+	Image movementCollision;
+	
 	Rectangle arm;
 	private double speed = 0.02;
 	//public Rectangle boundingBox; //collision box
@@ -31,7 +34,8 @@ public class Player implements Renderable
 	public float width;
 	public float height;
 	
-	private boolean isPunching = false;
+	private boolean isAttacking = false;
+	private Attack currentAttack;
 	
 	ParticleSystem pSystem;
 	SnowEmitter snowEmitter;
@@ -46,7 +50,8 @@ public class Player implements Renderable
 		this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
 		this.worldMapChunkPosition = this.getWorldMapChunkPosition();
 
-		this.image = new Image("assets/images/sprites/player.png");
+		this.image = new Image("assets/images/sprites/ryu_stance.png", new Color(34, 177, 76));
+		this.movementCollision = new Image("assets/images/tiles/dirt.png");
 		this.armImage = new Image("assets/images/sprites/arm.png");
 		this.direction = new Vector2f(0f, 0f);
 		//Image fireImage = new Image("assets/images/particles/snow.png");
@@ -178,7 +183,9 @@ public class Player implements Renderable
 	{
 		//handle player input
 		handleInput(gc, delta);
-		checkCollisions(delta);
+		//checkCollisions(delta);
+		if(this.isAttacking)
+			updateAttackAnimation(delta);
 		
 		//manage GameScreenChunks around player
 		manageGameScreenChunks();
@@ -188,24 +195,60 @@ public class Player implements Renderable
 		
 	}	
 	
+	private void updateAttackAnimation(int delta) 
+	{
+		//this.currentAttack.animation.update(delta);
+		this.currentAttack.animation.update(delta);
+		if(this.currentAttack.animation.isStopped())
+		{
+			this.currentAttack.animation.stop();
+			this.isAttacking = false;
+		}
+		
+		/**
+		//if attack is done with its execution frames
+		if(this.currentAttack.isExecutionDone())
+		{
+			//if attack is in "active" phase
+			if(this.currentAttack.animation.getFrame() < (this.currentAttack.phase.frameAmount - this.currentAttack.phase.recovery.length))
+			{
+				//create hit boxes
+				this.currentAttack.createHitBoxes();
+				this.currentAttack.state = "active";
+			}	
+			
+			else
+				this.currentAttack.state = "recovery";
+			
+			
+			if(this.currentAttack.animation.getFrame() == this.currentAttack.animation.getFrameCount() - 1)
+			{
+				this.currentAttack.animation.stop();
+				this.isAttacking = false;
+			}
+				
+		}	
+		**/
+	}
+/*
 	private void checkCollisions(int delta)
 	{
 		//check tile collisions
-		for (VisibleTile tile : CollisionManager.collidableTiles.values()) 
+		for (Tile tile : CollisionManager.collidableTiles.values()) 
 		{
-			if(this.boundingBox().intersects(tile.getBoundingBox()))
+			if(this.movementBox().intersects(tile.getBoundingBox()))
 			{
-				if(this.boundingBox().intersects(tile.getBoundingBox()))
+				if(this.movementBox().intersects(tile.getBoundingBox()))
 				{
 					float x, y;		
 					//System.out.println("COLLIDE");
 					
 					
 					//player moving right
-					if(this.boundingBox().getX() + this.boundingBox().getWidth() > tile.getX() && this.boundingBox().getCenterX() < tile.getBoundingBox().getCenterX() && this.direction.x == 1 && this.direction.y == 0)
+					if(this.movementBox().getX() + this.movementBox().getWidth() > tile.getX() && this.movementBox().getCenterX() < tile.getBoundingBox().getCenterX() && this.direction.x == 1 && this.direction.y == 0)
 					{
 						
-						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						while(this.movementBox().intersects(tile.getBoundingBox()))
 						{
 							this.moveLeft(delta);
 						}
@@ -214,20 +257,20 @@ public class Player implements Renderable
 					}
 					
 					//player moving left
-					if(this.boundingBox().getX() < tile.getX() + tile.getWidth() && this.boundingBox().getCenterX() > tile.getBoundingBox().getCenterX() && this.direction.x == -1 && this.direction.y == 0)
+					if(this.movementBox().getX() < tile.getX() + tile.getWidth() && this.movementBox().getCenterX() > tile.getBoundingBox().getCenterX() && this.direction.x == -1 && this.direction.y == 0)
 					{
-						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						while(this.movementBox().intersects(tile.getBoundingBox()))
 						{
 							this.moveRight(delta);
 						}
 					}
 					
 					//player moving up
-					if(this.boundingBox().getY() < tile.getY() + tile.getHeight() && this.boundingBox().getCenterY() > tile.getBoundingBox().getCenterY() && this.direction.y == -1 && this.direction.x == 0)
+					if(this.movementBox().getY() < tile.getY() + tile.getHeight() && this.movementBox().getCenterY() > tile.getBoundingBox().getCenterY() && this.direction.y == -1 && this.direction.x == 0)
 					{
 						if(this.direction.x != 1)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveDown(delta);
 							}
@@ -235,9 +278,9 @@ public class Player implements Renderable
 					}
 					
 					//player moving down
-					if(this.boundingBox().getY() + this.boundingBox().getHeight() > tile.getY() && this.boundingBox().getCenterY() < tile.getBoundingBox().getCenterY() && this.direction.y == 1 && this.direction.x == 0)
+					if(this.movementBox().getY() + this.movementBox().getHeight() > tile.getY() && this.movementBox().getCenterY() < tile.getBoundingBox().getCenterY() && this.direction.y == 1 && this.direction.x == 0)
 					{
-						while(this.boundingBox().intersects(tile.getBoundingBox()))
+						while(this.movementBox().intersects(tile.getBoundingBox()))
 						{
 							this.moveUp(delta);
 						}
@@ -246,10 +289,10 @@ public class Player implements Renderable
 					//if player moving northeast
 					if(this.direction.x == 1 && this.direction.y == -1)
 					{
-						float playerTopRightCornerX = this.boundingBox().getX() + this.boundingBox().getWidth();
+						float playerTopRightCornerX = this.movementBox().getX() + this.movementBox().getWidth();
 						float objectBottomLeftCornerX = tile.getBoundingBox().getX();
 						
-						float playerTopRightCornerY = this.boundingBox().getY();
+						float playerTopRightCornerY = this.movementBox().getY();
 						float objectBottomLeftCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
 						
 						float xDif = Math.abs(playerTopRightCornerX - objectBottomLeftCornerX);
@@ -258,7 +301,7 @@ public class Player implements Renderable
 						//collided with bottom
 						if(xDif > yDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveDown(delta);
 							}
@@ -267,7 +310,7 @@ public class Player implements Renderable
 						//collided with left side of object
 						else if(yDif > xDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveLeft(delta);
 							}
@@ -277,10 +320,10 @@ public class Player implements Renderable
 					//if player moving northwest
 					if(this.direction.x == -1 && this.direction.y == -1)
 					{
-						float playerTopLeftCornerX = this.boundingBox().getX();
+						float playerTopLeftCornerX = this.movementBox().getX();
 						float objectBottomRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
 						
-						float playerTopLeftCornerY = this.boundingBox().getY();
+						float playerTopLeftCornerY = this.movementBox().getY();
 						float objectBottomRightCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
 						
 						float xDif = Math.abs(playerTopLeftCornerX - objectBottomRightCornerX);
@@ -289,7 +332,7 @@ public class Player implements Renderable
 						//collided with bottom
 						if(xDif > yDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveDown(delta);
 							}
@@ -298,7 +341,7 @@ public class Player implements Renderable
 						//collided with right side of object
 						else if(yDif > xDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveRight(delta);
 							}
@@ -308,10 +351,10 @@ public class Player implements Renderable
 					//if player moving southeast
 					if(this.direction.x == 1 && this.direction.y == 1)
 					{
-						float playerBottomRightCornerX = this.boundingBox().getX() + this.boundingBox().getWidth();
+						float playerBottomRightCornerX = this.movementBox().getX() + this.movementBox().getWidth();
 						float objectTopLeftCornerX = tile.getBoundingBox().getX();
 						
-						float playerBottomRightCornerY = this.boundingBox().getY() + this.boundingBox().getHeight();
+						float playerBottomRightCornerY = this.movementBox().getY() + this.movementBox().getHeight();
 						float objectTopLeftCornerY = tile.getBoundingBox().getY();
 						
 						float xDif = Math.abs(playerBottomRightCornerX - objectTopLeftCornerX);
@@ -320,7 +363,7 @@ public class Player implements Renderable
 						//collided with top of object
 						if(xDif > yDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveUp(delta);
 							}
@@ -329,7 +372,7 @@ public class Player implements Renderable
 						//collided with left side of object
 						else if(yDif > xDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveLeft(delta);
 							}
@@ -339,10 +382,10 @@ public class Player implements Renderable
 					//if player moving southwest
 					if(this.direction.x == -1 && this.direction.y == 1)
 					{
-						float playerBottomLeftCornerX = this.boundingBox().getX();
+						float playerBottomLeftCornerX = this.movementBox().getX();
 						float objectTopRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
 						
-						float playerBottomLeftCornerY = this.boundingBox().getY() + this.boundingBox().getHeight();
+						float playerBottomLeftCornerY = this.movementBox().getY() + this.movementBox().getHeight();
 						float objectTopRightCornerY = tile.getBoundingBox().getY();
 						
 						float xDif = Math.abs(playerBottomLeftCornerX - objectTopRightCornerX);
@@ -351,7 +394,7 @@ public class Player implements Renderable
 						//collided with top of object
 						if(xDif > yDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveUp(delta);
 							}
@@ -360,7 +403,7 @@ public class Player implements Renderable
 						//collided with right side of object
 						else if(yDif > xDif)
 						{
-							while(this.boundingBox().intersects(tile.getBoundingBox()))
+							while(this.movementBox().intersects(tile.getBoundingBox()))
 							{
 								this.moveRight(delta);
 							}
@@ -370,6 +413,7 @@ public class Player implements Renderable
 			}
 		}
 	}
+	*/
 
 	//manage GameScreenChunks to render surrounding the player
 	private void manageGameScreenChunks() 
@@ -421,16 +465,13 @@ public class Player implements Renderable
 	//handle player's input
 	private void handleInput(GameContainer gc, int delta) 
 	{
-		float x = this.getX();
-		float y = this.getY();
-		
 		Input input = gc.getInput();
 		
 		if(input.isKeyDown(Input.KEY_ESCAPE))
 		{
 			gc.exit();
 		}
-		
+				
 		//space bar
 		if(input.isKeyDown(Input.KEY_SPACE))
 		{
@@ -438,25 +479,19 @@ public class Player implements Renderable
 			punch();
 		}
 		
-		//not punching
-		if(!input.isKeyDown(Input.KEY_SPACE))
-		{
-			//this.setPosition(new Vector2f(this.position.x + 50, this.position.y));
-			this.isPunching = false;
-		}
+		//if not punching, set to false
+		
 		
 		//move left
 		if(input.isKeyDown(Input.KEY_A))
 		{
 			moveLeft(delta);
-			
 		}
 		
 		//move right
 		if(input.isKeyDown(Input.KEY_D))
 		{
 			moveRight(delta);
-			System.out.println("WTWTT: " + CollisionManager.collidableTiles.size());
 		}
 		
 		//move down
@@ -472,26 +507,28 @@ public class Player implements Renderable
 			moveUp(delta);
 			
 		}
+
 		
+		//if not moving left or right, set x direction to 0
 		if(!(input.isKeyDown(Input.KEY_A)) && !(input.isKeyDown(Input.KEY_D)))
 		{
 			this.direction.x = 0f;
 		}
 		
+		//if not moving up or down, set y direction to 0
 		if(!(input.isKeyDown(Input.KEY_S)) && !(input.isKeyDown(Input.KEY_W)))
 		{
 			this.direction.y = 0f;
 		}
 	}
 	
-	
-	
-	private void punch() 
+	private void punch()
 	{
-		arm = new Rectangle(this.getX() + this.width, this.getY() + this.height / 3, 64, 32);
-		this.isPunching = true;
-		//arm.draw(rect.getX(), rect.getY());
+		this.isAttacking = true;
+		//arm = new Rectangle(this.getX() + this.width, this.getY() + this.height / 3, 64, 32);
 		
+		this.currentAttack = new BasicSwordSlashAttack(this);
+		//arm.draw(rect.getX(), rect.getY());
 	}
 
 	public void setPosition(Vector2f position)
@@ -588,9 +625,16 @@ public class Player implements Renderable
 		}
 	}
 	
+	//box around player used for fighting collision
 	public Rectangle boundingBox()
 	{
 		return new Rectangle(this.getX(), this.getY(), this.width, this.height);
+	}
+	
+	//collision box at player's feet used for movement collision
+	public Rectangle movementBox()
+	{
+		return new Rectangle(this.getX(), this.getY() + (this.height / 2), this.width, this.height / 2);
 	}
 
 	@Override
@@ -598,10 +642,20 @@ public class Player implements Renderable
 	{
 		//draw player
 		this.image.draw(x, y);
+		//this.movementCollision.draw(movementBox().getX(), movementBox().getY(), 0.5f);
 		
-		if(this.isPunching)
+		if(this.isAttacking)
 		{
-			this.armImage.draw(this.arm.getX(), this.arm.getY());
+			this.currentAttack.animation.draw(this.getX(), this.getY());
+			/**
+			if(this.currentAttack.state == "active")
+			{
+				for(int i = 0; i < this.currentAttack.hitBoxes.length; i++)
+				{
+					this.armImage.draw(this.currentAttack.hitBoxes[i].getX(), this.currentAttack.hitBoxes[i].getY());
+				}
+			}	
+			**/		
 		}
 		
 	}

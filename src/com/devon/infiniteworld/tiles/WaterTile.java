@@ -7,14 +7,25 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.GameSettings;
 
-public class WaterTile extends VisibleTile
+public class WaterTile extends Tile
 {
 	Rectangle boundingBox;
 	
-	public WaterTile(Vector2f position, Image image) throws SlickException
+	public WaterTile(int id)
 	{
-		super(position, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT, image, true);
-		
-		this.boundingBox = new Rectangle(position.x, position.y, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT);
+		super(id);
+		try {
+			this.texture = new Image("assets/images/tiles/water.png");
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//this.boundingBox = new Rectangle(position.x, position.y, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT);
+	}
+
+	@Override
+	public boolean isCollidable() 
+	{
+		return true;
 	}
 }

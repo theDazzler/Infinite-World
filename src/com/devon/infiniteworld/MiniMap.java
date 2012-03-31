@@ -5,7 +5,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 
 import com.devon.infiniteworld.tiles.BiomeType;
-import com.devon.infiniteworld.tiles.TileType;
+import com.devon.infiniteworld.tiles.Tile;
 
 public class MiniMap implements Renderable
 {
@@ -60,23 +60,23 @@ public class MiniMap implements Renderable
 					switch(biomeType)
 					{
 						case BiomeType.OCEAN:
-							water.draw((float)(startX + (j * (GameSettings.TILE_WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (GameSettings.TILE_HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+							water.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 							break;
 							
 						case BiomeType.PLAIN:
-							grass.draw((float)(startX + (j * (GameSettings.TILE_WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (GameSettings.TILE_HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+							grass.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 							break;
 							
 						case BiomeType.FOREST:
-							tree.draw((float)(startX + (j * (GameSettings.TILE_WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (GameSettings.TILE_HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+							tree.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 							break;
 							
 						case BiomeType.SNOW:
-							snow.draw((float)(startX + (j * (GameSettings.TILE_WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (GameSettings.TILE_HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+							snow.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 							break;
 							
 						case BiomeType.VOLCANIC:
-							lava.draw((float)(startX + (j * (GameSettings.TILE_WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (GameSettings.TILE_HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+							lava.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 							break;
 					}
 					//chunk.draw(player.getX() + 300, player.getY() - 300);

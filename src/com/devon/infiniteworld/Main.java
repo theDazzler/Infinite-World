@@ -13,13 +13,13 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.particles.effects.FireEmitter;
 
-import com.devon.infiniteworld.tiles.VisibleTile;
 import com.devon.infiniteworld.tiles.WaterTile;
 
 public class Main extends BasicGame 
 {
 	ChunkGenerator chunkGenerator;
 	WorldMap worldMap;
+	World world;
 	MiniMap miniMap;
 	WaterTile waterTile;
 	Sound bg;
@@ -88,11 +88,12 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
-		player = new Player(200, 384, 64, 128);
+		player = new Player(1300, 384, 64, 128);
 		worldMap = WorldMap.getWorldMap(player);
+		world = new World();
+		world.add(player);
 
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");
-		
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();

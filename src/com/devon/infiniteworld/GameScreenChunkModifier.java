@@ -6,7 +6,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.tiles.BiomeType;
-import com.devon.infiniteworld.tiles.TileType;
+import com.devon.infiniteworld.tiles.Tile;
 import com.devon.infiniteworld.tiles.WaterTile;
 
 /**
@@ -56,7 +56,7 @@ public class GameScreenChunkModifier implements Runnable
 				{
 					for(int j = startY; j >= stopY; j--)
 					{
-						this.chunk.tileLayer[i][j] = TileType.WATER;
+						this.chunk.tileLayer[i][j] = Tile.water.id;
 					}
 
 					//make water tiles connect Ocean biomes diagonally rather than squares
@@ -80,7 +80,7 @@ public class GameScreenChunkModifier implements Runnable
 				{
 					for(int j = startY; j >= stopY; j--)
 					{
-						this.chunk.tileLayer[i][j] = TileType.WATER;
+						this.chunk.tileLayer[i][j] = Tile.water.id;
 					}
 
 					//make water tiles connect Ocean biomes diagonally rather than squares
@@ -110,7 +110,7 @@ public class GameScreenChunkModifier implements Runnable
 				{
 					for(int j = startY; j <= stopY; j++)
 					{
-						this.chunk.tileLayer[i][j] = TileType.WATER;
+						this.chunk.tileLayer[i][j] = Tile.water.id;
 					}
 
 					//make water tiles connect Ocean biomes diagonally rather than squares
@@ -135,7 +135,7 @@ public class GameScreenChunkModifier implements Runnable
 				{
 					for(int j = startY; j <= stopY; j++)
 					{
-						this.chunk.tileLayer[i][j] = TileType.WATER;
+						this.chunk.tileLayer[i][j] = Tile.water.id;
 					}
 
 					//make water tiles connect Ocean biomes diagonally rather than squares

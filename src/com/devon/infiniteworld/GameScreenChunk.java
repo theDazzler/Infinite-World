@@ -8,8 +8,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.tiles.BiomeType;
-import com.devon.infiniteworld.tiles.TileType;
-import com.devon.infiniteworld.tiles.VisibleTile;
+import com.devon.infiniteworld.tiles.Tile;
 import com.devon.infiniteworld.tiles.WaterTile;
 
 /**
@@ -42,40 +41,10 @@ public class GameScreenChunk implements Renderable
 	 * Ex. If value from WorldMap is 0.8(GRASS), then a GameScreenChunk is generated from that value(a forest, jungle, trees, grass, etc.)
 	 * The WorldMap is like a minimap. It tells whether a GameScreenChunk should be water, land, etc. Then the tileLayer is filled with terrain relating to that value(trees, grass, etc.)
 	 * 
-	 */
-	
-	Image water;
-	Image grass;
-	Image dirt;
-	Image deepWater;
-	Image tree;
-	Image snow;
-	Image lava;
-	Image ice;
-
-	
+	 */	
 	public GameScreenChunk(Vector2f position) throws SlickException
 	{
-		this.position = position;
-
-		water = new Image("assets/images/tiles/water.png");
-		grass = new Image("assets/images/tiles/grass.png");
-		dirt = new Image("assets/images/tiles/dirt.png");
-		deepWater = new Image("assets/images/tiles/deep_water.png");
-		tree = new Image("assets/images/tiles/tree.png");
-		snow = new Image("assets/images/tiles/snow.png");
-		lava = new Image("assets/images/tiles/lava.png");
-		ice = new Image("assets/images/tiles/ice.png");
-		
-		water = water.getScaledCopy(0.5f);
-		grass = grass.getScaledCopy(0.5f);
-		deepWater = deepWater.getScaledCopy(0.5f);
-		dirt = dirt.getScaledCopy(0.5f);
-		tree = tree.getScaledCopy(0.5f);
-		snow = snow.getScaledCopy(0.5f);
-		lava = lava.getScaledCopy(0.5f);
-		ice = ice.getScaledCopy(0.5f);
-		
+		this.position = position;		
 		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
@@ -116,6 +85,7 @@ public class GameScreenChunk implements Renderable
 			
 	}
 	
+	/*
 	private void addWaterTiles() throws SlickException
 	{
 		for(int i = 0; i < this.tileLayer.length; i++)
@@ -134,6 +104,7 @@ public class GameScreenChunk implements Renderable
 		}
 		
 	}
+	*/
 
 	//connect oceans that are diagonal to each other by placing tiles on the land chunks next to them
 	private void modifyTileLayer()
@@ -159,12 +130,12 @@ public class GameScreenChunk implements Renderable
 				if(this.worldMapBiomeValue == BiomeType.FOREST)
 				{
 					//dont place trees on water tiles
-					if(this.objectLayer[i][j] != TileType.WATER)
+					if(this.objectLayer[i][j] != Tile.water.id)
 					{
 						//place tree
 						if(rand.nextInt(10) == 1)
 						{
-							this.objectLayer[i][j] = TileType.TREE;
+							this.objectLayer[i][j] = Tile.tree.id;
 						}
 					}
 				}
@@ -184,19 +155,19 @@ public class GameScreenChunk implements Renderable
 				switch(this.worldMapBiomeValue)
 				{
 					case BiomeType.OCEAN:
-						tileValue = TileType.WATER;
+						tileValue = Tile.water.id;
 						break;
 					case BiomeType.PLAIN:
-						tileValue = TileType.GRASS;
+						tileValue = Tile.grass.id;
 						break;
 					case BiomeType.FOREST:
-						tileValue = TileType.GRASS;
+						tileValue = Tile.grass.id;
 						break;
 					case BiomeType.SNOW:
-						tileValue = TileType.SNOW;
+						tileValue = Tile.snow.id;
 						break;
 					case BiomeType.VOLCANIC:
-						tileValue = TileType.LAVA;
+						tileValue = Tile.lava.id;
 						break;
 				}
 				
@@ -228,8 +199,8 @@ public class GameScreenChunk implements Renderable
 	
 	public Vector2f getWorldMapIndices()
 	{
-		float x = (float)(Math.floor((this.getWorldMapPosition().y % 768) / GameSettings.TILE_HEIGHT)) + GameSettings.CHUNK_HEIGHT;
-		float y = (float)(Math.floor((this.getWorldMapPosition().x % 1024) / GameSettings.TILE_WIDTH)) + GameSettings.CHUNK_WIDTH;
+		float x = (float)(Math.floor((this.getWorldMapPosition().y % 768) / Tile.HEIGHT)) + GameSettings.CHUNK_HEIGHT;
+		float y = (float)(Math.floor((this.getWorldMapPosition().x % 1024) / Tile.WIDTH)) + GameSettings.CHUNK_WIDTH;
 		y = y % this.NUM_TILES_X;
 		x = x % this.NUM_TILES_Y;
 		
@@ -282,12 +253,11 @@ public class GameScreenChunk implements Renderable
 		{
 			for(int j = 0; j < this.objectLayer[i].length; j++)
 			{
-				switch(this.objectLayer[i][j])
+				if(this.objectLayer[i][j] == Tile.tree.id)
 				{
 					//draw tree
-					case TileType.TREE:
-						tree.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
+					Tile.tree.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+					break;
 				}
 			}
 		}
@@ -300,43 +270,30 @@ public class GameScreenChunk implements Renderable
 		{
 			for(int j = 0; j < this.tileLayer[i].length; j++)
 			{
-				switch(this.tileLayer[i][j])
-				{
-					//draw deep water
-					case TileType.DEEP_WATER:
-						deepWater.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-					
-					//draw water
-					case TileType.WATER:
-						water.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						//waterTile.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-						
-						//draw water
-					case TileType.ICE:
-						ice.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-					
-					//draw grass
-					case TileType.GRASS:
-						grass.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-						
-					//draw snow
-					case TileType.SNOW:
-						snow.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-						
-					//draw lava
-					case TileType.LAVA:
-						lava.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
-						break;
-						
-				}
+				int tileType = this.tileLayer[i][j];
 				
+				if(tileType == Tile.water.id)
+				{
+					//draw water
+					Tile.water.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+					//waterTile.draw((float)(this.getX() + (j * GameSettings.TILE_WIDTH)), (float)(this.getY() + (i * GameSettings.TILE_HEIGHT)));
+				}
+				else if(tileType == Tile.grass.id)
+				{
+					//draw grass
+					Tile.grass.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}
+				else if(tileType == Tile.snow.id)
+				{
+					//draw grass
+					Tile.snow.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}
+				else if(tileType == Tile.lava.id)
+				{
+					//draw lava
+					Tile.lava.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}				
 			}
 		}
-		
 	}
 }

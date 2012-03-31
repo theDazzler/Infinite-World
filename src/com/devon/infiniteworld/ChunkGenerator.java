@@ -5,7 +5,8 @@ import java.util.Random;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.devon.infiniteworld.tiles.TileType;
+import com.devon.infiniteworld.tiles.Tile;
+
 
 /**
  * Generate chunks around the player as he moves
@@ -18,11 +19,11 @@ import com.devon.infiniteworld.tiles.TileType;
  */
 public class ChunkGenerator 
 {
-	static Player player;
+	public Player player;
 	
-	public ChunkGenerator(Player player1)
+	public ChunkGenerator(Player player)
 	{
-		player = player1;
+		this.player = player;
 	}
 	
 	/**
@@ -36,7 +37,7 @@ public class ChunkGenerator
 	public void generateWorldMapChunks() throws SlickException
 	{
 		//get top left coordinates of the chunk the player is currently on
-		Vector2f currentWorldMapChunkPosition = player.getWorldMapChunkPosition();
+		Vector2f currentWorldMapChunkPosition = this.player.getWorldMapChunkPosition();
 		
 		String xKey = "x"; //used for hashmap key(x32y32)
 		String yKey = "y"; //used for hashmap key(x32y32)
@@ -128,7 +129,7 @@ public class ChunkGenerator
 					{
 						int randVal = rand.nextInt(100);
 						if(randVal < 80)
-							chunk.terrain[i][j] = TileType.GRASS;
+							chunk.terrain[i][j] = Tile.grass.id;
 					}
 				}
 			}

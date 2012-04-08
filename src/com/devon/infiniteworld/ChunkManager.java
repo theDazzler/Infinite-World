@@ -6,6 +6,8 @@ import java.util.HashMap;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.entities.Player;
+
 public class ChunkManager 
 {
 	public static HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)

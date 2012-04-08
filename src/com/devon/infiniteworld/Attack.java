@@ -10,7 +10,8 @@ import org.newdawn.slick.geom.Rectangle;
  */
 public abstract class Attack 
 {
-	Animation animation; //animation played during attack
+	float damage;
+	public Animation animation; //animation played during attack
 	AttackPhase phase; //attack frame data (execution, active, recovery)
 	Rectangle[] hitBoxes; //holds hitboxes for each attack
 	String state; //"execution", "active", or "recovery"

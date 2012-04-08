@@ -13,17 +13,16 @@ import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.particles.ParticleSystem;
 import org.newdawn.slick.particles.effects.FireEmitter;
 
+import com.devon.infiniteworld.entities.Player;
 import com.devon.infiniteworld.tiles.WaterTile;
 
 public class Main extends BasicGame 
 {
 	ChunkGenerator chunkGenerator;
 	WorldMap worldMap;
-	World world;
 	MiniMap miniMap;
 	WaterTile waterTile;
 	Sound bg;
-	
 	
 	Player player;
 	
@@ -43,6 +42,14 @@ public class Main extends BasicGame
 		//drawMiniMap();
 		drawDebugInformation(g);
 		drawPlayer();
+		
+		//draw entities
+		for(int i = 0; i < WorldManager.entities.size(); i++)
+		{
+			WorldManager.entities.get(i).draw();
+		}
+		
+		
 		//player.pSystem.render();
 		
 	}
@@ -88,10 +95,8 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
-		player = new Player(1300, 384, 64, 128);
+		player = new Player(new Vector2f(1300f, 384f), 64, 128);
 		worldMap = WorldMap.getWorldMap(player);
-		world = new World();
-		world.add(player);
 
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
@@ -113,6 +118,14 @@ public class Main extends BasicGame
 		{
 			player.update(container, delta);
 		}
+		
+		
+		//update entities
+		for(int i = 0; i < WorldManager.entities.size(); i++)
+		{
+			WorldManager.entities.get(i).update(container, delta);
+		}
+		
 		
 		//player.pSystem.update(delta);
 	}

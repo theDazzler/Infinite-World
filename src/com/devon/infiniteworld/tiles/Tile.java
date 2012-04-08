@@ -6,9 +6,9 @@ import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.GameSettings;
-import com.devon.infiniteworld.NewGrassTile;
-import com.devon.infiniteworld.NewRockTile;
-import com.devon.infiniteworld.NewTile;
+import com.devon.infiniteworld.test.NewGrassTile;
+import com.devon.infiniteworld.test.NewRockTile;
+import com.devon.infiniteworld.test.NewTile;
 
 /** 
  * SUper class that all other tiles inherit from
@@ -18,11 +18,10 @@ import com.devon.infiniteworld.NewTile;
 public abstract class Tile implements Renderable
 {
 	public static Tile[] tiles = new Tile[256]; //holds all tile types
-	public static Tile grass = new GrassTile(0);
-	public static Tile water = new WaterTile(1);
-	public static Tile tree = new TreeTile(2);
-	public static Tile snow = new SnowTile(3);
-	public static Tile lava = new LavaTile(4);
+	public static Tile grass = new GrassTile(1);
+	public static Tile water = new WaterTile(2);
+	public static Tile snow = new SnowTile(4);
+	public static Tile lava = new LavaTile(5);
 	public static final int WIDTH = GameSettings.TILE_WIDTH;
 	public static final int HEIGHT = GameSettings.TILE_HEIGHT;
 	

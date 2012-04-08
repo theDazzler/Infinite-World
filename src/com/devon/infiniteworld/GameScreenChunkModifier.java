@@ -46,7 +46,7 @@ public class GameScreenChunkModifier implements Runnable
 				int startX = GameSettings.CHUNK_HEIGHT - 1;
 				int startY = GameSettings.CHUNK_WIDTH - 1;
 				
-				int stopY = rand.nextInt(14); //2 column minimum
+				int stopY = rand.nextInt(GameSettings.CHUNK_WIDTH - 2); //2 column minimum
 				int stopX = GameSettings.CHUNK_HEIGHT - (GameSettings.CHUNK_WIDTH - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
 				if(stopX < 0)
 					stopX = 0;
@@ -71,15 +71,17 @@ public class GameScreenChunkModifier implements Runnable
 				int startX = 0;
 				int startY = GameSettings.CHUNK_WIDTH - 1;
 				
-				int stopY = rand.nextInt(14); //2 column minimum
-				int stopX = (GameSettings.CHUNK_WIDTH - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
+				int stopY = rand.nextInt(GameSettings.CHUNK_WIDTH - 2); //2 column minimum
+				int stopX = (GameSettings.CHUNK_HEIGHT - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
 				
 				
 				//spread some water tiles into the land chunks
-				for(int i = startX; i <= stopX; i++)
+				for(int i = startX; i < stopX; i++)
 				{
 					for(int j = startY; j >= stopY; j--)
 					{
+						System.out.println("IJIJIJI: " + i + " " +  j);
+						System.out.println("STOPX: " + stopX);
 						this.chunk.tileLayer[i][j] = Tile.water.id;
 					}
 
@@ -100,7 +102,7 @@ public class GameScreenChunkModifier implements Runnable
 				int startX = GameSettings.CHUNK_HEIGHT - 1;
 				int startY = 0;
 				
-				int stopY = rand.nextInt(14) + 2; //2 column minimum
+				int stopY = rand.nextInt(GameSettings.CHUNK_WIDTH - 2) + 2; //2 column minimum
 				int stopX = GameSettings.CHUNK_HEIGHT - (GameSettings.CHUNK_WIDTH - stopY); //makes water tiles connect Ocean biomes diagonally rather than squares
 				if(stopX < 0)
 					stopX = 0;
@@ -126,12 +128,15 @@ public class GameScreenChunkModifier implements Runnable
 				int startX = 0;
 				int startY = 0;
 				
-				int stopY = rand.nextInt(14) + 2; //2 column minimum
+				int stopY = rand.nextInt(GameSettings.CHUNK_WIDTH - 2) + 2; //2 column minimum
 				int stopX = stopY; //makes water tiles connect Ocean biomes diagonally rather than squares
+				
+				if(stopX > GameSettings.CHUNK_HEIGHT)
+					stopX = GameSettings.CHUNK_HEIGHT;
 				
 				
 				//spread some water tiles into the land chunks
-				for(int i = startX; i <= stopX; i++)
+				for(int i = startX; i < stopX; i++)
 				{
 					for(int j = startY; j <= stopY; j++)
 					{

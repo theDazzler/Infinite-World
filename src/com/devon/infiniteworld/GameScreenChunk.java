@@ -7,6 +7,9 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.entities.Horse;
+import com.devon.infiniteworld.entities.Player;
+import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
 import com.devon.infiniteworld.tiles.WaterTile;
@@ -133,12 +136,31 @@ public class GameScreenChunk implements Renderable
 					if(this.objectLayer[i][j] != Tile.water.id)
 					{
 						//place tree
-						if(rand.nextInt(10) == 1)
+						if(rand.nextInt(5) == 0)
 						{
-							this.objectLayer[i][j] = Tile.tree.id;
+							this.objectLayer[i][j] = WorldObject.tree.id;
 						}
 					}
+
+					//add horses to forests
+					if(rand.nextInt(200) == 0)
+					{
+						Horse horse = new Horse(new Vector2f(this.position.x + (i * 64), this.position.y + (j * 64)));
+						WorldManager.addEntity(horse);
+					}
+					
 				}
+				
+				//dont place caves on water tiles
+				if(this.objectLayer[i][j] != Tile.water.id)
+				{
+					//add caves
+					if(rand.nextInt(WorldObject.cave.rarity) == 0)
+					{
+						this.objectLayer[i][j] = WorldObject.cave.id;
+					}
+				}
+				
 			}
 		}	
 	}
@@ -253,11 +275,15 @@ public class GameScreenChunk implements Renderable
 		{
 			for(int j = 0; j < this.objectLayer[i].length; j++)
 			{
-				if(this.objectLayer[i][j] == Tile.tree.id)
+				if(this.objectLayer[i][j] == WorldObject.tree.id)
 				{
 					//draw tree
-					Tile.tree.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
-					break;
+					WorldObject.tree.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}
+				else if(this.objectLayer[i][j] == WorldObject.cave.id)
+				{
+					//draw cave
+					WorldObject.cave.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
 				}
 			}
 		}

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.entities.Player;
+
 /**
  * Singleton class
  * Large Map of the entire world

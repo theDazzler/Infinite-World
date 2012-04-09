@@ -37,10 +37,10 @@ public class GameScreenChunkModifier implements Runnable
 	{
 	
 		//if ocean is to the right of the chunk
-		if(ChunkManager.getBiomeValueRightOf(this.chunk) == BiomeType.OCEAN)
+		if(WorldManager.currentEnvironment.chunkManager.getBiomeValueRightOf(this.chunk) == BiomeType.OCEAN)
 		{
 			//if ocean is below the chunk
-			if(ChunkManager.getBiomeValueBelow(this.chunk) == BiomeType.OCEAN)
+			if(WorldManager.currentEnvironment.chunkManager.getBiomeValueBelow(this.chunk) == BiomeType.OCEAN)
 			{
 				Random rand = new Random((long) (GameSettings.seed + ((this.chunk.getX() + this.chunk.getY()) / 100)));
 				int startX = GameSettings.CHUNK_HEIGHT - 1;
@@ -65,7 +65,7 @@ public class GameScreenChunkModifier implements Runnable
 			}
 			
 			//if ocean is above the chunk
-			if(ChunkManager.getBiomeValueAbove(this.chunk) == BiomeType.OCEAN)
+			if(WorldManager.currentEnvironment.chunkManager.getBiomeValueAbove(this.chunk) == BiomeType.OCEAN)
 			{
 				Random rand = new Random((long) (GameSettings.seed + ((this.chunk.getX() + this.chunk.getY()) / 100)));
 				int startX = 0;
@@ -92,11 +92,11 @@ public class GameScreenChunkModifier implements Runnable
 		}
 		
 		//if ocean is to the left of the chunk
-		if(ChunkManager.getBiomeValueLeftOf(this.chunk) == BiomeType.OCEAN)
+		if(WorldManager.currentEnvironment.chunkManager.getBiomeValueLeftOf(this.chunk) == BiomeType.OCEAN)
 		{
 			
 			//if ocean is below the chunk
-			if(ChunkManager.getBiomeValueBelow(this.chunk) == BiomeType.OCEAN)
+			if(WorldManager.currentEnvironment.chunkManager.getBiomeValueBelow(this.chunk) == BiomeType.OCEAN)
 			{
 				Random rand = new Random((long) (GameSettings.seed + ((this.chunk.getX() + this.chunk.getY()) / 100)));
 				int startX = GameSettings.CHUNK_HEIGHT - 1;
@@ -122,7 +122,7 @@ public class GameScreenChunkModifier implements Runnable
 			
 			
 			//if ocean is above the chunk
-			if(ChunkManager.getBiomeValueAbove(this.chunk) == BiomeType.OCEAN)
+			if(WorldManager.currentEnvironment.chunkManager.getBiomeValueAbove(this.chunk) == BiomeType.OCEAN)
 			{
 				Random rand = new Random((long) (GameSettings.seed + ((this.chunk.getX() + this.chunk.getY()) / 100)));
 				int startX = 0;

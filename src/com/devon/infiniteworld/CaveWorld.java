@@ -1,15 +1,13 @@
-package com.devon.infiniteworld.test;
+package com.devon.infiniteworld;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.Random;
 
-import javax.swing.JPanel;
+import org.newdawn.slick.geom.Vector2f;
 
-public class Cave extends JPanel
+public class CaveWorld 
 {
-
 	public static final int MAX_WIDTH = 1000;
 	public static final int MAX_HEIGHT = 700;
 	public static final int TILE_WIDTH = 8;
@@ -19,44 +17,21 @@ public class Cave extends JPanel
 	public static final int FLOOR = 0;
 	public static final int WALL = 1;
 	
-	private int[][] map;
-	private int numCols;
-	private int numRows;
+	public int[][] map;
+	public int numCols;
+	public int numRows;
+	public Vector2f position;
 	
-	private static final long serialVersionUID = 8111554517572474109L;
-	
-	public Cave()
+	public CaveWorld(float xPos, float yPos)
 	{
+		this.position = new Vector2f(xPos, yPos);
 		this.numCols = MAX_HEIGHT / TILE_HEIGHT;
 		this.numRows = MAX_WIDTH / TILE_WIDTH;
 		this.map = new int[this.numRows][this.numCols];
 		this.createCave();
 		this.generateWalls();
 	}
-	
-	public void paintComponent(Graphics g)
-	{
-		super.paintComponent(g);
-		for(int i = 0; i < this.numRows; i++)
-		{
-			for(int j = 0; j < this.numCols; j++)
-			{
-				if(this.map[i][j] == FLOOR)
-				{
-					g.setColor(Color.GRAY);
-					g.fillRect(i * TILE_WIDTH, j * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-					
-				}
-				else
-				{
-					g.setColor(Color.BLACK);
-					g.fillRect(i * TILE_WIDTH, j * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-				}
-				//g.fillRect(10, 10, i * 10, j * 10);
-			}
-		}
-	}
-	
+		
 	public void createCave()
 	{
 		Random rand = new Random();

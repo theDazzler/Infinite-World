@@ -19,7 +19,6 @@ public class WorldMap
 {
 	private static WorldMap ref;
 	
-	//public WorldMapChunk[][] map;
 	public static HashMap<String, WorldMapChunk> map = new HashMap<String, WorldMapChunk>();
 	
 	private ChunkGenerator chunkGenerator;

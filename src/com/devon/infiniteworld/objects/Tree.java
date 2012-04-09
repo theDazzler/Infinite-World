@@ -2,13 +2,18 @@ package com.devon.infiniteworld.objects;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Vector2f;
 
 public class Tree extends WorldObject 
 {
-
-	public Tree(int id) 
+	public Tree(float xPos, float yPos) 
 	{
-		super(id);
+		this.id = WorldObject.treeId;
+		this.width = 64;
+		this.height = 64;
+		this.position = new Vector2f(xPos, yPos);
+		this.boundingBox = new Rectangle(xPos, yPos, this.width, this.height);
 
 		try 
 		{
@@ -20,7 +25,7 @@ public class Tree extends WorldObject
 			e.printStackTrace();
 		}
 	}
-
+		
 	@Override
 	public boolean isCollidable()
 	{

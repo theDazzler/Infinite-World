@@ -15,7 +15,7 @@ public class Entity
 		this.position = new Vector2f(position.x, position.y);
 	}
 	
-	public void draw(int x, int y)
+	public void draw(float x, float y)
 	{
 		this.image.draw(x, y);
 	}

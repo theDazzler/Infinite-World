@@ -20,8 +20,10 @@ public abstract class Tile implements Renderable
 	public static Tile[] tiles = new Tile[256]; //holds all tile types
 	public static Tile grass = new GrassTile(1);
 	public static Tile water = new WaterTile(2);
+	public static Tile dirt = new DirtTile(3);
 	public static Tile snow = new SnowTile(4);
 	public static Tile lava = new LavaTile(5);
+	public static Tile caveWall = new CaveWallTile(6);
 	public static final int WIDTH = GameSettings.TILE_WIDTH;
 	public static final int HEIGHT = GameSettings.TILE_HEIGHT;
 	

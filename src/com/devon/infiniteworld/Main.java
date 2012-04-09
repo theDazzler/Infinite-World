@@ -18,9 +18,8 @@ import com.devon.infiniteworld.tiles.WaterTile;
 
 public class Main extends BasicGame 
 {
-	ChunkGenerator chunkGenerator;
-	WorldMap worldMap;
-	MiniMap miniMap;
+	WorldManager worldManager;
+	
 	WaterTile waterTile;
 	Sound bg;
 	
@@ -37,18 +36,8 @@ public class Main extends BasicGame
 	{		
 		//center player and follow player around
 		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox().getX() + (player.boundingBox().getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox().getY() + (player.boundingBox().getHeight() / 2)));
-
-		drawGameScreenChunks();
-		//drawMiniMap();
-		drawDebugInformation(g);
-		drawPlayer();
 		
-		//draw entities
-		for(int i = 0; i < WorldManager.entities.size(); i++)
-		{
-			WorldManager.entities.get(i).draw();
-		}
-		
+		this.worldManager.currentEnvironment.render(gc, g);
 		
 		//player.pSystem.render();
 		
@@ -56,53 +45,20 @@ public class Main extends BasicGame
 
 	private void drawMiniMap() 
 	{
-		miniMap.draw(1300f, 300f);
+		this.worldManager.currentEnvironment.miniMap.draw(1300f, 300f);
 		
-	}
-
-	//draw player
-	private void drawPlayer()
-	{
-		//display player
-		//player.image.draw(player.getX(), player.getY());
-		//player.arm.draw(player.getX() + 100, player.getY());
-		player.draw(player.getX(), player.getY());
-		
-	}
-	
-	//draw position information
-	private void drawDebugInformation(Graphics g)
-	{
-		g.drawString("WorldMap X:" + player.getWorldMapPosition().x + " Y:" + player.getWorldMapPosition().y, player.getX() - 380, player.getY() - 342);
-		g.drawString("Position X:" + player.getX() + " Y:" + player.getY(), player.getX() - 380, player.getY() - 322);
-		g.drawString("Screen X:" + player.getCurrentGameScreenChunkTopLeftPosition().x + " Y:" + player.getCurrentGameScreenChunkTopLeftPosition().y, player.getX() - 380, player.getY() - 302);
-		g.drawString("Chunk X:" + player.getWorldMapChunkPosition().x+ " Y:" + player.getWorldMapChunkPosition().y, player.getX() - 380, player.getY() - 282);
-		//g.drawString("Biome:" + player.getCurrentBiomeType(), player.getX() - 380, player.getY() - 262);
-		
-		
-	}
-
-	//render GameScreenChunks
-	private void drawGameScreenChunks() 
-	{
-		//render 3x3 GameScreenChunks
-		for (GameScreenChunk chunk : ChunkManager.visibleChunks.values()) 
-		{
-			chunk.draw(chunk.getX(), chunk.getY());
-		}
 	}
 
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
 		player = new Player(new Vector2f(1300f, 384f), 64, 128);
-		worldMap = WorldMap.getWorldMap(player);
+		worldManager = new WorldManager();
+		worldManager.setCurrentEnvironment(new NormalOutdoorEnvironment(player));
+		
 
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");
-		
-		chunkGenerator = new ChunkGenerator(player);
-		chunkGenerator.generateGameScreenChunks();
-		
+				
 		//bg.play();
 
 		//miniMap = new MiniMap(300, 50);
@@ -114,17 +70,17 @@ public class Main extends BasicGame
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException 
 	{
-		for(int i = delta; i > 0; i--)
+		/*
+		if(this.player.environmentChanged)
 		{
-			player.update(container, delta);
+			
+			this.worldManager.setCurrentEnvironment(new CaveEnvironment(player, player.getCurrentGameScreenChunkTopLeftPosition().x, player.getCurrentGameScreenChunk().position.y));
+			this.player.environmentChanged = false;
+			//ChunkManager.releaseAll();
+			
 		}
-		
-		
-		//update entities
-		for(int i = 0; i < WorldManager.entities.size(); i++)
-		{
-			WorldManager.entities.get(i).update(container, delta);
-		}
+		*/
+		this.worldManager.currentEnvironment.update(container, delta);
 		
 		
 		//player.pSystem.update(delta);

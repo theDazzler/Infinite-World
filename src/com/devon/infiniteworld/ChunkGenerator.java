@@ -239,9 +239,10 @@ public class ChunkGenerator
 			for(int j = 0; j < 3; j++)
 			{
 				//place GameScreenChunk into hashmap to be rendered
-				GameScreenChunk chunk = new GameScreenChunk(new Vector2f(startX, startY));
-				ChunkManager.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
-				ChunkManager.generatedChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
+				GameScreenChunk chunk = new NormalOutdoorGameScreenChunk(new Vector2f(startX, startY));
+				String key = "x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY);
+				WorldManager.currentEnvironment.visibleChunks.put(key, chunk);
+				WorldManager.currentEnvironment.generatedChunks.put(key, chunk);
 				startX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			

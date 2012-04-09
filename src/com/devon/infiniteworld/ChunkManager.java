@@ -10,12 +10,12 @@ import com.devon.infiniteworld.entities.Player;
 
 public class ChunkManager 
 {
-	public static HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)
-	public static HashMap<String, GameScreenChunk> generatedChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that are currently generated
+	public HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)
+	public HashMap<String, GameScreenChunk> generatedChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that are currently generated
 	
 	//adds a column of GameScreenChunksto to be rendered to the right or left of the player's current GameScreenChunk
 	//String side should be "left" to add left column or "right" to add right column
-	public static void addRenderColumn(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
+	public void addRenderColumn(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
 	{
 		float startX = 0;
 		
@@ -35,7 +35,7 @@ public class ChunkManager
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try
 				{
-					visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					visibleChunks.put(key, new NormalOutdoorGameScreenChunk(new Vector2f(startX, startY)));
 				} 
 				catch (SlickException e)
 				{
@@ -57,7 +57,7 @@ public class ChunkManager
 	}
 
 	//removes a column of GameScreenChunkstoso it won't be rendered anymore
-	private static void removeRenderColumn(String side, Vector2f playerPreviousGameScreenChunkPosition) 
+	private void removeRenderColumn(String side, Vector2f playerPreviousGameScreenChunkPosition) 
 	{
 		float startX = 0;
 		
@@ -78,7 +78,7 @@ public class ChunkManager
 	}	
 	
 	//adds a row of GameScreenChunksto be rendered, "top" or "bottom"
-	public static void addRenderRow(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
+	public void addRenderRow(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
 	{
 		float startY = 0;
 		
@@ -98,7 +98,7 @@ public class ChunkManager
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try 
 				{
-					visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					visibleChunks.put(key, new NormalOutdoorGameScreenChunk(new Vector2f(startX, startY)));
 				} 
 				catch (SlickException e) 
 				{
@@ -120,7 +120,7 @@ public class ChunkManager
 	}
 
 	//removes a row of GameScreenChunkstoso it wont be rendered anymore
-	private static void removeRenderRow(String side, Vector2f playerPreviousGameScreenChunkPosition)
+	private void removeRenderRow(String side, Vector2f playerPreviousGameScreenChunkPosition)
 	{
 		float startY = 0;
 		
@@ -141,7 +141,7 @@ public class ChunkManager
 		
 	}
 	
-	public static void addWorldChunkRow(String side, Player player, Vector2f playerCurrentGameScreenChunkPosition)
+	public void addWorldChunkRow(String side, Player player, Vector2f playerCurrentGameScreenChunkPosition)
 	{
 		float startY = 0;
 		
@@ -213,7 +213,7 @@ public class ChunkManager
 	}
 
 	//writes each WorldMapChunk in a row to a text file so they can later be retrieved, then removes them from the WorldMapHashMap
-	private static void removeWorldMapChunkRow(String side, Vector2f playerCurrentWorldMapChunkPosition)
+	private void removeWorldMapChunkRow(String side, Vector2f playerCurrentWorldMapChunkPosition)
 	{
 		HashMap<String, WorldMapChunk> chunks = new HashMap<String, WorldMapChunk>();
 
@@ -248,7 +248,7 @@ public class ChunkManager
 		System.out.println("WorldChunkSize: " + WorldMap.map.size());
 	}
 
-	public static void addWorldChunkColumn(String side, Player player,Vector2f playerCurrentWorldMapChunkPosition) 
+	public void addWorldChunkColumn(String side, Player player,Vector2f playerCurrentWorldMapChunkPosition) 
 	{
 		float startX = 0;
 		
@@ -306,7 +306,7 @@ public class ChunkManager
 		//System.out.println("WorldChunkSize: " + WorldMap.map.size());	
 	}
 
-	private static void removeWorldMapChunkColumn(String side, Vector2f playerCurrentWorldMapChunkPosition)
+	private void removeWorldMapChunkColumn(String side, Vector2f playerCurrentWorldMapChunkPosition)
 	{
 		HashMap<String, WorldMapChunk> chunks = new HashMap<String, WorldMapChunk>();
 		
@@ -334,7 +334,7 @@ public class ChunkManager
 	}
 
 	//return the BiomeType to the left of the GameScreenChunk passed in
-	public static int getBiomeValueLeftOf(GameScreenChunk chunk)
+	public int getBiomeValueLeftOf(GameScreenChunk chunk)
 	{
 		int xIndex = (int)chunk.getWorldMapIndices().x;
 		int yIndex = (int)chunk.getWorldMapIndices().y;
@@ -364,7 +364,7 @@ public class ChunkManager
 	}
 	
 	//return the BiomeType above the GameScreenChunk passed in
-	public static int getBiomeValueAbove(GameScreenChunk chunk)
+	public int getBiomeValueAbove(GameScreenChunk chunk)
 	{
 		int xIndex = (int)chunk.getWorldMapIndices().x;
 		int yIndex = (int)chunk.getWorldMapIndices().y;
@@ -394,7 +394,7 @@ public class ChunkManager
 	}
 	
 	//return the BiomeType to the right of the GameScreenChunk passed in
-	public static int getBiomeValueRightOf(GameScreenChunk chunk)
+	public int getBiomeValueRightOf(GameScreenChunk chunk)
 	{
 		int xIndex = (int)chunk.getWorldMapIndices().x;
 		int yIndex = (int)chunk.getWorldMapIndices().y;
@@ -424,7 +424,7 @@ public class ChunkManager
 	}
 	
 	//return the BiomeType below the GameScreenChunk passed in
-	public static int getBiomeValueBelow(GameScreenChunk chunk)
+	public int getBiomeValueBelow(GameScreenChunk chunk)
 	{
 		int xIndex = (int)chunk.getWorldMapIndices().x;
 		int yIndex = (int)chunk.getWorldMapIndices().y;

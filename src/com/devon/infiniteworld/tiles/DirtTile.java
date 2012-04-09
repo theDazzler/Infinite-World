@@ -3,27 +3,25 @@ package com.devon.infiniteworld.tiles;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-public class GrassTile extends Tile 
+public class DirtTile extends Tile
 {
 
-	public GrassTile(int id)
+	public DirtTile(int id)
 	{
 		super(id);
 		try {
-			this.texture = new Image("assets/images/tiles/grass.png");
-			//this.texture.setColor(1, 1.0f, 0.8f, 0.0f, 0.5f);
-
-			
+			this.texture = new Image("assets/images/tiles/dirt.png").getScaledCopy(0.5f);
 		} catch (SlickException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean isCollidable() 
-	{
+	public boolean isCollidable() {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 }

@@ -1,5 +1,7 @@
 package com.devon.infiniteworld.entities;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -8,6 +10,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.SpriteSheet;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.particles.ParticleSystem;
@@ -16,9 +19,13 @@ import org.newdawn.slick.particles.effects.FireEmitter;
 import com.devon.infiniteworld.Attack;
 import com.devon.infiniteworld.BasicSwordSlashAttack;
 import com.devon.infiniteworld.ChunkManager;
+import com.devon.infiniteworld.CollisionManager;
+import com.devon.infiniteworld.Environment;
 import com.devon.infiniteworld.GameScreenChunk;
 import com.devon.infiniteworld.GameSettings;
+import com.devon.infiniteworld.WorldManager;
 import com.devon.infiniteworld.WorldMap;
+import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.particles.SnowEmitter;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
@@ -48,6 +55,7 @@ public class Player extends Mob implements Renderable
 	private boolean isAttacking = false;
 	private Attack currentAttack;
 	private boolean attackEnabled = true;
+	public boolean environmentChanged = false;
 	
 	ParticleSystem pSystem;
 	SnowEmitter snowEmitter;
@@ -205,7 +213,7 @@ public class Player extends Mob implements Renderable
 	{
 		Vector2f currentGameScreenChunkPos = this.getCurrentGameScreenChunkTopLeftPosition();
 		String key = "x" + Integer.toString((int)currentGameScreenChunkPos.x) + "y" + Integer.toString((int)currentGameScreenChunkPos.y);
-		return ChunkManager.visibleChunks.get(key);
+		return WorldManager.currentEnvironment.chunkManager.visibleChunks.get(key);
 	}
 	
 	public void update(GameContainer gc, int delta)
@@ -222,7 +230,7 @@ public class Player extends Mob implements Renderable
 		{
 			this.currentAnimation = this.walkAnimation;
 		}
-		//checkCollisions(delta);
+		checkCollisions(delta);
 		updateAnimation(delta);
 		
 		//manage GameScreenChunks around player
@@ -233,6 +241,7 @@ public class Player extends Mob implements Renderable
 		
 	}	
 	
+
 	private void updateAnimation(int delta) 
 	{
 		this.currentAnimation.update(delta);
@@ -273,9 +282,11 @@ public class Player extends Mob implements Renderable
 		}	
 		**/
 	}
-/*
+
 	private void checkCollisions(int delta)
 	{
+		//checkObjectCollisions(delta);
+		/*
 		//check tile collisions
 		for (Tile tile : CollisionManager.collidableTiles.values()) 
 		{
@@ -455,8 +466,23 @@ public class Player extends Mob implements Renderable
 				}
 			}
 		}
+		*/
 	}
-	*/
+	
+
+	private void checkObjectCollisions(int delta) 
+	{
+		ArrayList<WorldObject> collidableObjects = this.getCurrentGameScreenChunk().worldObjects;
+		for(int i =0; i < collidableObjects.size(); i++)
+		{
+			WorldObject obj = collidableObjects.get(i);
+			if(this.boundingBox().intersects(obj.boundingBox))
+			{
+				this.environmentChanged = true;
+			}
+		}
+		
+	}
 
 	//manage GameScreenChunks to render surrounding the player
 	private void manageGameScreenChunks() 
@@ -465,7 +491,7 @@ public class Player extends Mob implements Renderable
 		if(this.position.x < this.currentGameScreenChunkPosition.x)
 		{
 			//add column of GameScreenChunks to the left of player's new GameScreenChunk position to get rendered
-			ChunkManager.addRenderColumn("left", this, this.currentGameScreenChunkPosition);
+			WorldManager.currentEnvironment.chunkManager.addRenderColumn("left", this, this.currentGameScreenChunkPosition);
 			
 			//update currentGameScreenChunkPosition
 			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
@@ -475,7 +501,7 @@ public class Player extends Mob implements Renderable
 		if(this.position.x > this.currentGameScreenChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
 		{
 			//add column of GameScreenChunks to the left of player's new GameScreenChunk position to get rendered
-			ChunkManager.addRenderColumn("right", this, this.currentGameScreenChunkPosition);
+			WorldManager.currentEnvironment.chunkManager.addRenderColumn("right", this, this.currentGameScreenChunkPosition);
 			
 			//update currentGameScreenChunkPosition
 			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
@@ -485,7 +511,7 @@ public class Player extends Mob implements Renderable
 		if(this.position.y < this.currentGameScreenChunkPosition.y)
 		{
 			//add row of GameScreenChunks above the player's new GameScreenChunk position
-			ChunkManager.addRenderRow("top", this, this.currentGameScreenChunkPosition);
+			WorldManager.currentEnvironment.chunkManager.addRenderRow("top", this, this.currentGameScreenChunkPosition);
 			
 			//update currentGameScreenChunkPosition
 			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
@@ -495,7 +521,7 @@ public class Player extends Mob implements Renderable
 		if(this.position.y > this.currentGameScreenChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
 		{
 			//add row of GameScreenChunks below the player's new GameScreenChunk position
-			ChunkManager.addRenderRow("bottom", this, this.currentGameScreenChunkPosition);
+			WorldManager.currentEnvironment.chunkManager.addRenderRow("bottom", this, this.currentGameScreenChunkPosition);
 			
 			//update currentGameScreenChunkPosition
 			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
@@ -638,7 +664,7 @@ public class Player extends Mob implements Renderable
 		//if player has moved above the center WorldMapChunk, generate more WorldMapChunks above the player
 		if(this.worldMapPosition.y < this.worldMapChunkPosition.y)
 		{
-			ChunkManager.addWorldChunkRow("top", this, this.getWorldMapChunkPosition());
+			WorldManager.currentEnvironment.chunkManager.addWorldChunkRow("top", this, this.getWorldMapChunkPosition());
 			
 			//update worldMapChunkPosition
 			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
@@ -647,7 +673,7 @@ public class Player extends Mob implements Renderable
 		//if player has moved below the center WorldMapChunk, generate more WorldMapChunks below the player
 		if(this.worldMapPosition.y > this.worldMapChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
 		{
-			ChunkManager.addWorldChunkRow("bottom", this, this.getWorldMapChunkPosition());
+			WorldManager.currentEnvironment.chunkManager.addWorldChunkRow("bottom", this, this.getWorldMapChunkPosition());
 			
 			//update worldMapChunkPosition
 			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
@@ -656,7 +682,7 @@ public class Player extends Mob implements Renderable
 		//if player has moved to the right of the center WorldMapChunk, generate more WorldMapChunks to the right of player
 		if(this.worldMapPosition.x > this.worldMapChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
 		{
-			ChunkManager.addWorldChunkColumn("right", this, this.getWorldMapChunkPosition());
+			WorldManager.currentEnvironment.chunkManager.addWorldChunkColumn("right", this, this.getWorldMapChunkPosition());
 			
 			//update worldMapChunkPosition
 			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
@@ -665,7 +691,7 @@ public class Player extends Mob implements Renderable
 		//if player has moved to the left of the center WorldMapChunk, generate more WorldMapChunks to the left of player
 		if(this.worldMapPosition.x < this.worldMapChunkPosition.x)
 		{
-			ChunkManager.addWorldChunkColumn("left", this, this.getWorldMapChunkPosition());
+			WorldManager.currentEnvironment.chunkManager.addWorldChunkColumn("left", this, this.getWorldMapChunkPosition());
 			
 			//update worldMapChunkPosition
 			this.worldMapChunkPosition = this.getWorldMapChunkPosition();

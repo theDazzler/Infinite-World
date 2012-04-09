@@ -10,16 +10,19 @@ import com.devon.infiniteworld.entities.Player;
 
 public class WorldManager
 {
+	
+	public static Environment currentEnvironment;
 	public Player player;
-	public static List<Entity> entities = new ArrayList<Entity>(); //holds all entities in the game
+	
 	 
 	public WorldManager()
 	{	
 		
 	}
 	 
-	public static void addEntity(Entity entity)
-	{ 
-		entities.add(entity);
+	public static void setCurrentEnvironment(Environment environment)
+	{
+		currentEnvironment = environment;
+		
 	}
 }

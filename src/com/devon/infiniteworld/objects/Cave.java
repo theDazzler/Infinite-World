@@ -9,7 +9,7 @@ public class Cave extends WorldObject
 	public Cave(int id)
 	{
 		super(id);
-		this.rarity = 5000;//higher the number, the more rare it is(ex. this means cave will appear 1 in 5000)
+		this.rarity = 50;//higher the number, the more rare it is(ex. this means cave will appear 1 in 5000)
 		
 		try 
 		{

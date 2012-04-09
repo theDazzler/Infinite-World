@@ -2,6 +2,7 @@ package com.devon.infiniteworld.objects;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Renderable;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.tiles.GrassTile;
@@ -18,6 +19,7 @@ public abstract class WorldObject implements Renderable
 	public Image texture;
 	public Vector2f position;
 	public int rarity; //higher the number, the more rare the object is(ex. 100 means object will appear 1 in 100 times)
+	public Rectangle boundingBox;
 	
 	public WorldObject(int id)
 	{

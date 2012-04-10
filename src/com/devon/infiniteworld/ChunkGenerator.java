@@ -29,14 +29,14 @@ public class ChunkGenerator
 	
 	/**
 	 * Generate WorldMapChunks near player
-	 * player is on chunk 4
-	 * [0][1][2]
-	 * [3][4][5]
-	 * [6][7][8]
 	 * @throws SlickException 
 	 */
 	public void generateWorldMapChunks() throws SlickException
 	{
+		//start game with 15x15 WorldMapChunks sized map
+		int worldChunkRows = 15; 
+		int worldChunkCols = 15;
+		
 		//get top left coordinates of the chunk the player is currently on
 		Vector2f currentWorldMapChunkPosition = this.player.getWorldMapChunkPosition();
 		
@@ -48,9 +48,9 @@ public class ChunkGenerator
 		
 		
 		//for each worldMapChunk in 3x3 section around player
-		for(int i = 0; i < 3; i++)
+		for(int i = 0; i < worldChunkRows; i++)
 		{
-			for(int j = 0; j < 3; j++)
+			for(int j = 0; j < worldChunkCols; j++)
 			{
 				String key = xKey + Integer.toString((int)startPosX) + yKey + Integer.toString((int)startPosY);
 				System.out.println("STARTX: " + startPosX + "STARTY: " + startPosY);
@@ -60,7 +60,7 @@ public class ChunkGenerator
 				startPosX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			
-			startPosX -= GameSettings.CHUNK_PIXEL_WIDTH * 3;
+			startPosX -= GameSettings.CHUNK_PIXEL_WIDTH * worldChunkRows;
 			startPosY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 	}

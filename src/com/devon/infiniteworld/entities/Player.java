@@ -1,5 +1,7 @@
 package com.devon.infiniteworld.entities;
 
+import java.util.List;
+
 import org.newdawn.slick.Animation;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -19,6 +21,7 @@ import com.devon.infiniteworld.ChunkManager;
 import com.devon.infiniteworld.GameScreenChunk;
 import com.devon.infiniteworld.GameSettings;
 import com.devon.infiniteworld.WorldMap;
+import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.particles.SnowEmitter;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
@@ -222,7 +225,8 @@ public class Player extends Mob implements Renderable
 		{
 			this.currentAnimation = this.walkAnimation;
 		}
-		//checkCollisions(delta);
+		
+		checkCollisions(delta);
 		updateAnimation(delta);
 		
 		//manage GameScreenChunks around player
@@ -273,9 +277,11 @@ public class Player extends Mob implements Renderable
 		}	
 		**/
 	}
-/*
+
 	private void checkCollisions(int delta)
 	{
+		checkObjectCollisions(delta);
+		/*
 		//check tile collisions
 		for (Tile tile : CollisionManager.collidableTiles.values()) 
 		{
@@ -455,8 +461,24 @@ public class Player extends Mob implements Renderable
 				}
 			}
 		}
+		*/
 	}
-	*/
+	
+
+	private void checkObjectCollisions(int delta)
+	{
+		List<WorldObject> collidableObjects = this.getCurrentGameScreenChunk().worldObjects;
+		for(int i =0; i < collidableObjects.size(); i++)
+		{
+			WorldObject obj = collidableObjects.get(i);
+			if(this.boundingBox().intersects(obj.boundingBox))
+			{
+				System.out.println("Object Collision");
+				//this.environmentChanged = true;
+			}
+		}
+		
+	}
 
 	//manage GameScreenChunks to render surrounding the player
 	private void manageGameScreenChunks() 

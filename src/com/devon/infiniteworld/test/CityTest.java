@@ -9,21 +9,21 @@ import java.awt.event.MouseEvent;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-public class CaveTest extends JFrame
+public class CityTest extends JFrame
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 7204918799602570148L;
-	public static GeneratedCave genCave;
-	public static CaveTest testFrame;
+	public static GeneratedCity genCity;
+	public static CityTest testFrame;
 
-	public CaveTest()
+	public CityTest()
 	{
-		genCave = new GeneratedCave();
+		genCity = new GeneratedCity();
 		addMouseListener(new MouseClickHandler());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		add(genCave, BorderLayout.CENTER);
+		add(genCity, BorderLayout.CENTER);
 		
 		setSize(1200, 900);
 		setVisible(true);
@@ -31,7 +31,7 @@ public class CaveTest extends JFrame
 	
 	public static void main(String args[])
 	{
-		testFrame = new CaveTest();
+		testFrame = new CityTest();
 		
 		
 	}
@@ -40,10 +40,10 @@ public class CaveTest extends JFrame
 	{
 		public void mouseClicked(MouseEvent event)
 		{
-			testFrame.remove(genCave);
-			genCave = new GeneratedCave();
-			add(genCave,BorderLayout.CENTER);
-			genCave.revalidate();
+			testFrame.remove(genCity);
+			genCity = new GeneratedCity();
+			add(genCity, BorderLayout.CENTER);
+			genCity.revalidate();
 			testFrame.repaint();
 			System.out.println("SS");
 		}

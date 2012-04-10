@@ -23,6 +23,7 @@ public class Main extends BasicGame
 	MiniMap miniMap;
 	WaterTile waterTile;
 	Sound bg;
+	Image enemy;
 	
 	Player player;
 	
@@ -48,6 +49,8 @@ public class Main extends BasicGame
 		{
 			WorldManager.entities.get(i).draw();
 		}
+		
+		enemy.draw(player.getX() + 100, player.getY());
 		
 		
 		//player.pSystem.render();
@@ -98,6 +101,7 @@ public class Main extends BasicGame
 		player = new Player(new Vector2f(1300f, 384f), 64, 128);
 		worldMap = WorldMap.getWorldMap(player);
 
+		enemy = new Image("assets/images/sprites/muscle_enemy_normal.png");
 		//bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
 		chunkGenerator = new ChunkGenerator(player);

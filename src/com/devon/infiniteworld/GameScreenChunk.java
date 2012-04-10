@@ -1,5 +1,7 @@
 package com.devon.infiniteworld;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.newdawn.slick.Image;
@@ -9,6 +11,8 @@ import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.entities.Horse;
 import com.devon.infiniteworld.entities.Player;
+import com.devon.infiniteworld.objects.Cave;
+import com.devon.infiniteworld.objects.Tree;
 import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
@@ -35,6 +39,7 @@ public class GameScreenChunk implements Renderable
 	WorldMap worldMap;
 	int worldMapBiomeValue; //value of biome from worldMap, if worldMap biome is BiomeType.OCEAN, then GameScreenChunk will use this value to fill screen with forest tiles and forest objects
 	Vector2f parentWorldMapChunkPosition; //get coordinates of the WorldMapChunk the GameScreenChunk is in
+	public List<WorldObject> worldObjects;
 	
 	public int[][] tileLayer; //holds tile data for each GameScreenChunk(which tile should be placed)
 	public int[][] objectLayer; //holds object data for the chunk(trees, buildings, etc.)
@@ -52,6 +57,7 @@ public class GameScreenChunk implements Renderable
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.parentWorldMapChunkPosition = this.getParentWorldMapChunkPosition();
+		this.worldObjects = new ArrayList<WorldObject>();
 		
 		//this.initObjectNoise();
 		
@@ -133,36 +139,46 @@ public class GameScreenChunk implements Renderable
 				if(this.worldMapBiomeValue == BiomeType.FOREST)
 				{
 					//dont place trees on water tiles
-					if(this.objectLayer[i][j] != Tile.water.id)
+					if(this.tileLayer[i][j] != Tile.water.id)
 					{
 						//place tree
 						if(rand.nextInt(5) == 0)
 						{
-							this.objectLayer[i][j] = WorldObject.tree.id;
+							this.objectLayer[i][j] = WorldObject.treeId;
+							this.addWorldObject(new Tree(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
 						}
 					}
 
+					/*
 					//add horses to forests
 					if(rand.nextInt(200) == 0)
 					{
 						Horse horse = new Horse(new Vector2f(this.position.x + (i * 64), this.position.y + (j * 64)));
 						WorldManager.addEntity(horse);
 					}
+					*/
 					
 				}
 				
 				//dont place caves on water tiles
-				if(this.objectLayer[i][j] != Tile.water.id)
+				if(this.tileLayer[i][j] != Tile.water.id)
 				{
 					//add caves
-					if(rand.nextInt(WorldObject.cave.rarity) == 0)
+					if(rand.nextInt(Cave.rarity) == 0)
 					{
-						this.objectLayer[i][j] = WorldObject.cave.id;
+						this.objectLayer[i][j] = WorldObject.caveId;
+						this.worldObjects.add(new Cave(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
 					}
 				}
 				
 			}
 		}	
+	}
+
+	private void addWorldObject(WorldObject obj)
+	{
+		this.worldObjects.add(obj);
+		
 	}
 
 	//generate tiles for the chunk
@@ -271,21 +287,13 @@ public class GameScreenChunk implements Renderable
 
 	private void drawObjectLayer() 
 	{
-		for(int i = 0; i < this.objectLayer.length; i++)
+		for(int i = 0; i < this.worldObjects.size(); i++)
 		{
-			for(int j = 0; j < this.objectLayer[i].length; j++)
-			{
-				if(this.objectLayer[i][j] == WorldObject.tree.id)
-				{
-					//draw tree
-					WorldObject.tree.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
-				}
-				else if(this.objectLayer[i][j] == WorldObject.cave.id)
-				{
-					//draw cave
-					WorldObject.cave.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
-				}
-			}
+			WorldObject obj = this.worldObjects.get(i);
+
+			//draw WorldObjects
+			obj.draw();
+
 		}
 		
 	}

@@ -7,7 +7,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class Cave extends JPanel
+public class GeneratedCave extends JPanel
 {
 
 	public static final int MAX_WIDTH = 1000;
@@ -28,7 +28,7 @@ public class Cave extends JPanel
 	
 	private static final long serialVersionUID = 8111554517572474109L;
 	
-	public Cave()
+	public GeneratedCave()
 	{
 		this.numCols = MAX_HEIGHT / TILE_HEIGHT;
 		this.numRows = MAX_WIDTH / TILE_WIDTH;

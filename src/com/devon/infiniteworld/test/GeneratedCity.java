@@ -25,22 +25,23 @@ public class GeneratedCity extends JPanel
 	private int[][] map;
 	private int numCols;
 	private int numRows;
+	private int buildingDensity; //0-100
 	
-	private static Random rand = new Random(54334);
-	
+	private Random rand = new Random();
 	
 	private static final long serialVersionUID = 8111554517572474109L;
 	
-	public GeneratedCity()
+	public GeneratedCity(int buildingDensity)
 	{
 		this.numCols = MAX_HEIGHT / TILE_HEIGHT;
 		this.numRows = MAX_WIDTH / TILE_WIDTH;
 		this.map = new int[this.numRows][this.numCols];
+		this.buildingDensity = buildingDensity;
 		this.createCave();
 		this.generateWalls();
 		this.addWater();
 		this.addCoast();
-		//this.addBuildings();
+		this.addBuildings();
 		
 	}
 	
@@ -114,7 +115,7 @@ public class GeneratedCity extends JPanel
 
 				if(tileValue == WALL)
 				{
-					if(rand.nextInt(10) > 2)
+					if(rand.nextInt(100) < this.buildingDensity)
 						this.map[i][j] = BUILDING;
 							
 				}

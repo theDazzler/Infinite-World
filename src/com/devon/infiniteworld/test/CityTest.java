@@ -20,7 +20,7 @@ public class CityTest extends JFrame
 
 	public CityTest()
 	{
-		genCity = new GeneratedCity();
+		genCity = new GeneratedCity(37);
 		addMouseListener(new MouseClickHandler());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		add(genCity, BorderLayout.CENTER);
@@ -41,7 +41,7 @@ public class CityTest extends JFrame
 		public void mouseClicked(MouseEvent event)
 		{
 			testFrame.remove(genCity);
-			genCity = new GeneratedCity();
+			genCity = new GeneratedCity(37);
 			add(genCity, BorderLayout.CENTER);
 			genCity.revalidate();
 			testFrame.repaint();

@@ -98,7 +98,9 @@ public class ChunkManager
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try 
 				{
+					System.out.println("ADDING row: " + startX + ", " + startY );
 					visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					
 				} 
 				catch (SlickException e) 
 				{
@@ -372,6 +374,7 @@ public class ChunkManager
 		//if chunk is on top edge
 		if(xIndex == 0)
 		{
+			System.out.println("ON EDGE");
 			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
 			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x) + "y" + Integer.toString((int) parentWorldMapChunkPos.y - GameSettings.CHUNK_PIXEL_HEIGHT);
 			

@@ -36,13 +36,13 @@ public class GameScreenChunk implements Renderable
 	Vector2f position; //top left coordinates of the chunk
 	private Vector2f worldMapPosition; //position of chunk on the WorldMap
 	Player player;
-	WorldMap worldMap;
-	int worldMapBiomeValue; //value of biome from worldMap, if worldMap biome is BiomeType.OCEAN, then GameScreenChunk will use this value to fill screen with forest tiles and forest objects
+	int worldMapBiomeValue; //value of biome from worldMap, if worldMap biome is BiomeType.FOREST, then GameScreenChunk will use this value to fill screen with forest tiles and forest objects
 	Vector2f parentWorldMapChunkPosition; //get coordinates of the WorldMapChunk the GameScreenChunk is in
 	public List<WorldObject> worldObjects;
 	
 	public int[][] tileLayer; //holds tile data for each GameScreenChunk(which tile should be placed)
 	public int[][] objectLayer; //holds object data for the chunk(trees, buildings, etc.)
+	private Random random;
 	
 	/**
 	 * Each value from the WorldMap is taken and a GameScreenCHunk is generated from that value
@@ -58,6 +58,7 @@ public class GameScreenChunk implements Renderable
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.parentWorldMapChunkPosition = this.getParentWorldMapChunkPosition();
 		this.worldObjects = new ArrayList<WorldObject>();
+		this.random = new Random((long) (GameSettings.seed + ((this.getX() + this.getY()) / 100)));
 		
 		//this.initObjectNoise();
 		
@@ -70,6 +71,10 @@ public class GameScreenChunk implements Renderable
 		String key = "x" + Integer.toString((int)this.parentWorldMapChunkPosition.x) + "y" + Integer.toString((int)this.parentWorldMapChunkPosition.y);
 		System.out.println("WORLD X: " + this.worldMapPosition.x + "WORLD Y: " + this.worldMapPosition.y);
 		System.out.println("INDICES X: " + (int)this.getWorldMapIndices().x + " INDICES Y: " + (int)this.getWorldMapIndices().y);
+		System.out.println("KEY: " + key);
+		System.out.println("indices x: " + this.getWorldMapIndices().x + " indices y: " + this.getWorldMapIndices().y);
+		System.out.println("BIOMES: " + WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y]);
+			
 		//get tile terrain value
 		this.worldMapBiomeValue = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		
@@ -77,7 +82,7 @@ public class GameScreenChunk implements Renderable
 		//generate initial tiles
 		generateTileLayer(); 
 		
-		modifyTileLayer(); //makes GameScreenChunks less square (some water tiles will go into forest chunks etc.)
+		//modifyTileLayer(); //makes GameScreenChunks less square (some water tiles will go into forest chunks etc.)
 		generateObjectLayer();
 		
 		/**
@@ -127,9 +132,6 @@ public class GameScreenChunk implements Renderable
 	
 	private void generateObjectLayer() 
 	{
-		//generate new random seed for each gameScreenChunk so objects will be placed in different spots in each GameScreenChunk
-		Random rand = new Random((long) (GameSettings.seed + ((this.getX() + this.getY()) / 100)));
-		
 		//for each row in the chunk
 		for(int i = 0; i < this.objectLayer.length; i++)
 		{
@@ -142,7 +144,7 @@ public class GameScreenChunk implements Renderable
 					if(this.tileLayer[i][j] != Tile.water.id)
 					{
 						//place tree
-						if(rand.nextInt(5) == 0)
+						if(this.random.nextInt(5) == 0)
 						{
 							this.objectLayer[i][j] = WorldObject.treeId;
 							this.addWorldObject(new Tree(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
@@ -164,7 +166,7 @@ public class GameScreenChunk implements Renderable
 				if(this.tileLayer[i][j] != Tile.water.id)
 				{
 					//add caves
-					if(rand.nextInt(Cave.rarity) == 0)
+					if(this.random.nextInt(Cave.rarity) == 0)
 					{
 						this.objectLayer[i][j] = WorldObject.caveId;
 						this.worldObjects.add(new Cave(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));

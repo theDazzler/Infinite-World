@@ -43,8 +43,8 @@ public class ChunkGenerator
 		String xKey = "x"; //used for hashmap key(x32y32)
 		String yKey = "y"; //used for hashmap key(x32y32)
 		
-		float startPosX = currentWorldMapChunkPosition.x - GameSettings.CHUNK_PIXEL_WIDTH; //start one WorldMapChunk above and to the left of player
-		float startPosY = currentWorldMapChunkPosition.y - GameSettings.CHUNK_PIXEL_HEIGHT;
+		float startPosX = currentWorldMapChunkPosition.x - (GameSettings.CHUNK_PIXEL_WIDTH * (worldChunkCols / 2)); //center player in middle of world
+		float startPosY = currentWorldMapChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT * (worldChunkRows / 2));
 		
 		
 		//for each worldMapChunk in 3x3 section around player
@@ -60,7 +60,7 @@ public class ChunkGenerator
 				startPosX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			
-			startPosX -= GameSettings.CHUNK_PIXEL_WIDTH * worldChunkRows;
+			startPosX -= GameSettings.CHUNK_PIXEL_WIDTH * worldChunkCols;
 			startPosY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 	}

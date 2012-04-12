@@ -38,6 +38,8 @@ public class WorldMapChunk implements Serializable
 	public double[][] temperature; //temperature data for each tile(GameScreenChunk) on the worldMap. It can be a value from 0-100
 	public double[][] rainfall; //rainfall data
 	public int[][] biomeTypes; //holds biome data for each WorldMapChunk
+	public int[][] cityData; //holds data for cities
+	public int[][] gameScreenTypes; //holds data about which type of GameScreenChunk should be generated. (ex. if forest, build a GameScreenChunk with a forest. If road, build road. If vacant lot, build vacant lot)
 	PerlinNoise terrainNoise;
 	
 	
@@ -61,6 +63,8 @@ public class WorldMapChunk implements Serializable
 		this.rainfall = new double[this.HEIGHT][this.WIDTH];
 		this.terrainNoise = new PerlinNoise(GameSettings.seed);
 		this.biomeTypes = new int[this.HEIGHT][this.WIDTH];
+		this.cityData = new int[this.HEIGHT][this.WIDTH];
+		this.gameScreenTypes = new int[this.HEIGHT][this.WIDTH];
 
 		generateTerrainNoise();
 
@@ -68,13 +72,180 @@ public class WorldMapChunk implements Serializable
 		
 		generateTemperatureNoise();
 		generateRainfallNoise();
-		
 		initBiomeTypes();
+		generateCities();
 		
 		System.out.println();
 		System.out.println("DONE");
 	}
 	
+	public void generateCities()
+	{
+		Random random = new Random(6734);
+		
+		for (int i = 0; i < this.biomeTypes.length; i++)
+		{
+			for(int j = 0; j < this.biomeTypes[i].length; j++)
+			{
+				int biomeType = this.biomeTypes[i][j];
+				
+				//place cities in snow biomes
+				if(biomeType == BiomeType.SNOW)
+				{
+					//if there is NOT a city at this location
+					if(this.cityData[i][j] != 1)
+					{
+						City city = new City(45);
+					
+						placeCity(city, i, j);
+						
+					}
+				}
+			}
+		}
+	}
+
+
+
+	private void placeCity(City city, int xIndex, int yIndex) 
+	{
+		if(canPlace(city, xIndex, yIndex))
+		{
+			System.out.println("ROWSCITY: " + city.numRows);
+			System.out.println("COSLCITY: " + city.numCols);
+			WorldMapChunk targetChunk = null;
+			int xTargetIndex;
+			int yTargetIndex;
+			int xCityMapIndex = 0;
+			int yCityMapIndex = 0;
+			String key;
+			
+			for(int i = xIndex; i < (city.numRows - 1) + xIndex; i++)
+			{
+				for(int j = yIndex; j < (city.numCols - 1) + yIndex; j++)
+				{
+					xTargetIndex = i;
+					yTargetIndex = j;
+					targetChunk = this;
+					
+					//if city needs to extend to WorldMapChunk below this chunk
+					if(xTargetIndex > this.HEIGHT - 1)
+					{
+						key = "x" + Integer.toString((int)this.getX() + GameSettings.CHUNK_PIXEL_HEIGHT) + "y" + Integer.toString((int)this.getY());
+						
+						//get WorldMapChunk below
+						targetChunk = WorldMap.map.get(key);
+						
+						xTargetIndex = i % this.HEIGHT;	
+					}
+					
+					//if city needs to extend into the WorldMapChunk to the right
+					else if(yTargetIndex > this.WIDTH - 1)
+					{
+						key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + GameSettings.CHUNK_PIXEL_WIDTH);
+						
+						//get WorldMapChunk below
+						targetChunk = WorldMap.map.get(key);
+						
+						yTargetIndex = j % this.HEIGHT;	
+					}
+					
+					if(WorldMap.map.containsValue(targetChunk))
+					{
+						//place a 1 into cityData to indicate that a city GameScreenType is at this location
+						System.out.println("xTargetIndex: " + xTargetIndex + "yTargetIndex: " + yTargetIndex);
+						targetChunk.cityData[xTargetIndex][yTargetIndex] = 1;
+					
+						
+						//type of city GameScreen(ex. road, building, water, etc.)
+						int cityScreenValue = city.map[xCityMapIndex][yCityMapIndex];
+					
+						//place road screen
+						if(cityScreenValue == City.FLOOR)
+						{
+							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.cityRoad.id;
+						}
+					
+						//place building screen
+						else if(cityScreenValue == City.BUILDING)
+						{
+							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.cityBuilding.id;
+						}
+					
+						//place water screen
+						else if(cityScreenValue == City.WATER)
+						{
+							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.cityWater.id;
+						}
+					
+						//place coastline(beach)
+						else if(cityScreenValue == City.GRASS)
+						{
+							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.cityCoast.id;
+						}	
+						
+						yCityMapIndex++;
+					}		
+				}
+				yCityMapIndex = 0;
+				xCityMapIndex++;
+			}
+			
+		}
+	}
+
+	//checks to see if city can fit into specified area on the World map
+	private boolean canPlace(City city, int xIndex, int yIndex)
+	{
+		WorldMapChunk targetChunk;
+		int xTargetIndex;
+		int yTargetIndex;
+		String key;
+		
+		for(int i = xIndex; i < city.numRows; i++)
+		{
+			for(int j = yIndex; j < city.numCols; j++)
+			{
+				xTargetIndex = i;
+				yTargetIndex = j;
+				targetChunk = this;
+				
+				//if city needs to extend to WorldMapChunk below this chunk
+				if(xTargetIndex > this.HEIGHT - 1)
+				{
+					key = "x" + Integer.toString((int)this.getX() + GameSettings.CHUNK_PIXEL_HEIGHT) + "y" + Integer.toString((int)this.getY());
+					
+					//get WorldMapChunk below
+					targetChunk = WorldMap.map.get(key);
+					
+					xTargetIndex = i % this.HEIGHT;	
+				}
+				
+				//if city needs to extend into the WorldMapChunk to the right
+				else if(yTargetIndex > this.WIDTH - 1)
+				{
+					key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + GameSettings.CHUNK_PIXEL_WIDTH);
+					
+					//get WorldMapChunk below
+					targetChunk = WorldMap.map.get(key);
+					
+					yTargetIndex = j % this.HEIGHT;	
+				}
+				
+				if(WorldMap.map.containsValue(targetChunk))
+				{
+					//if there is already a city at this location, return false
+					if(targetChunk.cityData[xTargetIndex][yTargetIndex] == 1)
+					{
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+
 	private void generateRainfallNoise() 
 	{
 		int rainSeed;
@@ -105,9 +276,7 @@ public class WorldMapChunk implements Serializable
 				
 			}
 			y += .314f;	
-		}
-		
-		
+		}	
 	}
 
 	//generate noise data for temperature map
@@ -159,6 +328,7 @@ public class WorldMapChunk implements Serializable
 				if(terrainValue <= GameSettings.WATER_THRESHOLD)
 				{
 					this.biomeTypes[i][j] = BiomeType.OCEAN;
+					this.gameScreenTypes[i][j] = GameScreenType.water.id;
 				}
 				
 				//land
@@ -168,25 +338,29 @@ public class WorldMapChunk implements Serializable
 					if(tempValue <= -0.5f)
 					{
 						this.biomeTypes[i][j] = BiomeType.SNOW;
+						this.gameScreenTypes[i][j] = GameScreenType.snow.id;
 					}
 					
 					//forest
 					else if(tempValue < 0.2 && tempValue > 0 && rainValue > 0 && rainValue < 0.4)
 					{
 						this.biomeTypes[i][j] = BiomeType.FOREST;
+						this.gameScreenTypes[i][j] = GameScreenType.forest.id;
 					}
 					
 					//volcanic
 					else if(tempValue > 0.6 && rainValue < 0)
 					{
 						this.biomeTypes[i][j] = BiomeType.VOLCANIC;
+						this.gameScreenTypes[i][j] = GameScreenType.volcanic.id;
 						
-					}
+					}			
 					
 					//plain
 					else
 					{
 						this.biomeTypes[i][j] = BiomeType.PLAIN;
+						this.gameScreenTypes[i][j] = GameScreenType.plain.id;
 					}
 					
 				}

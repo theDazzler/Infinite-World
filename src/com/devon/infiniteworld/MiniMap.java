@@ -17,6 +17,8 @@ public class MiniMap implements Renderable
 	Image snow;
 	Image lava;
 	Image tree;
+	Image dirt;
+	Image cement;
 	
 	float tileScaleFactor = 0.125f;
 	int width = (int) ((GameSettings.TILE_WIDTH * tileScaleFactor) * GameSettings.CHUNK_WIDTH);
@@ -31,6 +33,8 @@ public class MiniMap implements Renderable
 		this.snow = new Image("assets/images/tiles/snow.png");
 		this.lava = new Image("assets/images/tiles/lava.png");
 		this.tree = new Image("assets/images/tiles/tree.png");
+		this.dirt = new Image("assets/images/tiles/dirt.png");
+		this.cement = new Image("assets/images/tiles/cement.png");
 		
 		/**
 		water = water.getScaledCopy(tileScaleFactor);
@@ -55,29 +59,43 @@ public class MiniMap implements Renderable
 			{
 				for(int j = 0; j < chunk.terrain[i].length; j++)
 				{
-					int biomeType = chunk.biomeTypes[i][j];
+					int screenType = chunk.gameScreenTypes[i][j];
 					
-					switch(biomeType)
+					if(screenType == GameScreenType.water.id)
 					{
-						case BiomeType.OCEAN:
-							water.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
-							break;
-							
-						case BiomeType.PLAIN:
-							grass.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
-							break;
-							
-						case BiomeType.FOREST:
-							tree.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
-							break;
-							
-						case BiomeType.SNOW:
-							snow.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
-							break;
-							
-						case BiomeType.VOLCANIC:
-							lava.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
-							break;
+						water.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.plain.id)
+					{
+						grass.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.forest.id)
+					{
+						tree.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.snow.id)
+					{
+						snow.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.volcanic.id)
+					{
+						lava.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.cityRoad.id)
+					{
+						cement.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.cityBuilding.id)
+					{
+						dirt.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.cityCoast.id)
+					{
+						grass.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
+					}
+					else if(screenType == GameScreenType.cityWater.id)
+					{
+						water.draw((float)(startX + (j * (Tile.WIDTH * (tileScaleFactor * 2)))), (float)(startY + (i * (Tile.HEIGHT * (tileScaleFactor * 2)))), tileScaleFactor);
 					}
 					//chunk.draw(player.getX() + 300, player.getY() - 300);
 				}

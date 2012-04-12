@@ -240,8 +240,8 @@ public class ChunkGenerator
 			{
 				//place GameScreenChunk into hashmap to be rendered
 				GameScreenChunk chunk = new GameScreenChunk(new Vector2f(startX, startY));
-				ChunkManager.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
-				ChunkManager.generatedChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
+				player.currentEnvironment.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
+				player.currentEnvironment.generatedChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
 				startX += GameSettings.CHUNK_PIXEL_WIDTH;
 			}
 			

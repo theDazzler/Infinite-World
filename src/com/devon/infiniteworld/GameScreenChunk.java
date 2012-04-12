@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.newdawn.slick.Image;
 import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
-import com.devon.infiniteworld.entities.Horse;
 import com.devon.infiniteworld.entities.Player;
 import com.devon.infiniteworld.objects.Cave;
 import com.devon.infiniteworld.objects.Tree;
 import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
-import com.devon.infiniteworld.tiles.WaterTile;
 
 /**
  * Creates an actual screen sized chunk that the player plays on(fills screen with grass, forests, etc)
@@ -37,6 +34,7 @@ public class GameScreenChunk implements Renderable
 	private Vector2f worldMapPosition; //position of chunk on the WorldMap
 	Player player;
 	int worldMapBiomeValue; //value of biome from worldMap, if worldMap biome is BiomeType.FOREST, then GameScreenChunk will use this value to fill screen with forest tiles and forest objects
+	int gameScreenType;
 	Vector2f parentWorldMapChunkPosition; //get coordinates of the WorldMapChunk the GameScreenChunk is in
 	public List<WorldObject> worldObjects;
 	
@@ -71,14 +69,12 @@ public class GameScreenChunk implements Renderable
 		String key = "x" + Integer.toString((int)this.parentWorldMapChunkPosition.x) + "y" + Integer.toString((int)this.parentWorldMapChunkPosition.y);
 		System.out.println("WORLD X: " + this.worldMapPosition.x + "WORLD Y: " + this.worldMapPosition.y);
 		System.out.println("INDICES X: " + (int)this.getWorldMapIndices().x + " INDICES Y: " + (int)this.getWorldMapIndices().y);
-		System.out.println("KEY: " + key);
-		System.out.println("indices x: " + this.getWorldMapIndices().x + " indices y: " + this.getWorldMapIndices().y);
-		System.out.println("BIOMES: " + WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y]);
 			
 		//get tile terrain value
-		this.worldMapBiomeValue = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
+		WorldMapChunk parentChunk = WorldMap.map.get(key);
+		this.worldMapBiomeValue = parentChunk.biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
+		this.gameScreenType = parentChunk.gameScreenTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		
-
 		//generate initial tiles
 		generateTileLayer(); 
 		
@@ -138,16 +134,23 @@ public class GameScreenChunk implements Renderable
 			//for each column in the chunk
 			for(int j = 0; j < this.objectLayer[i].length; j++)
 			{
-				if(this.worldMapBiomeValue == BiomeType.FOREST)
+				if(this.gameScreenType == GameScreenType.forest.id)
 				{
 					//dont place trees on water tiles
-					if(this.tileLayer[i][j] != Tile.water.id)
+					if(this.tileLayer[i][j] == Tile.grass.id)
 					{
 						//place tree
 						if(this.random.nextInt(5) == 0)
 						{
 							this.objectLayer[i][j] = WorldObject.treeId;
 							this.addWorldObject(new Tree(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
+						}
+						
+						//add caves
+						if(this.random.nextInt(Cave.rarity) == 0)
+						{
+							this.objectLayer[i][j] = WorldObject.caveId;
+							this.worldObjects.add(new Cave(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
 						}
 					}
 
@@ -160,19 +163,7 @@ public class GameScreenChunk implements Renderable
 					}
 					*/
 					
-				}
-				
-				//dont place caves on water tiles
-				if(this.tileLayer[i][j] != Tile.water.id)
-				{
-					//add caves
-					if(this.random.nextInt(Cave.rarity) == 0)
-					{
-						this.objectLayer[i][j] = WorldObject.caveId;
-						this.worldObjects.add(new Cave(this.position.x + (i * GameSettings.TILE_WIDTH), this.position.y + (j * GameSettings.TILE_HEIGHT)));
-					}
-				}
-				
+				}				
 			}
 		}	
 	}
@@ -191,25 +182,25 @@ public class GameScreenChunk implements Renderable
 			for(int j = 0; j < this.tileLayer[i].length; j++)
 			{
 				int tileValue = 0;
-				
-				switch(this.worldMapBiomeValue)
-				{
-					case BiomeType.OCEAN:
-						tileValue = Tile.water.id;
-						break;
-					case BiomeType.PLAIN:
-						tileValue = Tile.grass.id;
-						break;
-					case BiomeType.FOREST:
-						tileValue = Tile.grass.id;
-						break;
-					case BiomeType.SNOW:
-						tileValue = Tile.snow.id;
-						break;
-					case BiomeType.VOLCANIC:
-						tileValue = Tile.lava.id;
-						break;
-				}
+								
+				if(this.gameScreenType == GameScreenType.water.id)
+					tileValue = Tile.water.id;
+				else if(this.gameScreenType == GameScreenType.plain.id)
+					tileValue = Tile.grass.id;
+				else if(this.gameScreenType == GameScreenType.forest.id)
+					tileValue = Tile.grass.id;
+				else if(this.gameScreenType == GameScreenType.snow.id)
+					tileValue = Tile.snow.id;
+				else if(this.gameScreenType == GameScreenType.volcanic.id)
+					tileValue = Tile.lava.id;
+				else if(this.gameScreenType == GameScreenType.cityRoad.id)
+					tileValue = Tile.cement.id;
+				else if(this.gameScreenType == GameScreenType.cityBuilding.id)
+					tileValue = Tile.dirt.id;
+				else if(this.gameScreenType == GameScreenType.cityCoast.id)
+					tileValue = Tile.grass.id;
+				else if(this.gameScreenType == GameScreenType.cityWater.id)
+					tileValue = Tile.water.id;
 				
 				this.tileLayer[i][j] = tileValue;
 			}
@@ -328,7 +319,20 @@ public class GameScreenChunk implements Renderable
 				{
 					//draw lava
 					Tile.lava.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
-				}				
+				}	
+				
+				else if(tileType == Tile.cement.id)
+				{
+					//draw lava
+					Tile.cement.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}	
+				
+				else if(tileType == Tile.dirt.id)
+				{
+					//draw lava
+					Tile.dirt.draw((float)(this.getX() + (j * Tile.WIDTH)), (float)(this.getY() + (i * Tile.HEIGHT)));
+				}	
+				
 			}
 		}
 	}

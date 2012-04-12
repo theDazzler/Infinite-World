@@ -38,20 +38,21 @@ public class Main extends BasicGame
 	{		
 		//center player and follow player around
 		g.translate((GameSettings.SCREEN_WIDTH / 2) - (player.boundingBox().getX() + (player.boundingBox().getWidth() / 2)), (GameSettings.SCREEN_HEIGHT / 2) - (player.boundingBox().getY() + (player.boundingBox().getHeight() / 2)));
-
-		drawGameScreenChunks();
-		//drawMiniMap();
+		
+		player.currentEnvironment.draw();
 		drawDebugInformation(g);
 		drawPlayer();
 		
 		//draw entities
-		for(int i = 0; i < WorldManager.entities.size(); i++)
+		for(int i = 0; i < player.currentEnvironment.entities.size(); i++)
 		{
-			WorldManager.entities.get(i).draw();
+			player.currentEnvironment.entities.get(i).draw();
 		}
 		
-		//enemy.draw(player.getX() + 100, player.getY());
+		//drawMiniMap();
 		
+		
+		//enemy.draw(player.getX() + 100, player.getY());
 		
 		//player.pSystem.render();
 		
@@ -59,7 +60,7 @@ public class Main extends BasicGame
 
 	private void drawMiniMap() 
 	{
-		miniMap.draw(1300f, 300f);
+		miniMap.draw(player.getX(), player.getY());
 		
 	}
 
@@ -69,8 +70,7 @@ public class Main extends BasicGame
 		//display player
 		//player.image.draw(player.getX(), player.getY());
 		//player.arm.draw(player.getX() + 100, player.getY());
-		player.draw(player.getX(), player.getY());
-		
+		player.draw(player.getX(), player.getY());	
 	}
 	
 	//draw position information
@@ -82,18 +82,9 @@ public class Main extends BasicGame
 		g.drawString("Chunk X:" + player.getWorldMapChunkPosition().x+ " Y:" + player.getWorldMapChunkPosition().y, player.getX() - 380, player.getY() - 282);
 		//g.drawString("Biome:" + player.getCurrentBiomeType(), player.getX() - 380, player.getY() - 262);
 		
-		
 	}
 
-	//render GameScreenChunks
-	private void drawGameScreenChunks() 
-	{
-		//render 3x3 GameScreenChunks
-		for (GameScreenChunk chunk : ChunkManager.visibleChunks.values()) 
-		{
-			chunk.draw(chunk.getX(), chunk.getY());
-		}
-	}
+	
 
 	@Override
 	public void init(GameContainer container) throws SlickException 
@@ -106,6 +97,13 @@ public class Main extends BasicGame
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();
+		
+		for (WorldMapChunk chunk : WorldMap.map.values()) 
+		{
+		    chunk.generateCities();
+		}
+		
+			
 
 		
 		//bg.play();
@@ -123,14 +121,6 @@ public class Main extends BasicGame
 		{
 			player.update(container, delta);
 		}
-		
-		
-		//update entities
-		for(int i = 0; i < WorldManager.entities.size(); i++)
-		{
-			WorldManager.entities.get(i).update(container, delta);
-		}
-		
 		
 		//player.pSystem.update(delta);
 	}

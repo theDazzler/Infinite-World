@@ -10,8 +10,8 @@ import com.devon.infiniteworld.entities.Player;
 
 public class ChunkManager 
 {
-	public static HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)
-	public static HashMap<String, GameScreenChunk> generatedChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that are currently generated
+	//public static HashMap<String, GameScreenChunk> visibleChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that need to be rendered(3x3 section surrounding player)
+	//public static HashMap<String, GameScreenChunk> generatedChunks = new HashMap<String, GameScreenChunk>(); //holds chunks that are currently generated
 	
 	//adds a column of GameScreenChunksto to be rendered to the right or left of the player's current GameScreenChunk
 	//String side should be "left" to add left column or "right" to add right column
@@ -30,12 +30,12 @@ public class ChunkManager
 		for(int i = 0; i < 3; i++)
 		{
 			String key = "x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY);
-			if(!visibleChunks.containsKey(key))
+			if(!player.currentEnvironment.visibleChunks.containsKey(key))
 			{
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try
 				{
-					visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
 				} 
 				catch (SlickException e)
 				{
@@ -47,17 +47,17 @@ public class ChunkManager
 		}
 		
 		if(side == "left")
-			removeRenderColumn("right", playerPreviousGameScreenChunkPosition);
+			removeRenderColumn("right", player, playerPreviousGameScreenChunkPosition);
 		else if(side == "right")
-			removeRenderColumn("left", playerPreviousGameScreenChunkPosition);
+			removeRenderColumn("left", player, playerPreviousGameScreenChunkPosition);
 		
-		System.out.println("RENDER SIZE: " + visibleChunks.size());
+		System.out.println("RENDER SIZE: " + player.currentEnvironment.visibleChunks.size());
 		System.out.println("WorldChunkSize: " + WorldMap.map.size());
 		
 	}
 
 	//removes a column of GameScreenChunkstoso it won't be rendered anymore
-	private static void removeRenderColumn(String side, Vector2f playerPreviousGameScreenChunkPosition) 
+	private static void removeRenderColumn(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition) 
 	{
 		float startX = 0;
 		
@@ -72,7 +72,7 @@ public class ChunkManager
 		for(int i = 0; i < 3; i++)
 		{
 			//remove column so it wont get rendered
-			visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
+			player.currentEnvironment.visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
 			startY += GameSettings.CHUNK_PIXEL_HEIGHT;
 		}
 	}	
@@ -93,13 +93,13 @@ public class ChunkManager
 		for(int i = 0; i < 3; i++)
 		{
 			String key = "x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY);
-			if(!visibleChunks.containsKey(key))
+			if(!player.currentEnvironment.visibleChunks.containsKey(key))
 			{
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try 
 				{
 					System.out.println("ADDING row: " + startX + ", " + startY );
-					visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
 					
 				} 
 				catch (SlickException e) 
@@ -113,16 +113,16 @@ public class ChunkManager
 		}
 		
 		if(side == "top")
-			removeRenderRow("bottom", playerPreviousGameScreenChunkPosition);
+			removeRenderRow("bottom", player, playerPreviousGameScreenChunkPosition);
 		else if(side == "bottom")
-			removeRenderRow("top", playerPreviousGameScreenChunkPosition);
+			removeRenderRow("top", player, playerPreviousGameScreenChunkPosition);
 		
-		System.out.println("RENDER SIZE: " + visibleChunks.size());
+		System.out.println("RENDER SIZE: " + player.currentEnvironment.visibleChunks.size());
 		System.out.println("WorldChunkSize: " + WorldMap.map.size());
 	}
 
 	//removes a row of GameScreenChunkstoso it wont be rendered anymore
-	private static void removeRenderRow(String side, Vector2f playerPreviousGameScreenChunkPosition)
+	private static void removeRenderRow(String side, Player player, Vector2f playerPreviousGameScreenChunkPosition)
 	{
 		float startY = 0;
 		
@@ -137,7 +137,7 @@ public class ChunkManager
 		for(int i = 0; i < 3; i++)
 		{
 			//remove row so it wont get rendered
-			visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
+			player.currentEnvironment.visibleChunks.remove("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY));
 			startX += GameSettings.CHUNK_PIXEL_WIDTH;
 		}
 		

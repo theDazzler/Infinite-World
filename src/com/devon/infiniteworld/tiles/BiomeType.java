@@ -9,6 +9,5 @@ public class BiomeType
 	public static final int VOLCANIC = 14;
 	public static final int ICE = 15;
 	
-	public static final int CITY = 20;
 	
 }

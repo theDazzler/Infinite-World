@@ -18,8 +18,10 @@ import org.newdawn.slick.particles.effects.FireEmitter;
 import com.devon.infiniteworld.Attack;
 import com.devon.infiniteworld.BasicSwordSlashAttack;
 import com.devon.infiniteworld.ChunkManager;
+import com.devon.infiniteworld.Environment;
 import com.devon.infiniteworld.GameScreenChunk;
 import com.devon.infiniteworld.GameSettings;
+import com.devon.infiniteworld.OutdoorEnvironment;
 import com.devon.infiniteworld.WorldMap;
 import com.devon.infiniteworld.objects.WorldObject;
 import com.devon.infiniteworld.particles.SnowEmitter;
@@ -47,10 +49,12 @@ public class Player extends Mob implements Renderable
 	
 	public float width;
 	public float height;
+	public Environment currentEnvironment;
 	
 	private boolean isAttacking = false;
 	private Attack currentAttack;
 	private boolean attackEnabled = true;
+	
 	
 	ParticleSystem pSystem;
 	SnowEmitter snowEmitter;
@@ -61,6 +65,7 @@ public class Player extends Mob implements Renderable
 		super(position);
 		this.width = width;
 		this.height = height;
+		this.currentEnvironment = new OutdoorEnvironment();
 		
 		this.walkAnimation = new Animation(new SpriteSheet(new Image("assets/images/sprites/ryu_sheet.png"), 53, 120), 3, 0, 6, 0, false, 3000, false);
 		this.walkAnimation.setLooping(true);
@@ -208,7 +213,7 @@ public class Player extends Mob implements Renderable
 	{
 		Vector2f currentGameScreenChunkPos = this.getCurrentGameScreenChunkTopLeftPosition();
 		String key = "x" + Integer.toString((int)currentGameScreenChunkPos.x) + "y" + Integer.toString((int)currentGameScreenChunkPos.y);
-		return ChunkManager.visibleChunks.get(key);
+		return this.currentEnvironment.visibleChunks.get(key);
 	}
 	
 	public void update(GameContainer gc, int delta)
@@ -280,7 +285,7 @@ public class Player extends Mob implements Renderable
 
 	private void checkCollisions(int delta)
 	{
-		checkObjectCollisions(delta);
+		//checkObjectCollisions(delta);
 		/*
 		//check tile collisions
 		for (Tile tile : CollisionManager.collidableTiles.values()) 

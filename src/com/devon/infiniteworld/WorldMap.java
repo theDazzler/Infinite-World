@@ -7,6 +7,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
 import com.devon.infiniteworld.entities.Player;
+import com.devon.infiniteworld.test.NoiseMap;
 
 /**
  * Singleton class
@@ -30,10 +31,29 @@ public class WorldMap
 	{
 		this.player = player;
 		this.chunkGenerator = new ChunkGenerator(player);
-		
+		initNoiseMap();
 		this.chunkGenerator.generateWorldMapChunks();
+		this.chunkGenerator.generateGameScreenChunks();
 	}
 	
+	private void initNoiseMap()
+	{
+		NoiseMap noiseMap = new NoiseMap(64, 64, 64 / 4);
+		noiseMap.createMap(64, 64);
+
+		int noiseMapRows = 64 / 16; 
+		int noiseMapCols = 64 / 16;
+		
+		//get top left coordinates of the chunk the player is currently on
+		Vector2f currentWorldMapChunkPosition = this.player.getWorldMapChunkPosition();
+		
+		float startPosX = currentWorldMapChunkPosition.x - (GameSettings.CHUNK_PIXEL_WIDTH * (noiseMapCols / 2));
+		float startPosY = currentWorldMapChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT * (noiseMapRows / 2));
+		
+		player.currentEnvironment.addNoiseMap(startPosX, startPosY, noiseMap);
+		
+	}
+
 	//returns array index values from the WorldMap of a tile (tile is at (64, 64), array values will be 1,1)
 	public Vector2f getWorldMapArrayIndices(float xPos, float yPos)
 	{

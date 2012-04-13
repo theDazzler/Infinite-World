@@ -1,6 +1,7 @@
 package com.devon.infiniteworld;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Random;
 
 import org.newdawn.slick.Image;
@@ -8,6 +9,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.test.NoiseMap;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.WaterTile;
 
@@ -29,8 +31,8 @@ public class WorldMapChunk implements Serializable
 	//private static final long serialVersionUID = System.currentTimeMillis();
 	private String key; //key used for lookup in WorldMap hashmap
 	
-	final int WIDTH = GameSettings.CHUNK_WIDTH;
-	final int HEIGHT = GameSettings.CHUNK_HEIGHT;
+	final int NUM_COLS = GameSettings.WORLDMAP_CHUNK_WIDTH;
+	final int NUM_ROWS = GameSettings.WORLDMAP_CHUNK_HEIGHT;
 	
 	float xPos; //top left x coordinate of the chunk
 	float yPos; //top left y coordinate of the chunk
@@ -59,15 +61,15 @@ public class WorldMapChunk implements Serializable
 		//dirt = new Image("assets/images/tiles/dirt.png");
 		//deepWater = new Image("assets/images/tiles/deep_water.png");
 
-		this.terrain = new double[this.HEIGHT][this.WIDTH]; //[rows=height][cols=width]
-		this.temperature = new double[this.HEIGHT][this.WIDTH];
-		this.rainfall = new double[this.HEIGHT][this.WIDTH];
+		this.terrain = new double[this.NUM_ROWS][this.NUM_COLS]; //[rows=height][cols=width]
+		this.temperature = new double[this.NUM_ROWS][this.NUM_COLS];
+		this.rainfall = new double[this.NUM_ROWS][this.NUM_COLS];
 		this.terrainNoise = new PerlinNoise(GameSettings.seed);
-		this.biomeTypes = new int[this.HEIGHT][this.WIDTH];
-		this.cityData = new int[this.HEIGHT][this.WIDTH];
-		this.gameScreenTypes = new int[this.HEIGHT][this.WIDTH];
+		this.biomeTypes = new int[this.NUM_ROWS][this.NUM_COLS];
+		this.cityData = new int[this.NUM_ROWS][this.NUM_COLS];
+		this.gameScreenTypes = new int[this.NUM_ROWS][this.NUM_COLS];
 
-		generateTerrainNoise();
+		generateTerrain();
 
 		//ChunkGenerator.cleanUpWorldChunkWater();
 		
@@ -152,20 +154,20 @@ public class WorldMapChunk implements Serializable
 					yTargetIndex = yIndex + j;
 					targetChunk = this;
 					
-					targetChunkRow = xTargetIndex / this.HEIGHT;
-					targetChunkCol = yTargetIndex / this.WIDTH;
+					targetChunkRow = xTargetIndex / this.NUM_ROWS;
+					targetChunkCol = yTargetIndex / this.NUM_COLS;
 					
 					
 					System.out.println("xTARRRGET: " + xTargetIndex + " yTARRRGET: " + yTargetIndex);
 					
 					//if city needs to extend to WorldMapChunk below and to the right of this chunk
-					if(xTargetIndex > this.HEIGHT - 1 && yTargetIndex > this.WIDTH - 1)
+					if(xTargetIndex > this.NUM_ROWS - 1 && yTargetIndex > this.NUM_COLS - 1)
 					{
 						
 						
 						key = "x" + Integer.toString((int)this.getX()+ (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
-						xTargetIndex = xTargetIndex % this.HEIGHT;
-						yTargetIndex = yTargetIndex % this.WIDTH;
+						xTargetIndex = xTargetIndex % this.NUM_ROWS;
+						yTargetIndex = yTargetIndex % this.NUM_COLS;
 						if(WorldMap.map.containsKey(key))
 						{
 							//get WorldMapChunk below
@@ -180,10 +182,10 @@ public class WorldMapChunk implements Serializable
 					}
 					
 					//if city needs to extend to WorldMapChunk below this chunk
-					else if(xTargetIndex > this.HEIGHT - 1)
+					else if(xTargetIndex > this.NUM_ROWS - 1)
 					{
 						key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
-						xTargetIndex = xTargetIndex % this.HEIGHT;
+						xTargetIndex = xTargetIndex % this.NUM_ROWS;
 						
 						if(WorldMap.map.containsKey(key))
 						{
@@ -199,9 +201,9 @@ public class WorldMapChunk implements Serializable
 					}
 					
 					//if city needs to extend into the WorldMapChunk to the right
-					else if(yTargetIndex > this.WIDTH - 1)
+					else if(yTargetIndex > this.NUM_COLS - 1)
 					{
-						yTargetIndex = yTargetIndex % this.WIDTH;
+						yTargetIndex = yTargetIndex % this.NUM_COLS;
 
 						key = "x" + Integer.toString((int)this.getX() + (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY());
 						
@@ -287,15 +289,15 @@ public class WorldMapChunk implements Serializable
 				
 				targetChunk = this;
 				
-				targetChunkRow = xTargetIndex / this.HEIGHT;
-				targetChunkCol = yTargetIndex / this.WIDTH;
+				targetChunkRow = xTargetIndex / this.NUM_ROWS;
+				targetChunkCol = yTargetIndex / this.NUM_COLS;
 				
 				//if city needs to extend to WorldMapChunk below and to the right of this chunk
-				if(xTargetIndex > this.HEIGHT - 1 && yTargetIndex > this.WIDTH - 1)
+				if(xTargetIndex > this.NUM_ROWS - 1 && yTargetIndex > this.NUM_COLS - 1)
 				{
 					key = "x" + Integer.toString((int)this.getX()+ (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
-					xTargetIndex = xTargetIndex % this.HEIGHT;
-					yTargetIndex = yTargetIndex % this.WIDTH;
+					xTargetIndex = xTargetIndex % this.NUM_ROWS;
+					yTargetIndex = yTargetIndex % this.NUM_COLS;
 					if(WorldMap.map.containsKey(key))
 					{
 						//get WorldMapChunk below
@@ -310,10 +312,10 @@ public class WorldMapChunk implements Serializable
 				}
 				
 				//if city needs to extend to WorldMapChunk below this chunk
-				else if(xTargetIndex > this.HEIGHT - 1)
+				else if(xTargetIndex > this.NUM_ROWS - 1)
 				{
 					key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
-					xTargetIndex = xTargetIndex % this.HEIGHT;
+					xTargetIndex = xTargetIndex % this.NUM_ROWS;
 
 					if(WorldMap.map.containsKey(key))
 					{
@@ -329,9 +331,9 @@ public class WorldMapChunk implements Serializable
 				}
 				
 				//if city needs to extend into the WorldMapChunk to the right
-				else if(yTargetIndex > this.WIDTH - 1)
+				else if(yTargetIndex > this.NUM_COLS - 1)
 				{
-					yTargetIndex = yTargetIndex % this.WIDTH;
+					yTargetIndex = yTargetIndex % this.NUM_COLS;
 					key = "x" + Integer.toString((int)this.getX() + (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY());
 					if(WorldMap.map.containsKey(key))
 					{
@@ -438,6 +440,25 @@ public class WorldMapChunk implements Serializable
 				double rainValue = this.rainfall[i][j];
 				
 				//water
+				if(terrainValue < 0)
+				{
+					this.biomeTypes[i][j] = BiomeType.OCEAN;
+					this.gameScreenTypes[i][j] = GameScreenType.water.id;
+				}
+				//dirt
+				else if(terrainValue < 0.5)
+				{
+					this.biomeTypes[i][j] = BiomeType.PLAIN;
+					this.gameScreenTypes[i][j] = GameScreenType.dirt.id;
+				}
+				else
+				{
+					this.biomeTypes[i][j] = BiomeType.PLAIN;
+					this.gameScreenTypes[i][j] = GameScreenType.plain.id;
+				}
+				
+				/*
+				//water
 				if(terrainValue <= GameSettings.WATER_THRESHOLD)
 				{
 					this.biomeTypes[i][j] = BiomeType.OCEAN;
@@ -477,33 +498,96 @@ public class WorldMapChunk implements Serializable
 					}
 					
 				}
+				*/
 			}
 		}
 	}
 
 	//generates noise data for the worldMap terrain
-	private void generateTerrainNoise() 
-	{
-		double x = this.getX();
-		double y = this.getY();
-		
-		//for each row in the chunk
-		for(int i = 0; i < this.terrain.length; i++)
+	private void generateTerrain() 
+	{		
+		if(noiseMap() != null)
 		{
-			//for each column in the chunk
-			for(int j = 0; j < this.terrain[i].length; j++)
+			NoiseMap map = noiseMap();
+			int startXIndex = getNoiseMapXIndex(map);
+			int startYIndex = getNoiseMapYIndex(map);
+			int x = startXIndex;
+			int y = startYIndex;
+			
+			//for each row in the chunk
+			for(int i = 0; i < this.terrain.length; i++)
 			{
-				//place noise value into chunk array
-				this.terrain[i][j] = this.terrainNoise.noise(x  + (x * .472), y + (y * .472), .77);
-				//this.terrain[i][j] = this.terrainNoise.fBm(x  + (x * .472), y + (y * .472), .77, GameSettings.FBM_OCTAVES, GameSettings.FBM_LACUNARITY, GameSettings.FBM_H);
-				x += .314f; //arbitrary number
-
-				System.out.print(this.terrain[i][j] + " ");
-				
+				//for each column in the chunk
+				for(int j = 0; j < this.terrain[i].length; j++)
+				{
+					int a = y + x * 64;
+					this.terrain[i][j] = map.noiseData[a];
+					
+					y++;
+					
+				}
+				y = startYIndex;
+				x++;
 			}
-			y += .314f;	
 		}
+		
 	}
+	
+	public int getNoiseMapXIndex(NoiseMap map)
+	{
+		float dif = this.getX() - map.origin.x;
+		return (int) ((dif / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.WORLDMAP_CHUNK_WIDTH);	
+	}
+	
+	public int getNoiseMapYIndex(NoiseMap map)
+	{
+		float dif = this.getY() - map.origin.y;
+		return (int) ((dif / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.WORLDMAP_CHUNK_HEIGHT);
+		
+	}
+	
+	
+	
+	/**
+	 * returns its noise map if it exists, else it returns null
+	 * @return
+	 */
+	public NoiseMap noiseMap()
+	{
+		for (Map.Entry<String, NoiseMap> map : OutdoorEnvironment.noiseMaps.entrySet()) 
+		{
+		    String key = map.getKey();
+		    NoiseMap noiseMap = map.getValue();
+		    
+		    if(containedIn(noiseMap))
+		    {
+		    	return noiseMap;
+		    }
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * checks if the WorldMapChunk belongs to the specified noiseMap key by checking against its x and y coordinates
+	 * @param key
+	 * @return
+	 */
+
+	private boolean containedIn(NoiseMap map) 
+	{
+		float xMinMapBound = map.origin.x;
+		float xMaxMapBound = (float) Math.floor((map.w - 1) / GameSettings.WORLDMAP_CHUNK_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH;
+		float yMinBound = map.origin.y;
+		float yMaxBound = (float) Math.floor((map.h - 1) / GameSettings.WORLDMAP_CHUNK_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT;
+			
+		if(this.getX() >= xMinMapBound && this.getX() < xMaxMapBound && this.getY() >= yMinBound && this.getY() <= yMaxBound)
+		{
+			return true;
+		}
+		return false;
+	}
+
 
 	//key used for lookup in WorldMap hashmap
 	public String getKey()

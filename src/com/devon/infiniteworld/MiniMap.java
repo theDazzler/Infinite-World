@@ -25,8 +25,8 @@ public class MiniMap implements Renderable
 	Player player;
 	
 	float tileScaleFactor = 0.0625f;
-	int width = (int) ((GameSettings.TILE_WIDTH * tileScaleFactor) * GameSettings.CHUNK_WIDTH);
-	int height = (int) ((GameSettings.TILE_HEIGHT * tileScaleFactor) * GameSettings.CHUNK_HEIGHT);
+	int width = (int) ((GameSettings.TILE_WIDTH * tileScaleFactor) * GameSettings.WORLDMAP_CHUNK_WIDTH);
+	int height = (int) ((GameSettings.TILE_HEIGHT * tileScaleFactor) * GameSettings.WORLDMAP_CHUNK_HEIGHT);
 	
 	public MiniMap(float xPos, float yPos, Player player) throws SlickException
 	{

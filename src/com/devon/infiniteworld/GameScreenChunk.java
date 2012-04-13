@@ -27,8 +27,8 @@ import com.devon.infiniteworld.tiles.Tile;
  */
 public class GameScreenChunk implements Renderable
 {
-	final int NUM_TILES_X = GameSettings.CHUNK_WIDTH;  //number of tiles in horizontal direction
-	final int NUM_TILES_Y = GameSettings.CHUNK_HEIGHT; //number of tiles in vertical direction
+	final int NUM_TILES_X = GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH;  //number of tiles in horizontal direction
+	final int NUM_TILES_Y = GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT; //number of tiles in vertical direction
 	final int WIDTH = GameSettings.CHUNK_PIXEL_WIDTH;   
 	final int HEIGHT = GameSettings.CHUNK_PIXEL_HEIGHT;
 	Vector2f position; //top left coordinates of the chunk
@@ -203,6 +203,8 @@ public class GameScreenChunk implements Renderable
 					tileValue = Tile.grass.id;
 				else if(this.gameScreenType == GameScreenType.cityWater.id)
 					tileValue = Tile.water.id;
+				else if(this.gameScreenType == GameScreenType.dirt.id)
+					tileValue = Tile.dirt.id;
 				
 				this.tileLayer[i][j] = tileValue;
 			}
@@ -232,8 +234,8 @@ public class GameScreenChunk implements Renderable
 	
 	public Vector2f getWorldMapIndices()
 	{
-		float x = (float)(Math.floor((this.getWorldMapPosition().y % 768) / Tile.HEIGHT)) + GameSettings.CHUNK_HEIGHT;
-		float y = (float)(Math.floor((this.getWorldMapPosition().x % 1024) / Tile.WIDTH)) + GameSettings.CHUNK_WIDTH;
+		float x = (float)(Math.floor((this.getWorldMapPosition().y % GameSettings.CHUNK_PIXEL_HEIGHT) / Tile.HEIGHT)) + GameSettings.WORLDMAP_CHUNK_HEIGHT;
+		float y = (float)(Math.floor((this.getWorldMapPosition().x % GameSettings.CHUNK_PIXEL_WIDTH) / Tile.WIDTH)) + GameSettings.WORLDMAP_CHUNK_WIDTH;
 		y = y % this.NUM_TILES_X;
 		x = x % this.NUM_TILES_Y;
 		

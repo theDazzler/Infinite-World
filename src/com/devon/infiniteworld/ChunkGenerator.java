@@ -85,22 +85,22 @@ public class ChunkGenerator
 		WorldMapChunk topLeftChunk = WorldMap.map.get(key);
 
 		//bottom right corner of top left diagonal chunk(top left diagonal of the tile)
-		if(topLeftChunk.terrain[GameSettings.CHUNK_HEIGHT][GameSettings.CHUNK_WIDTH] > GameSettings.WATER_THRESHOLD)
+		if(topLeftChunk.terrain[topLeftChunk.NUM_ROWS][topLeftChunk.NUM_COLS] > GameSettings.WATER_THRESHOLD)
 		{
 			//get above chunk 
 			String key2 = "x" + Integer.toString((int)(chunk.xPos)) + "y" + Integer.toString((int)(chunk.yPos - GameSettings.CHUNK_PIXEL_HEIGHT));
 			WorldMapChunk topChunk = WorldMap.map.get(key2);
 
-			if(topChunk.terrain[GameSettings.CHUNK_HEIGHT][0] > GameSettings.WATER_THRESHOLD)
+			if(topChunk.terrain[topChunk.NUM_ROWS][0] > GameSettings.WATER_THRESHOLD)
 			{
 				//check top right diagonal tile
-				if(topChunk.terrain[GameSettings.CHUNK_HEIGHT][1] > GameSettings.WATER_THRESHOLD)
+				if(topChunk.terrain[topChunk.NUM_ROWS][1] > GameSettings.WATER_THRESHOLD)
 				{
 					//check left tile
 					String key3 = "x" + Integer.toString((int)(chunk.xPos - GameSettings.CHUNK_PIXEL_WIDTH)) + "y" + Integer.toString((int)(chunk.yPos));
 					WorldMapChunk leftChunk = WorldMap.map.get(key3);
 
-					if(leftChunk.terrain[1][GameSettings.CHUNK_WIDTH] > GameSettings.WATER_THRESHOLD)
+					if(leftChunk.terrain[1][leftChunk.NUM_COLS] > GameSettings.WATER_THRESHOLD)
 					{
 						
 							//check right tile

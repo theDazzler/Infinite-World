@@ -1,5 +1,10 @@
 package com.devon.infiniteworld;
 
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
@@ -49,7 +54,7 @@ public class Main extends BasicGame
 			player.currentEnvironment.entities.get(i).draw();
 		}
 		
-		//drawMiniMap();
+		drawMiniMap();
 		
 		
 		//enemy.draw(player.getX() + 100, player.getY());
@@ -93,24 +98,23 @@ public class Main extends BasicGame
 		worldMap = WorldMap.getWorldMap(player);
 
 		//enemy = new Image("assets/images/sprites/muscle_enemy_normal.png");
-		bg = new Sound("assets/sounds/bg_music/test.ogg");
+		//bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
-		chunkGenerator = new ChunkGenerator(player);
-		chunkGenerator.generateGameScreenChunks();
-		
-		
+/*
 		for (WorldMapChunk chunk : WorldMap.map.values()) 
 		{
 			if(WorldMapChunk.oneCity == false)
 				chunk.generateCities();
 		}
+		*/
+		
 		
 		
 
 		
-		bg.play();
+		//bg.play();
 
-		//miniMap = new MiniMap(player.getX(), player.getY(), player);
+		miniMap = new MiniMap(player.getX(), player.getY(), player);
 		
 		//String key = "x" + Integer.toString((int)player.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)player.getWorldMapChunkPosition().y);
 		//WorldChunkWriter.writeWorldChunk(WorldMap.map.get(key), key);

@@ -348,7 +348,7 @@ public class ChunkManager
 			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x - GameSettings.CHUNK_PIXEL_WIDTH) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);
 			
 			WorldMapChunk leftWorldMapChunk = WorldMap.map.get(key);
-			int biomeValue = leftWorldMapChunk.biomeTypes[xIndex][GameSettings.CHUNK_WIDTH - 1];
+			int biomeValue = leftWorldMapChunk.biomeTypes[xIndex][leftWorldMapChunk.NUM_COLS - 1];
 			
 			return biomeValue;
 		}
@@ -403,7 +403,7 @@ public class ChunkManager
 		int yIndex = (int)chunk.getWorldMapIndices().y;
 		
 		//if chunk is on right edge
-		if(yIndex == GameSettings.CHUNK_WIDTH - 1)
+		if(yIndex == GameSettings.WORLDMAP_CHUNK_WIDTH - 1)
 		{
 			Vector2f parentWorldMapChunkPos = chunk.parentWorldMapChunkPosition;
 			String key = "x" + Integer.toString((int)parentWorldMapChunkPos.x + GameSettings.CHUNK_PIXEL_WIDTH) + "y" + Integer.toString((int) parentWorldMapChunkPos.y);

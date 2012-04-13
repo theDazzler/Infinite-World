@@ -8,6 +8,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Renderable;
 
 import com.devon.infiniteworld.entities.Entity;
+import com.devon.infiniteworld.test.NoiseMap;
 
 public abstract class Environment
 {
@@ -18,11 +19,15 @@ public abstract class Environment
 	
 	abstract void update(GameContainer container, int delta);
 	abstract void draw();
+	abstract void addNoiseMap(float x, float y);
+	abstract void addNoiseMap(float x, float y, NoiseMap map);
 	
 	public void addEntity(Entity entity)
 	{ 
 		entities.add(entity);
 	}
+	
+	
 	
 	
 }

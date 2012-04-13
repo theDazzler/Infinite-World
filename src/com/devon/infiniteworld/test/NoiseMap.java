@@ -7,18 +7,23 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.newdawn.slick.geom.Vector2f;
+
 import com.devon.infiniteworld.tiles.Tile;
 
-public class NoiseMap 
+public class NoiseMap
 {
 	private static final Random random = new Random();
 	public double[] values;
-	private int w, h;
+	public int w, h;
+	public double[] noiseData;
+	public Vector2f origin;
 	
 	public NoiseMap(int w, int h, int featureSize)
 	{
 		this.w = w;
 		this.h = h;
+		this.noiseData = new double[w * h];
 		
 		this.values = new double[w * h];
 		
@@ -75,6 +80,11 @@ public class NoiseMap
 		while(stepSize > 1);
 	}
 	
+	public void setOrigin(float xPos, float yPos)
+	{
+		this.origin = new Vector2f(xPos, yPos);
+	}
+	
 	private double sample(int x, int y)
 	{
 		return this.values[(x & (w - 1)) + (y & (h - 1)) * w];
@@ -85,10 +95,11 @@ public class NoiseMap
 		this.values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 	
-	public static int[] getMap(int w, int h)
+	public void createMap(int w, int h)
 	{
 		NoiseMap noise1 = new NoiseMap(w, h, w / 4);
 		NoiseMap noise2 = new NoiseMap(w, h, w / 4);
+		NoiseMap noise3 = new NoiseMap(w, h, w / 4);
 		
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		int[] map = new int[w * h];
@@ -98,7 +109,8 @@ public class NoiseMap
 			{
 				int i = x + y * w;
 				
-				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 4 - 1.6;
+				//val = Math.abs(val - noise3.values[i]) * 3 - 2;
 				
 				double xd = x / (w - 1.0) * 2 - 1;
 				double yd = y / (h - 1.0) * 2 - 1;
@@ -107,26 +119,14 @@ public class NoiseMap
 				double dist = xd >= yd ? xd : yd;
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
+
 				val = val + 1 - dist * 20;
 				
 				int br = val < 0 ? 0 : 255;
-				if(val < 0)
-				{
-					map[i] = 0;//water
-				}
-				else if(val > 1.8)
-					map[i] = 1; //mountain
-				else if(val > 1)
-				{
-					map[i] = 2;//dirt
-				}
-				else
-				{
-					map[i] = 3;//grass
-				}
+				this.noiseData[i] = val;
+				
 			}
 		}
-		return map;
 	}
 	
 	public static void main(String[] args)
@@ -137,9 +137,8 @@ public class NoiseMap
 			int w = 512;
 			int h = 512;
 			
-			int[] map = NoiseMap.getMap(w, h);
-			
-			
+			NoiseMap noiseMap = new NoiseMap(w, h, w/4);
+			noiseMap.createMap(w, h);
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];
@@ -149,10 +148,13 @@ public class NoiseMap
 				{
 					int i = x + y * w;
 					
-					if(map[i] == 0)pixels[i] = 0x000080;//water
-					if(map[i] == 1)pixels[i] = 0x004080;//mountain
-					if(map[i] == 2)pixels[i] = 0x404040; //dirt
-					if(map[i] == 3)pixels[i] = 0x208020; //grass
+					if(noiseMap.noiseData[i] < 0)pixels[i] = 0x000080;//water
+					else if(noiseMap.noiseData[i] > 3)pixels[i] = 0xe5c08c;//mountain
+					else if(noiseMap.noiseData[i] > 2.5)pixels[i] = 0xa77939;//semi-mountain
+					else if(noiseMap.noiseData[i] < 0.5)pixels[i] = 0x404040; //dirt
+					else 
+						pixels[i] = 0x208020; //grass
+						
 
 				}
 			}

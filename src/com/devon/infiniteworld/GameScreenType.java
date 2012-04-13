@@ -19,6 +19,7 @@ public abstract class GameScreenType
 	public static GameScreenType cityBuilding = new CityBuildingGameScreenType(7);
 	public static GameScreenType cityWater = new CityWaterGameScreenType(8);
 	public static GameScreenType cityCoast = new CityCoastGameScreenType(9);
+	public static GameScreenType dirt = new DirtGameScreenType(10);
 	
 	public static final int WIDTH = GameSettings.TILE_WIDTH;
 	public static final int HEIGHT = GameSettings.TILE_HEIGHT;

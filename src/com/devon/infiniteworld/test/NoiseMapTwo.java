@@ -89,7 +89,6 @@ public class NoiseMapTwo
 	{
 		NoiseMapTwo noise1 = new NoiseMapTwo(w, h, w / 4);
 		NoiseMapTwo noise2 = new NoiseMapTwo(w, h, w / 4);
-		NoiseMapTwo noise3 = new NoiseMapTwo(w, h, w / 4);
 		
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		int[] map = new int[w * h];
@@ -99,8 +98,7 @@ public class NoiseMapTwo
 			{
 				int i = x + y * w;
 				
-				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 4 - 1.6;
-				//val = Math.abs(val - noise3.values[i]) * 3 - 2;
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 3 - 2;
 				
 				double xd = x / (w - 1.0) * 2 - 1;
 				double yd = y / (h - 1.0) * 2 - 1;
@@ -109,7 +107,6 @@ public class NoiseMapTwo
 				double dist = xd >= yd ? xd : yd;
 				dist = dist * dist * dist * dist;
 				dist = dist * dist * dist * dist;
-
 				val = val + 1 - dist * 20;
 				
 				int br = val < 0 ? 0 : 255;
@@ -117,17 +114,17 @@ public class NoiseMapTwo
 				{
 					map[i] = 0;//water
 				}
-				else if(val > 3)
+				else if(val > 1.8)
 					map[i] = 1; //mountain
-				else if(val > 2.5)
-					map[i] = 2; //semi-mountain
-				else if(val < .3)
+				else if(val < 0.5)
+					map[i] =4;
+				else if(val > 1)
 				{
-					map[i] = 3;//dirt
+					map[i] = 2;//dirt
 				}
 				else
 				{
-					map[i] = 4;//grass
+					map[i] = 3;//grass
 				}
 			}
 		}
@@ -155,10 +152,10 @@ public class NoiseMapTwo
 					int i = x + y * w;
 					
 					if(map[i] == 0)pixels[i] = 0x000080;//water
-					if(map[i] == 1)pixels[i] = 0xe5c08c;//mountain
-					if(map[i] == 2)pixels[i] = 0xa77939;//semi-mountain
-					if(map[i] == 3)pixels[i] = 0x404040; //dirt
-					if(map[i] == 4)pixels[i] = 0x208020; //grass
+					if(map[i] == 1)pixels[i] = 0x004080;//mountain
+					if(map[i] == 2)pixels[i] = 0x404040; //dirt
+					if(map[i] == 3)pixels[i] = 0x208020; //grass
+					if(map[i] == 4)pixels[i] = 0xffd700; //grass
 
 				}
 			}

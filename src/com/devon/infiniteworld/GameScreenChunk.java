@@ -8,6 +8,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.entities.Horse;
 import com.devon.infiniteworld.entities.Player;
 import com.devon.infiniteworld.objects.Cave;
 import com.devon.infiniteworld.objects.Tree;
@@ -48,9 +49,10 @@ public class GameScreenChunk implements Renderable
 	 * The WorldMap is like a minimap. It tells whether a GameScreenChunk should be water, land, etc. Then the tileLayer is filled with terrain relating to that value(trees, grass, etc.)
 	 * 
 	 */	
-	public GameScreenChunk(Vector2f position) throws SlickException
+	public GameScreenChunk(Vector2f position, Player player) throws SlickException
 	{
-		this.position = position;		
+		this.position = position;	
+		this.player = player;
 		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 		this.tileLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
 		this.objectLayer = new int[this.NUM_TILES_Y][this.NUM_TILES_X];
@@ -154,14 +156,14 @@ public class GameScreenChunk implements Renderable
 						}
 					}
 
-					/*
+					
+					Random rand = new Random();
 					//add horses to forests
-					if(rand.nextInt(200) == 0)
+					if(rand.nextInt(50) == 0)
 					{
 						Horse horse = new Horse(new Vector2f(this.position.x + (i * 64), this.position.y + (j * 64)));
-						WorldManager.addEntity(horse);
+						player.currentEnvironment.addEntity(horse);
 					}
-					*/
 					
 				}				
 			}

@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Vector2f;
 
 public class Cave extends WorldObject
 {	
-	public static final int rarity = 50; //higher the number, the more rare it is(ex. this means cave will appear 1 in 5000)
+	public static final int rarity = 500; //higher the number, the more rare it is(ex. this means cave will appear 1 in 5000)
 	
 	public Cave(float xPos, float yPos)
 	{

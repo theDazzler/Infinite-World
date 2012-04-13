@@ -35,7 +35,7 @@ public class ChunkManager
 				//add GameScreenChunks to ChunkManager's hashmap to get rendered
 				try
 				{
-					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY), player));
 				} 
 				catch (SlickException e)
 				{
@@ -99,7 +99,7 @@ public class ChunkManager
 				try 
 				{
 					System.out.println("ADDING row: " + startX + ", " + startY );
-					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY)));
+					player.currentEnvironment.visibleChunks.put(key, new GameScreenChunk(new Vector2f(startX, startY), player));
 					
 				} 
 				catch (SlickException e) 

@@ -23,6 +23,7 @@ public class WorldMapChunk implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = -588622170029850906L;
+	public static boolean oneCity = false;
 
 	//private static Random rand = new Random(GameSettings.seed);
 	//private static final long serialVersionUID = System.currentTimeMillis();
@@ -73,7 +74,8 @@ public class WorldMapChunk implements Serializable
 		generateTemperatureNoise();
 		generateRainfallNoise();
 		initBiomeTypes();
-		generateCities();
+
+		//generateCities();
 		
 		System.out.println();
 		System.out.println("DONE");
@@ -81,84 +83,151 @@ public class WorldMapChunk implements Serializable
 	
 	public void generateCities()
 	{
-		Random random = new Random(6734);
-		
-		for (int i = 0; i < this.biomeTypes.length; i++)
+		Random random = new Random();
+		//try to create city ONLY if there isnt any city data in this chunk
+		if(!containsCity())
 		{
-			for(int j = 0; j < this.biomeTypes[i].length; j++)
+			for (int i = 0; i < this.biomeTypes.length; i++)
 			{
-				int biomeType = this.biomeTypes[i][j];
-				
-				//place cities in snow biomes
-				if(biomeType == BiomeType.SNOW)
+				for(int j = 0; j < this.biomeTypes[i].length; j++)
 				{
-					//if there is NOT a city at this location
-					if(this.cityData[i][j] != 1)
-					{
-						City city = new City(45);
+					int biomeType = this.biomeTypes[i][j];
 					
-						placeCity(city, i, j);
-						
+					//place cities in snow biomes
+					if(biomeType == BiomeType.SNOW)
+					{
+						if(random.nextInt(3) == 0)
+						{
+							//if there is NOT a city at this location
+							if(this.cityData[i][j] != 1)
+							{
+								City city = new City(45);
+							
+								placeCity(city, i, j);
+								
+							}
+						}
 					}
 				}
 			}
 		}
 	}
 
-
+	private boolean containsCity()
+	{
+		for(int i = 0; i < this.cityData.length; i++)
+		{
+			for(int j = 0; j < this.cityData[i].length; j++)
+			{
+				if(this.cityData[i][j] == 1)
+					return true;
+			}
+		}
+		return false;
+	}
 
 	private void placeCity(City city, int xIndex, int yIndex) 
 	{
 		if(canPlace(city, xIndex, yIndex))
 		{
+			oneCity = true;
+			System.out.println("INDEXES : " + xIndex + " " + yIndex);
+			
 			System.out.println("ROWSCITY: " + city.numRows);
 			System.out.println("COSLCITY: " + city.numCols);
 			WorldMapChunk targetChunk = null;
 			int xTargetIndex;
 			int yTargetIndex;
-			int xCityMapIndex = 0;
-			int yCityMapIndex = 0;
+			int targetChunkRow;
+			int targetChunkCol;
+
 			String key;
 			
-			for(int i = xIndex; i < (city.numRows - 1) + xIndex; i++)
+			System.out.println("CITY ROWS: " + city.numRows + " CITYCOLS: " + city.numCols);
+			for(int i = 0; i < city.numRows; i++)
 			{
-				for(int j = yIndex; j < (city.numCols - 1) + yIndex; j++)
+				for(int j = 0; j < city.numCols; j++)
 				{
-					xTargetIndex = i;
-					yTargetIndex = j;
+					xTargetIndex = xIndex + i;
+					yTargetIndex = yIndex + j;
 					targetChunk = this;
 					
-					//if city needs to extend to WorldMapChunk below this chunk
-					if(xTargetIndex > this.HEIGHT - 1)
+					targetChunkRow = xTargetIndex / this.HEIGHT;
+					targetChunkCol = yTargetIndex / this.WIDTH;
+					
+					
+					System.out.println("xTARRRGET: " + xTargetIndex + " yTARRRGET: " + yTargetIndex);
+					
+					//if city needs to extend to WorldMapChunk below and to the right of this chunk
+					if(xTargetIndex > this.HEIGHT - 1 && yTargetIndex > this.WIDTH - 1)
 					{
-						key = "x" + Integer.toString((int)this.getX() + GameSettings.CHUNK_PIXEL_HEIGHT) + "y" + Integer.toString((int)this.getY());
 						
-						//get WorldMapChunk below
-						targetChunk = WorldMap.map.get(key);
 						
-						xTargetIndex = i % this.HEIGHT;	
+						key = "x" + Integer.toString((int)this.getX()+ (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
+						xTargetIndex = xTargetIndex % this.HEIGHT;
+						yTargetIndex = yTargetIndex % this.WIDTH;
+						if(WorldMap.map.containsKey(key))
+						{
+							//get WorldMapChunk below
+							targetChunk = WorldMap.map.get(key);
+							
+							
+						}
+						else
+						{
+							continue;
+						}
+					}
+					
+					//if city needs to extend to WorldMapChunk below this chunk
+					else if(xTargetIndex > this.HEIGHT - 1)
+					{
+						key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
+						xTargetIndex = xTargetIndex % this.HEIGHT;
+						
+						if(WorldMap.map.containsKey(key))
+						{
+							//get WorldMapChunk below
+							targetChunk = WorldMap.map.get(key);
+							
+								
+						}
+						else
+						{
+							continue;
+						}
 					}
 					
 					//if city needs to extend into the WorldMapChunk to the right
 					else if(yTargetIndex > this.WIDTH - 1)
 					{
-						key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + GameSettings.CHUNK_PIXEL_WIDTH);
+						yTargetIndex = yTargetIndex % this.WIDTH;
+
+						key = "x" + Integer.toString((int)this.getX() + (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY());
 						
-						//get WorldMapChunk below
-						targetChunk = WorldMap.map.get(key);
-						
-						yTargetIndex = j % this.HEIGHT;	
+						if(WorldMap.map.containsKey(key))
+						{
+							//get WorldMapChunk below
+							targetChunk = WorldMap.map.get(key);
+							
+							
+						}
+						else
+						{
+							continue;
+						}
 					}
 					
 					if(WorldMap.map.containsValue(targetChunk))
 					{
+						System.out.println("XTARGET: " + xTargetIndex + "YTarget: " + yTargetIndex);
 						//place a 1 into cityData to indicate that a city GameScreenType is at this location
-						System.out.println("xTargetIndex: " + xTargetIndex + "yTargetIndex: " + yTargetIndex);
+						//System.out.println("xTargetIndex: " + xTargetIndex + "yTargetIndex: " + yTargetIndex);
 						targetChunk.cityData[xTargetIndex][yTargetIndex] = 1;
 					
 						
 						//type of city GameScreen(ex. road, building, water, etc.)
-						int cityScreenValue = city.map[xCityMapIndex][yCityMapIndex];
+						int cityScreenValue = city.map[i][j];
 					
 						//place road screen
 						if(cityScreenValue == City.FLOOR)
@@ -184,11 +253,14 @@ public class WorldMapChunk implements Serializable
 							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.cityCoast.id;
 						}	
 						
-						yCityMapIndex++;
-					}		
+						//place coastline(beach)
+						else if(cityScreenValue == City.WALL)
+						{
+							targetChunk.gameScreenTypes[xTargetIndex][yTargetIndex] = GameScreenType.plain.id;
+						}
+						
+					}	
 				}
-				yCityMapIndex = 0;
-				xCityMapIndex++;
 			}
 			
 		}
@@ -197,44 +269,85 @@ public class WorldMapChunk implements Serializable
 	//checks to see if city can fit into specified area on the World map
 	private boolean canPlace(City city, int xIndex, int yIndex)
 	{
+		
 		WorldMapChunk targetChunk;
 		int xTargetIndex;
 		int yTargetIndex;
 		String key;
+		int targetChunkRow;
+		int targetChunkCol;
 		
-		for(int i = xIndex; i < city.numRows; i++)
+		System.out.println("CHECKING...");
+		for(int i = 0; i < city.numRows; i++)
 		{
-			for(int j = yIndex; j < city.numCols; j++)
+			for(int j = 0; j < city.numCols; j++)
 			{
-				xTargetIndex = i;
-				yTargetIndex = j;
+				xTargetIndex = xIndex + i;
+				yTargetIndex = yIndex + j;
+				
 				targetChunk = this;
 				
-				//if city needs to extend to WorldMapChunk below this chunk
-				if(xTargetIndex > this.HEIGHT - 1)
+				targetChunkRow = xTargetIndex / this.HEIGHT;
+				targetChunkCol = yTargetIndex / this.WIDTH;
+				
+				//if city needs to extend to WorldMapChunk below and to the right of this chunk
+				if(xTargetIndex > this.HEIGHT - 1 && yTargetIndex > this.WIDTH - 1)
 				{
-					key = "x" + Integer.toString((int)this.getX() + GameSettings.CHUNK_PIXEL_HEIGHT) + "y" + Integer.toString((int)this.getY());
-					
-					//get WorldMapChunk below
-					targetChunk = WorldMap.map.get(key);
-					
-					xTargetIndex = i % this.HEIGHT;	
+					key = "x" + Integer.toString((int)this.getX()+ (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
+					xTargetIndex = xTargetIndex % this.HEIGHT;
+					yTargetIndex = yTargetIndex % this.WIDTH;
+					if(WorldMap.map.containsKey(key))
+					{
+						//get WorldMapChunk below
+						targetChunk = WorldMap.map.get(key);
+						
+						
+					}
+					else
+					{
+						continue;
+					}
+				}
+				
+				//if city needs to extend to WorldMapChunk below this chunk
+				else if(xTargetIndex > this.HEIGHT - 1)
+				{
+					key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + (GameSettings.CHUNK_PIXEL_HEIGHT * targetChunkRow));
+					xTargetIndex = xTargetIndex % this.HEIGHT;
+
+					if(WorldMap.map.containsKey(key))
+					{
+						//get WorldMapChunk below
+						targetChunk = WorldMap.map.get(key);
+						
+						
+					}
+					else
+					{
+						continue;
+					}
 				}
 				
 				//if city needs to extend into the WorldMapChunk to the right
 				else if(yTargetIndex > this.WIDTH - 1)
 				{
-					key = "x" + Integer.toString((int)this.getX()) + "y" + Integer.toString((int)this.getY() + GameSettings.CHUNK_PIXEL_WIDTH);
-					
-					//get WorldMapChunk below
-					targetChunk = WorldMap.map.get(key);
-					
-					yTargetIndex = j % this.HEIGHT;	
+					yTargetIndex = yTargetIndex % this.WIDTH;
+					key = "x" + Integer.toString((int)this.getX() + (GameSettings.CHUNK_PIXEL_WIDTH * targetChunkCol)) + "y" + Integer.toString((int)this.getY());
+					if(WorldMap.map.containsKey(key))
+					{
+						//get WorldMapChunk to right
+						targetChunk = WorldMap.map.get(key);
+						
+						
+					}
+					else
+					{
+						continue;
+					}
 				}
 				
-				if(WorldMap.map.containsValue(targetChunk))
-				{
-					//if there is already a city at this location, return false
+				if(WorldMap.map.containsKey(targetChunk))
+				{					
 					if(targetChunk.cityData[xTargetIndex][yTargetIndex] == 1)
 					{
 						return false;

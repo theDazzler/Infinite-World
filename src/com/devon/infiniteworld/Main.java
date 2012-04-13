@@ -60,7 +60,7 @@ public class Main extends BasicGame
 
 	private void drawMiniMap() 
 	{
-		miniMap.draw(player.getX(), player.getY());
+		miniMap.draw(miniMap.xPos, miniMap.yPos);
 		
 	}
 
@@ -93,22 +93,24 @@ public class Main extends BasicGame
 		worldMap = WorldMap.getWorldMap(player);
 
 		//enemy = new Image("assets/images/sprites/muscle_enemy_normal.png");
-		//bg = new Sound("assets/sounds/bg_music/test.ogg");
+		bg = new Sound("assets/sounds/bg_music/test.ogg");
 		
 		chunkGenerator = new ChunkGenerator(player);
 		chunkGenerator.generateGameScreenChunks();
 		
+		
 		for (WorldMapChunk chunk : WorldMap.map.values()) 
 		{
-		    chunk.generateCities();
+			if(WorldMapChunk.oneCity == false)
+				chunk.generateCities();
 		}
 		
-			
+		
 
 		
-		//bg.play();
+		bg.play();
 
-		//miniMap = new MiniMap(300, 50);
+		//miniMap = new MiniMap(player.getX(), player.getY(), player);
 		
 		//String key = "x" + Integer.toString((int)player.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)player.getWorldMapChunkPosition().y);
 		//WorldChunkWriter.writeWorldChunk(WorldMap.map.get(key), key);
@@ -121,6 +123,8 @@ public class Main extends BasicGame
 		{
 			player.update(container, delta);
 		}
+		
+		//player.currentEnvironment.update(container, delta);
 		
 		//player.pSystem.update(delta);
 	}

@@ -556,26 +556,26 @@ public class Player extends Mob implements Renderable
 		//move left
 		if(input.isKeyDown(Input.KEY_A))
 		{
-			moveLeft(delta);
+			move(-1, 0, delta);
 		}
 		
 		//move right
 		if(input.isKeyDown(Input.KEY_D))
 		{
-			moveRight(delta);
+			move(1, 0, delta);
 		}
 		
 		//move down
 		if(input.isKeyDown(Input.KEY_S))
 		{
-			moveDown(delta);
+			move(0, 1, delta);
 			
 		}
 		
 		//move up
 		if(input.isKeyDown(Input.KEY_W))
 		{
-			moveUp(delta);
+			move(0, -1, delta);
 			
 		}
 
@@ -610,53 +610,16 @@ public class Player extends Mob implements Renderable
 		this.position = position;
 		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
 	}
-
-	public void moveDown(int delta)
+	
+	public void move(int x, int y, int delta)
 	{
-		float y = this.getY();
+		this.position.x += x * (speed * delta);
+		this.position.y += y * (speed * delta);
 		
-		y += speed * delta;
-		this.position.y = y;
-		this.direction.y = 1.0f;
-		//update player's WorldMap position
+		this.direction.x = x;
+		this.direction.y = y;
+		
 		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
-		
-	}
-
-	public void moveUp(int delta) 
-	{
-		float y = this.getY();
-		
-		y -= speed * delta;
-		this.position.y = y;
-		this.direction.y = -1.0f;			
-		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
-		
-	}
-
-	public void moveRight(int delta) 
-	{
-		float x = this.getX();
-		
-		x += speed * delta;
-		this.position.x = x;
-		this.direction.x = 1.0f;
-		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
-		
-	}
-
-	public void moveLeft(int delta) 
-	{
-		float x = this.getX();
-		
-		x -= speed * delta;
-		this.position.x = x;
-		this.direction.x = -1.0f;
-		//update player's WorldMap position
-		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
-		
 	}
 
 	//check to see if more WorldMapChunks need to be generated

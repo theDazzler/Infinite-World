@@ -34,8 +34,8 @@ public class ChunkGenerator
 	public void generateWorldMapChunks() throws SlickException
 	{
 		//start game with 15x15 WorldMapChunks sized map
-		int worldChunkRows = 15; 
-		int worldChunkCols = 15;
+		int worldChunkRows = 3; 
+		int worldChunkCols = 3;
 		
 		//get top left coordinates of the chunk the player is currently on
 		Vector2f currentWorldMapChunkPosition = this.player.getWorldMapChunkPosition();
@@ -239,7 +239,7 @@ public class ChunkGenerator
 			for(int j = 0; j < 3; j++)
 			{
 				//place GameScreenChunk into hashmap to be rendered
-				GameScreenChunk chunk = new GameScreenChunk(new Vector2f(startX, startY));
+				GameScreenChunk chunk = new GameScreenChunk(new Vector2f(startX, startY), player);
 				player.currentEnvironment.visibleChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
 				player.currentEnvironment.generatedChunks.put("x" + Integer.toString((int)startX) + "y" + Integer.toString((int)startY), chunk);
 				startX += GameSettings.CHUNK_PIXEL_WIDTH;

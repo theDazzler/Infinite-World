@@ -9,10 +9,12 @@ public class Entity
 	public boolean removed;
 	public Image image;
 	public Vector2f position;
+	public Vector2f direction;
 	
 	public Entity(Vector2f position)
 	{
 		this.position = new Vector2f(position.x, position.y);
+		this.direction = new Vector2f(0, 0);
 	}
 	
 	public void draw(int x, int y)

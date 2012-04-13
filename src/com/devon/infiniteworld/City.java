@@ -9,8 +9,8 @@ public class City
 
 	public static final int MAX_WIDTH = 480;
 	public static final int MAX_HEIGHT = 384;
-	public static final int TILE_WIDTH = 8;
-	public static final int TILE_HEIGHT= 8;
+	public static final int TILE_WIDTH = 16;
+	public static final int TILE_HEIGHT= 16;
 
 	
 	public static final int FLOOR = 0; //used for cellular automata

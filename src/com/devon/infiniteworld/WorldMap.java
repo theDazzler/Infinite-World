@@ -1,6 +1,7 @@
 package com.devon.infiniteworld;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
@@ -20,7 +21,7 @@ public class WorldMap
 	private static WorldMap ref;
 	
 	//public WorldMapChunk[][] map;
-	public static HashMap<String, WorldMapChunk> map = new HashMap<String, WorldMapChunk>();
+	public static LinkedHashMap<String, WorldMapChunk> map = new LinkedHashMap<String, WorldMapChunk>();
 	
 	private ChunkGenerator chunkGenerator;
 	Player player;

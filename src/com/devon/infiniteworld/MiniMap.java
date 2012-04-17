@@ -5,6 +5,7 @@ import org.newdawn.slick.Renderable;
 import org.newdawn.slick.SlickException;
 
 import com.devon.infiniteworld.entities.Player;
+import com.devon.infiniteworld.test.NoiseMap;
 import com.devon.infiniteworld.tiles.BiomeType;
 import com.devon.infiniteworld.tiles.Tile;
 
@@ -23,8 +24,9 @@ public class MiniMap implements Renderable
 	int tileWidth;
 	int tileHeight;
 	Player player;
+	NoiseMap noise;
 	
-	float tileScaleFactor = 0.0625f;
+	float tileScaleFactor = 0.03125f;
 	int width = (int) ((GameSettings.TILE_WIDTH * tileScaleFactor) * GameSettings.WORLDMAP_CHUNK_WIDTH);
 	int height = (int) ((GameSettings.TILE_HEIGHT * tileScaleFactor) * GameSettings.WORLDMAP_CHUNK_HEIGHT);
 	
@@ -67,6 +69,7 @@ public class MiniMap implements Renderable
 				startX = x;
 				startY += this.tileHeight * chunk.cityData.length;
 			}
+			
 			for(int i = 0; i < chunk.gameScreenTypes.length; i++)
 			{
 				for(int j = 0; j < chunk.gameScreenTypes[i].length; j++)
@@ -101,6 +104,10 @@ public class MiniMap implements Renderable
 					{
 						dirt.draw(startX + (j * this.tileWidth), startY + (i * this.tileHeight), this.tileScaleFactor);
 					}
+					else if(screenType == GameScreenType.dirt.id)
+					{
+						dirt.draw(startX + (j * this.tileWidth), startY + (i * this.tileHeight), this.tileScaleFactor);
+					}
 					else if(screenType == GameScreenType.cityCoast.id)
 					{
 						grass.draw(startX + (j * this.tileWidth), startY + (i * this.tileHeight), this.tileScaleFactor);
@@ -118,5 +125,52 @@ public class MiniMap implements Renderable
 			startX += this.tileWidth * chunk.cityData[0].length;
 			chunkNumber++;
 		}
+	}
+	
+	public void drawNoise(float x, float y)
+	{
+		int chunkNumber = 0;
+		float startX = x;
+		float startY = y;
+		
+		
+		for(int b = 0; b < 128; b++)
+		{
+			for(int a = 0; a < 128; a++)
+			{
+				for (String key : OutdoorEnvironment.noiseMaps.keySet())
+				{
+					double[][] map = OutdoorEnvironment.noiseMaps.get(key).noiseData;
+					double screenType = map[a][b];
+						if(screenType < 0)
+						{
+							water.draw(x + (a * this.tileWidth / 2), y + (b * this.tileHeight / 2), this.tileScaleFactor);
+						}
+						else if(screenType < 0.5)
+						{
+							dirt.draw(x + (a * this.tileWidth / 2), y + (b * this.tileHeight / 2), this.tileScaleFactor);
+						}
+						else if(screenType > 0.85 && screenType < 1)
+						{
+							snow.draw(x + (a * this.tileWidth / 2), y + (b * this.tileHeight / 2), this.tileScaleFactor);
+						}
+						else
+						{
+							grass.draw(x + (a * this.tileWidth / 2), y + (b * this.tileHeight / 2), this.tileScaleFactor);
+						}
+						
+						//chunk.draw(player.getX() + 300, player.getY() - 300);
+						
+				}
+			}
+		}
+		//System.out.println(player.getWorldMapPosition().x);
+		lava.draw(this.xPos + (player.getWorldMapPosition().x * tileScaleFactor), this.yPos + (player.getWorldMapPosition().y *  tileScaleFactor), tileScaleFactor);
+	}
+	
+	public void update(int delta)
+	{
+		this.xPos = player.getX() - 100;
+		this.yPos = player.getY() - 350;
 	}
 }

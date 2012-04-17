@@ -16,8 +16,8 @@ public class OutdoorEnvironment extends Environment
 	
 	public void addNoiseMap(float xPos, float yPos)
 	{
-		NoiseMap noiseMap = new NoiseMap(64, 64, 64 / 4);
-		noiseMap.createMap(64, 64);
+		NoiseMap noiseMap = new NoiseMap(128, 128, 128 / 4);
+		noiseMap.createMap(128, 128);
 		noiseMap.setOrigin(xPos, yPos);
 		
 		String key = "x" + Integer.toString((int)xPos) + "y" + Integer.toString((int)yPos);

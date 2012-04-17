@@ -74,8 +74,11 @@ public class GameScreenChunk implements Renderable
 			
 		//get tile terrain value
 		WorldMapChunk parentChunk = WorldMap.map.get(key);
+		System.out.println("OOOO: " + this.getX() + " " +  this.getY());
+		System.out.println(parentChunk.xPos + " " + parentChunk.yPos + " " + this.getX() + " " +  this.getY());
 		this.worldMapBiomeValue = parentChunk.biomeTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
 		this.gameScreenType = parentChunk.gameScreenTypes[(int)this.getWorldMapIndices().x][(int)this.getWorldMapIndices().y];
+		//System.out.println("POO: " + key + "screen pos: "+ this.getX() + ", " +  this.getY() + " " + (int)this.getWorldMapIndices().x + ", " + (int)this.getWorldMapIndices().y);
 		
 		//generate initial tiles
 		generateTileLayer(); 
@@ -213,18 +216,29 @@ public class GameScreenChunk implements Renderable
 
 	//gets parent WorldMapChunk position
 	private Vector2f getParentWorldMapChunkPosition()
-	{
-		Vector2f coordinates = new Vector2f();
-		float x = 0;
-		float y = 0;
+	{		
+		for (WorldMapChunk chunk : WorldMap.map.values()) 
+		{
+			System.out.println("CHUNKYY: " + chunk.getKey());
+		}
 		
-		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
+		int xIndex = (int) Math.abs((this.getY() / GameSettings.CHUNK_PIXEL_HEIGHT));
+		int yIndex = (int) Math.abs((this.getX() / GameSettings.CHUNK_PIXEL_WIDTH));
 		
-		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT);
+		if(xIndex < 0)
+			xIndex += GameSettings.WORLDMAP_CHUNK_WIDTH;
+		if(yIndex < 0)
+			yIndex += GameSettings.WORLDMAP_CHUNK_HEIGHT;
 		
-		coordinates.set(x, y);
+		xIndex %= GameSettings.WORLDMAP_CHUNK_WIDTH;
+		yIndex %= GameSettings.WORLDMAP_CHUNK_HEIGHT;
 		
-		return coordinates;
+		float parentX = this.getX() - (yIndex * GameSettings.CHUNK_PIXEL_WIDTH);
+		float parentY = this.getY() - (xIndex * GameSettings.CHUNK_PIXEL_HEIGHT);
+
+		System.out.println(parentX +"::" + parentY);
+		return new Vector2f(parentX, parentY);
+					
 	}
 	
 	/**
@@ -234,10 +248,11 @@ public class GameScreenChunk implements Renderable
 	
 	public Vector2f getWorldMapIndices()
 	{
-		float x = (float)(Math.floor((this.getWorldMapPosition().y % GameSettings.CHUNK_PIXEL_HEIGHT) / Tile.HEIGHT)) + GameSettings.WORLDMAP_CHUNK_HEIGHT;
-		float y = (float)(Math.floor((this.getWorldMapPosition().x % GameSettings.CHUNK_PIXEL_WIDTH) / Tile.WIDTH)) + GameSettings.WORLDMAP_CHUNK_WIDTH;
-		y = y % this.NUM_TILES_X;
-		x = x % this.NUM_TILES_Y;
+		float x = Math.abs(this.getY() / GameSettings.CHUNK_PIXEL_HEIGHT);
+		float y = Math.abs(this.getX() / GameSettings.CHUNK_PIXEL_WIDTH);
+		
+		x = x % GameSettings.WORLDMAP_CHUNK_WIDTH;
+		y = y % GameSettings.WORLDMAP_CHUNK_HEIGHT;
 		
 		return new Vector2f(x, y);
 	}

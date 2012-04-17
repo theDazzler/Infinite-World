@@ -38,17 +38,19 @@ public class WorldMap
 	
 	private void initNoiseMap()
 	{
-		NoiseMap noiseMap = new NoiseMap(64, 64, 64 / 4);
-		noiseMap.createMap(64, 64);
+		NoiseMap noiseMap = new NoiseMap(128, 128, 128 / 4);
+		noiseMap.createMap(128, 128);
 
-		int noiseMapRows = 64 / 16; 
-		int noiseMapCols = 64 / 16;
+		int noiseMapRows = 128 / 16; 
+		int noiseMapCols = 128 / 16;
 		
 		//get top left coordinates of the chunk the player is currently on
 		Vector2f currentWorldMapChunkPosition = this.player.getWorldMapChunkPosition();
 		
 		float startPosX = currentWorldMapChunkPosition.x - (GameSettings.CHUNK_PIXEL_WIDTH * (noiseMapCols / 2));
 		float startPosY = currentWorldMapChunkPosition.y - (GameSettings.CHUNK_PIXEL_HEIGHT * (noiseMapRows / 2));
+		
+		System.out.println("player chunk at " + currentWorldMapChunkPosition.x + ", " + currentWorldMapChunkPosition.y + "created noise map at: " + startPosX + ", " + startPosY);
 		
 		player.currentEnvironment.addNoiseMap(startPosX, startPosY, noiseMap);
 		

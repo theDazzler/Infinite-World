@@ -5,9 +5,9 @@ import java.util.Random;
 public class GameSettings 
 {
 	private static Random rand = new Random();
-	public static int seed = 4345;
-	public static final int SCREEN_WIDTH = 1024; //width of screen in pixels 960
-	public static final int SCREEN_HEIGHT = 768; //height of screen in pixels 576
+	public static int seed = 434555;
+	public static final int SCREEN_WIDTH = 1920; //width of screen in pixels 960
+	public static final int SCREEN_HEIGHT = 1080; //height of screen in pixels 576
 	public static final int TILE_WIDTH = 64; //width of tiles in pixels
 	public static final int TILE_HEIGHT = 64; //height of tiles in pixels
 	public static final int CHUNK_PIXEL_WIDTH = 1024; //width of a GameScreenChunk in pixels

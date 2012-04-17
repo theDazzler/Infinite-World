@@ -451,6 +451,12 @@ public class WorldMapChunk implements Serializable
 					this.biomeTypes[i][j] = BiomeType.PLAIN;
 					this.gameScreenTypes[i][j] = GameScreenType.dirt.id;
 				}
+				//dirt
+				else if(terrainValue < 1 && terrainValue > 0.85)
+				{
+					this.biomeTypes[i][j] = BiomeType.SNOW;
+					this.gameScreenTypes[i][j] = GameScreenType.snow.id;
+				}
 				else
 				{
 					this.biomeTypes[i][j] = BiomeType.PLAIN;
@@ -509,43 +515,52 @@ public class WorldMapChunk implements Serializable
 		if(noiseMap() != null)
 		{
 			NoiseMap map = noiseMap();
-			int startXIndex = getNoiseMapXIndex(map);
-			int startYIndex = getNoiseMapYIndex(map);
-			int x = startXIndex;
-			int y = startYIndex;
-			
+					
+			int noiseMapIndexX = getXNoiseMapIndex(map);
+			int noiseMapIndexY = getYNoiseMapIndex(map);
+			int x = noiseMapIndexX;
+			int y = noiseMapIndexY;
+			System.out.println("QQZZ: " + map.origin.y);
 			//for each row in the chunk
 			for(int i = 0; i < this.terrain.length; i++)
 			{
 				//for each column in the chunk
 				for(int j = 0; j < this.terrain[i].length; j++)
 				{
-					int a = y + x * 64;
-					this.terrain[i][j] = map.noiseData[a];
 					
+					double noiseValue = map.noiseData[x][y];
+					System.out.println("noX: " + x + " noY: " + y + " " + noiseValue);
+					this.terrain[i][j] = noiseValue;
+
 					y++;
 					
 				}
-				y = startYIndex;
+				
 				x++;
+				y = noiseMapIndexY;
 			}
 		}
+	}
+	
+	public int getXNoiseMapIndex(NoiseMap map)
+	{	
+		float difY = this.getY() - map.origin.y;
 		
-	}
+		int xIndex = (int) (difY / GameSettings.CHUNK_PIXEL_HEIGHT) * this.NUM_ROWS;
+				
+		//System.out.println((int)(xIndex + yIndex * (map.w / (GameSettings.WORLDMAP_CHUNK_WIDTH * GameSettings.WORLDMAP_CHUNK_HEIGHT))));
+		return xIndex;
+	}	
 	
-	public int getNoiseMapXIndex(NoiseMap map)
-	{
-		float dif = this.getX() - map.origin.x;
-		return (int) ((dif / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.WORLDMAP_CHUNK_WIDTH);	
+	public int getYNoiseMapIndex(NoiseMap map)
+	{	
+		float difX = this.getX() - map.origin.x;
+
+		int yIndex= (int) (difX / GameSettings.CHUNK_PIXEL_WIDTH) * this.NUM_COLS;
+				
+		//System.out.println((int)(xIndex + yIndex * (map.w / (GameSettings.WORLDMAP_CHUNK_WIDTH * GameSettings.WORLDMAP_CHUNK_HEIGHT))));
+		return yIndex;
 	}
-	
-	public int getNoiseMapYIndex(NoiseMap map)
-	{
-		float dif = this.getY() - map.origin.y;
-		return (int) ((dif / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.WORLDMAP_CHUNK_HEIGHT);
-		
-	}
-	
 	
 	
 	/**
@@ -558,9 +573,9 @@ public class WorldMapChunk implements Serializable
 		{
 		    String key = map.getKey();
 		    NoiseMap noiseMap = map.getValue();
-		    
+
 		    if(containedIn(noiseMap))
-		    {
+		    { 
 		    	return noiseMap;
 		    }
 		}
@@ -576,12 +591,18 @@ public class WorldMapChunk implements Serializable
 
 	private boolean containedIn(NoiseMap map) 
 	{
+		/*
+		int chunksPerMap = (map.w * map.h) / (this.NUM_COLS * this.NUM_ROWS); //map can hold data for this many chunks
+		int chunksPerRow = (int) Math.sqrt(chunksPerMap);
+		int chunksPerCol = chunksPerRow;
+		*/
+
 		float xMinMapBound = map.origin.x;
-		float xMaxMapBound = (float) Math.floor((map.w - 1) / GameSettings.WORLDMAP_CHUNK_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH;
+		float xMaxMapBound = xMinMapBound + (map.w * GameSettings.CHUNK_PIXEL_WIDTH);
 		float yMinBound = map.origin.y;
-		float yMaxBound = (float) Math.floor((map.h - 1) / GameSettings.WORLDMAP_CHUNK_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT;
+		float yMaxBound = yMinBound + (map.h * GameSettings.CHUNK_PIXEL_HEIGHT);
 			
-		if(this.getX() >= xMinMapBound && this.getX() < xMaxMapBound && this.getY() >= yMinBound && this.getY() <= yMaxBound)
+		if(this.getX() >= xMinMapBound && this.getX() < xMaxMapBound && this.getY() >= yMinBound && this.getY() < yMaxBound)
 		{
 			return true;
 		}

@@ -65,7 +65,7 @@ public class Main extends BasicGame
 
 	private void drawMiniMap() 
 	{
-		miniMap.draw(miniMap.xPos, miniMap.yPos);
+		miniMap.drawNoise(miniMap.xPos, miniMap.yPos);
 		
 	}
 
@@ -94,7 +94,7 @@ public class Main extends BasicGame
 	@Override
 	public void init(GameContainer container) throws SlickException 
 	{		
-		player = new Player(new Vector2f(1300f, 384f), 64, 128);
+		player = new Player(new Vector2f(0, 0), 64, 128);
 		worldMap = WorldMap.getWorldMap(player);
 
 		//enemy = new Image("assets/images/sprites/muscle_enemy_normal.png");
@@ -107,14 +107,10 @@ public class Main extends BasicGame
 				chunk.generateCities();
 		}
 		*/
-		
-		
-		
-
-		
+				
 		//bg.play();
 
-		miniMap = new MiniMap(player.getX(), player.getY(), player);
+		miniMap = new MiniMap(player.getX() - 100, player.getY() - 350, player);
 		
 		//String key = "x" + Integer.toString((int)player.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)player.getWorldMapChunkPosition().y);
 		//WorldChunkWriter.writeWorldChunk(WorldMap.map.get(key), key);
@@ -127,6 +123,8 @@ public class Main extends BasicGame
 		{
 			player.update(container, delta);
 		}
+		
+		miniMap.update(delta);
 		
 		//player.currentEnvironment.update(container, delta);
 		

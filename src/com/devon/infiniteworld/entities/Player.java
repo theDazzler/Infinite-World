@@ -1,539 +1,99 @@
 package com.devon.infiniteworld.entities;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 
-import org.newdawn.slick.Animation;
-import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
-import org.newdawn.slick.Renderable;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.particles.ParticleSystem;
-import org.newdawn.slick.particles.effects.FireEmitter;
 
-import com.devon.infiniteworld.Attack;
-import com.devon.infiniteworld.BasicSwordSlashAttack;
-import com.devon.infiniteworld.ChunkManager;
-import com.devon.infiniteworld.Environment;
-import com.devon.infiniteworld.GameScreenChunk;
-import com.devon.infiniteworld.GameSettings;
-import com.devon.infiniteworld.OutdoorEnvironment;
-import com.devon.infiniteworld.WorldMap;
-import com.devon.infiniteworld.objects.WorldObject;
-import com.devon.infiniteworld.particles.SnowEmitter;
-import com.devon.infiniteworld.tiles.BiomeType;
+import com.devon.infiniteworld.Game;
+import com.devon.infiniteworld.Level;
+import com.devon.infiniteworld.MiniMap;
 import com.devon.infiniteworld.tiles.Tile;
 
-public class Player extends Mob implements Renderable
+public class Player extends Mob
 {
-	Image armImage;
-	Image movementCollision;
+	private double speed;
 	
-	Animation idleAnimation;
-	Animation walkAnimation;
-	Animation rollAnimation;
-	Animation currentAnimation;
-	
-	Rectangle arm;
-	private double speed = 0.02;
-	//public Rectangle boundingBox; //collision box
-	private Vector2f worldMapPosition; //position of player on worldMap(15 pixels of horizontal movement in GameScreenChunk = 1 pixel on worldMap, player must move 960 pixels in GameScreenChunk to move 64 pixels on worldMap)
-									   //9 pixels of vertical movement in GameScreenChunk = 1 pixel on worldMap
-	public Vector2f direction; //direction(velocity) vector ex. 1,1 = moving right and down
-	public Vector2f currentGameScreenChunkPosition; //top left coordinates of the current GameScreenChunk the player is in
-	public Vector2f worldMapChunkPosition; //position of WorldMapChunk player is currently on
-	
-	public float width;
-	public float height;
-	public Environment currentEnvironment;
-	
-	private boolean isAttacking = false;
-	private Attack currentAttack;
-	private boolean attackEnabled = true;
-	
-	
-	ParticleSystem pSystem;
-	SnowEmitter snowEmitter;
-	
-	public Player(Vector2f position, float width, float height) throws SlickException 
+	public Player(Vector2f position, float width, float height, Image texture)
 	{
-		//this.boundingBox = new Rectangle(x, y, width, height);
-		super(position);
-		this.width = width;
-		this.height = height;
-		this.currentEnvironment = new OutdoorEnvironment();
+		super(position, width, height, texture);
+		this.speed = 0.35;
+	}
 		
-		this.walkAnimation = new Animation(new SpriteSheet(new Image("assets/images/sprites/ryu_sheet.png"), 53, 120), 3, 0, 6, 0, false, 3000, false);
-		this.walkAnimation.setLooping(true);
-		
-		this.idleAnimation = new Animation(new SpriteSheet(new Image("assets/images/sprites/ryu_sheet.png"), 53, 120), 3, 0, 6, 0, false, 3000, false);
-		this.idleAnimation.setLooping(true);
-		
-		//set starting animation to idle
-		this.currentAnimation = this.idleAnimation;
-		
-		this.worldMapPosition = new Vector2f(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
-		this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
-		this.worldMapChunkPosition = this.getWorldMapChunkPosition();
+	public void update(GameContainer gc, int delta, Level level, MiniMap miniMap) 
+	{
+		handleInput(gc, delta, level, miniMap);
+		checkCollisions(gc, delta, level);
+	}
 
-		this.image = new Image("assets/images/sprites/ryu_stance.png", new Color(34, 177, 76));
-		this.movementCollision = new Image("assets/images/tiles/dirt.png");
-		this.armImage = new Image("assets/images/sprites/arm.png");
-		this.direction = new Vector2f(0f, 0f);
-		//Image fireImage = new Image("assets/images/particles/snow.png");
-		//fireImage = fireImage.getScaledCopy(0.5f);
-		//pSystem = new ParticleSystem(fireImage, 500);
-		//snowEmitter = new SnowEmitter();
-		//pSystem.addEmitter(snowEmitter);
+	private void checkCollisions(GameContainer gc, int delta, Level level) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
-	}
-	
-	//return position coordinates of player on world map(15 pixels of horizontal movement in game = 1 pixel of movement in world map. 9 pixels vertical = 1 pixel in world map)
-	public Vector2f getWorldMapPosition()
+	@Override
+	public void draw(float x, float y) 
 	{
-		return this.worldMapPosition;
+		this.texture.draw(x, y);
+		
 	}
 	
-	//returns top left coordinates of the WorldMapChunk the player is on(each WorldMapChunk is 64x64 on the WorldMap), if player is at 32,32 on WorldMap, then coordinates 0,0 will be returned
-	public Vector2f getWorldMapChunkPosition()
+	public void draw(Graphics g) 
 	{
-		Vector2f coordinates = new Vector2f();
-		float x = 0;
-		float y = 0;
+		this.texture.draw(this.getX(), this.getY());
+		g.drawRect(this.boundingBox().getX(), this.boundingBox().getY(), this.boundingBox().getWidth(), this.boundingBox().getHeight());
 		
-		x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.CHUNK_PIXEL_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
-		
-		y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.CHUNK_PIXEL_HEIGHT) * GameSettings.CHUNK_PIXEL_HEIGHT);
-		
-		coordinates.set(x, y);
-		
-		return coordinates;
 	}
 	
-	public int getCurrentBiomeType()
-	{
-		String key = "x" + Integer.toString((int)this.getWorldMapChunkPosition().x) + "y" + Integer.toString((int)this.getWorldMapChunkPosition().y);
-		
-		int biomeType = WorldMap.map.get(key).biomeTypes[(int)this.getWorldMapTerrainIndices().x][(int)this.getWorldMapTerrainIndices().y];
-		
-		/**
-		String result = "";
-		
-		switch(biomeType)
-		{
-			case BiomeType.FOREST:
-				result =  "Forest";
-				break;
-			case BiomeType.OCEAN:
-				result = "Ocean";
-				break;
-			case BiomeType.PLAIN:
-				result = "Plain";
-				break;
-			case BiomeType.SNOW:
-				result = "Snow";
-				break;
-			case BiomeType.VOLCANIC:
-				result = "Volcanic";
-				break;
-		}
-		**/
-		
-		return biomeType;
-	}
-	
-	/**this method returns the array indices of the terrain the player is currently in 
-	 * 3x3 WorldMap with 3x3 terrain array(each large square section is a WorldMapChunk containing a terrain array[][])
-	 * Map is actually made up of 15x9 terrain arrays rather than 3x3(3x3 is for Demo purposes only)
-	 * W = Water
-	 * L = Land
-	 * * = player
-	 * $ = player
-	 * [L] and [W] = values from terrain array that are used to create GameScreenChunks filled with either water tiles or land tiles(trees, grass, etc.)
-	 * 
-	 * In the case(*), it would return (1,1)
-	 * In the case($), it would also return (1,1) because each WorldMapChunk has its own array containing terrain data
-	 * 
-	 * 			    ---------      ---------	  ---------		
-	 * 			   |[W][W][W]|    |[W][L][L]|    |[W][W][W]|
-	 * 			   |[W][*][L]|	  |[L][$][L]|	 |[W][W][W]|
-	 *             |[L][L][L]|	  |[L][L][L]|    |[W][W][W]|
-	 *              ---------      ---------      ---------
-	 *              
-	 * 			    ---------      ---------	  ---------		
-	 * 			   |[W][L][W]|    |[W][L][W]|    |[L][W][W]|
-	 * 			   |[W][L][L]|	  |[W][L][W]|	 |[W][L][W]|
-	 *             |[L][L][L]|	  |[L][W][L]|    |[L][W][W]|
-	 *              ---------      ---------      ---------
-	 *    
-	 * 			    ---------      ---------	  ---------		
-	 * 			   |[W][W][W]|    |[W][W][L]|    |[W][W][L]|
-	 * 			   |[W][L][L]|	  |[L][W][L]|	 |[W][W][L]|
-	 *             |[L][L][W]|	  |[L][W][L]|    |[W][W][L]|
-	 *              ---------      ---------      ---------
+	/**
+	 * ArrayList containing the coordinates the player can see, which are also the tiles that get rendered
+	 * [0] = topLeftX coordinate
+	 * [1] = topLeftY coordinate
+	 * [2] = bottomRightX coordinate
+	 * [3] = bottomRightY coordinate
+	 * Tiles inside this rectangle(frustrum) are the ones that get rendered
+	 * @return
 	 */
-	public Vector2f getWorldMapTerrainIndices()
+	protected ArrayList<Float> getViewFrustram()
 	{
-		float x = Math.abs((float)(Math.floor(this.getWorldMapPosition().y / GameSettings.TILE_HEIGHT)));
-		float y = Math.abs((float)(Math.floor(this.getWorldMapPosition().x / GameSettings.TILE_WIDTH)));
+		ArrayList<Float> frustram = new ArrayList<Float>();
 		
-		return new Vector2f(x, y);
-	}
-	
-	//get player's x position
-	public float getX()
-	{
-		return this.position.getX();
-	}
-	
-	//get player's y position
-	public float getY()
-	{
-		return this.position.getY();
-	}
-	
-	//return the top left coordinates of the GameScreenChunk the player is in
-	public Vector2f getCurrentGameScreenChunkTopLeftPosition()
-	{
-		Vector2f coordinates = new Vector2f();
+		float topLeftX = this.getX() - (this.getWidth() / 2) - (Game.SCREEN_WIDTH / 2);
+		float topLeftY = this.getY() - (this.getHeight() / 2) - (Game.SCREEN_HEIGHT / 2);
+		float bottomRightX = this.getX() + (this.getWidth() / 2) + (Game.SCREEN_WIDTH / 2);
+		float bottomRightY = this.getY() + (this.getHeight()) + (Game.SCREEN_HEIGHT / 2);
 		
-		float x = (float) (Math.floor(this.getWorldMapPosition().x / GameSettings.TILE_WIDTH) * GameSettings.CHUNK_PIXEL_WIDTH);
-		float y = (float) (Math.floor(this.getWorldMapPosition().y / GameSettings.TILE_WIDTH) * GameSettings.CHUNK_PIXEL_HEIGHT);
+		frustram.add(topLeftX);
+		frustram.add(topLeftY);
+		frustram.add(bottomRightX);
+		frustram.add(bottomRightY);
 		
-		coordinates.set(x, y);
-		
-		return coordinates;
-	}
-	
-	public GameScreenChunk getCurrentGameScreenChunk()
-	{
-		Vector2f currentGameScreenChunkPos = this.getCurrentGameScreenChunkTopLeftPosition();
-		String key = "x" + Integer.toString((int)currentGameScreenChunkPos.x) + "y" + Integer.toString((int)currentGameScreenChunkPos.y);
-		return this.currentEnvironment.visibleChunks.get(key);
-	}
-	
-	public void update(GameContainer gc, int delta)
-	{
-		//handle player input
-		handleInput(gc, delta);
-		
-		//play idle animation
-		if(this.direction.x == 0 && this.direction.y == 0 && !this.isAttacking)
-			this.currentAnimation = this.idleAnimation;
-		
-		//play walking animation
-		else if(!this.isAttacking)
-		{
-			this.currentAnimation = this.walkAnimation;
-		}
-		
-		checkCollisions(delta);
-		updateAnimation(delta);
-		
-		//manage GameScreenChunks around player
-		manageGameScreenChunks();
-		
-		//this.pSystem.setPosition(this.getX() - (GameSettings.SCREEN_WIDTH / 2), this.getY() - (GameSettings.SCREEN_HEIGHT / 2));
-		//snowEmitter.update(pSystem, delta);
-		
-	}	
-	
-	private void updateAnimation(int delta) 
-	{
-		this.currentAnimation.update(delta);
-		
-		//this.currentAttack.animation.update(delta);
-		if(this.isAttacking)
-		{
-			if(this.currentAnimation.isStopped())
-			{
-				this.currentAnimation.stop();
-				this.isAttacking = false;
-				this.attackEnabled = true;
-			}
-		}
-		
-		/**
-		//if attack is done with its execution frames
-		if(this.currentAttack.isExecutionDone())
-		{
-			//if attack is in "active" phase
-			if(this.currentAttack.animation.getFrame() < (this.currentAttack.phase.frameAmount - this.currentAttack.phase.recovery.length))
-			{
-				//create hit boxes
-				this.currentAttack.createHitBoxes();
-				this.currentAttack.state = "active";
-			}	
-			
-			else
-				this.currentAttack.state = "recovery";
-			
-			
-			if(this.currentAttack.animation.getFrame() == this.currentAttack.animation.getFrameCount() - 1)
-			{
-				this.currentAttack.animation.stop();
-				this.isAttacking = false;
-			}
-				
-		}	
-		**/
+		return frustram;
 	}
 
-	private void checkCollisions(int delta)
+	/**
+	 * Checks to see if coordinates are in player's view frustrum
+	 * @param x x-coordinate
+	 * @param y y-coordinate
+	 * @return
+	 */
+	public boolean inFrustram(float x, float y)
 	{
-		//checkObjectCollisions(delta);
-		/*
-		//check tile collisions
-		for (Tile tile : CollisionManager.collidableTiles.values()) 
-		{
-			if(this.movementBox().intersects(tile.getBoundingBox()))
-			{
-				if(this.movementBox().intersects(tile.getBoundingBox()))
-				{
-					float x, y;		
-					//System.out.println("COLLIDE");
-					
-					
-					//player moving right
-					if(this.movementBox().getX() + this.movementBox().getWidth() > tile.getX() && this.movementBox().getCenterX() < tile.getBoundingBox().getCenterX() && this.direction.x == 1 && this.direction.y == 0)
-					{
-						
-						while(this.movementBox().intersects(tile.getBoundingBox()))
-						{
-							this.moveLeft(delta);
-						}
-							
-			
-					}
-					
-					//player moving left
-					if(this.movementBox().getX() < tile.getX() + tile.getWidth() && this.movementBox().getCenterX() > tile.getBoundingBox().getCenterX() && this.direction.x == -1 && this.direction.y == 0)
-					{
-						while(this.movementBox().intersects(tile.getBoundingBox()))
-						{
-							this.moveRight(delta);
-						}
-					}
-					
-					//player moving up
-					if(this.movementBox().getY() < tile.getY() + tile.getHeight() && this.movementBox().getCenterY() > tile.getBoundingBox().getCenterY() && this.direction.y == -1 && this.direction.x == 0)
-					{
-						if(this.direction.x != 1)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveDown(delta);
-							}
-						}
-					}
-					
-					//player moving down
-					if(this.movementBox().getY() + this.movementBox().getHeight() > tile.getY() && this.movementBox().getCenterY() < tile.getBoundingBox().getCenterY() && this.direction.y == 1 && this.direction.x == 0)
-					{
-						while(this.movementBox().intersects(tile.getBoundingBox()))
-						{
-							this.moveUp(delta);
-						}
-					}
-					
-					//if player moving northeast
-					if(this.direction.x == 1 && this.direction.y == -1)
-					{
-						float playerTopRightCornerX = this.movementBox().getX() + this.movementBox().getWidth();
-						float objectBottomLeftCornerX = tile.getBoundingBox().getX();
-						
-						float playerTopRightCornerY = this.movementBox().getY();
-						float objectBottomLeftCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
-						
-						float xDif = Math.abs(playerTopRightCornerX - objectBottomLeftCornerX);
-						float yDif = Math.abs(playerTopRightCornerY - objectBottomLeftCornerY);
-						
-						//collided with bottom
-						if(xDif > yDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveDown(delta);
-							}
-						}
-						
-						//collided with left side of object
-						else if(yDif > xDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveLeft(delta);
-							}
-						}
-					}
-					
-					//if player moving northwest
-					if(this.direction.x == -1 && this.direction.y == -1)
-					{
-						float playerTopLeftCornerX = this.movementBox().getX();
-						float objectBottomRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
-						
-						float playerTopLeftCornerY = this.movementBox().getY();
-						float objectBottomRightCornerY = tile.getBoundingBox().getY() + tile.getBoundingBox().getHeight();
-						
-						float xDif = Math.abs(playerTopLeftCornerX - objectBottomRightCornerX);
-						float yDif = Math.abs(playerTopLeftCornerY - objectBottomRightCornerY);
-						
-						//collided with bottom
-						if(xDif > yDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveDown(delta);
-							}
-						}
-						
-						//collided with right side of object
-						else if(yDif > xDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveRight(delta);
-							}
-						}
-					}	
-					
-					//if player moving southeast
-					if(this.direction.x == 1 && this.direction.y == 1)
-					{
-						float playerBottomRightCornerX = this.movementBox().getX() + this.movementBox().getWidth();
-						float objectTopLeftCornerX = tile.getBoundingBox().getX();
-						
-						float playerBottomRightCornerY = this.movementBox().getY() + this.movementBox().getHeight();
-						float objectTopLeftCornerY = tile.getBoundingBox().getY();
-						
-						float xDif = Math.abs(playerBottomRightCornerX - objectTopLeftCornerX);
-						float yDif = Math.abs(playerBottomRightCornerY - objectTopLeftCornerY);
-						
-						//collided with top of object
-						if(xDif > yDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveUp(delta);
-							}
-						}
-						
-						//collided with left side of object
-						else if(yDif > xDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveLeft(delta);
-							}
-						}
-					}	
-					
-					//if player moving southwest
-					if(this.direction.x == -1 && this.direction.y == 1)
-					{
-						float playerBottomLeftCornerX = this.movementBox().getX();
-						float objectTopRightCornerX = tile.getBoundingBox().getX() + tile.getBoundingBox().getWidth();
-						
-						float playerBottomLeftCornerY = this.movementBox().getY() + this.movementBox().getHeight();
-						float objectTopRightCornerY = tile.getBoundingBox().getY();
-						
-						float xDif = Math.abs(playerBottomLeftCornerX - objectTopRightCornerX);
-						float yDif = Math.abs(playerBottomLeftCornerY - objectTopRightCornerY);
-						
-						//collided with top of object
-						if(xDif > yDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveUp(delta);
-							}
-						}
-						
-						//collided with right side of object
-						else if(yDif > xDif)
-						{
-							while(this.movementBox().intersects(tile.getBoundingBox()))
-							{
-								this.moveRight(delta);
-							}
-						}
-					}
-				}
-			}
-		}
-		*/
-	}
-	
-
-	private void checkObjectCollisions(int delta)
-	{
-		List<WorldObject> collidableObjects = this.getCurrentGameScreenChunk().worldObjects;
-		for(int i =0; i < collidableObjects.size(); i++)
-		{
-			WorldObject obj = collidableObjects.get(i);
-			if(this.boundingBox().intersects(obj.boundingBox))
-			{
-				System.out.println("Object Collision");
-				//this.environmentChanged = true;
-			}
-		}
+		ArrayList<Float> frustram = getViewFrustram();
+		if(x >= frustram.get(0) && x <= frustram.get(2) && y >= frustram.get(1) && y <= frustram.get(3))
+			return true;
 		
-	}
-
-	//manage GameScreenChunks to render surrounding the player
-	private void manageGameScreenChunks() 
-	{
-		//if player moves to the left of the center GameScreenChunk
-		if(this.position.x < this.currentGameScreenChunkPosition.x)
-		{
-			//add column of GameScreenChunks to the left of player's new GameScreenChunk position to get rendered
-			ChunkManager.addRenderColumn("left", this, this.currentGameScreenChunkPosition);
-			
-			//update currentGameScreenChunkPosition
-			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
-		}
-		
-		//if player moves to the right of the center GameScreenChunk(currently the player's position is the top left corner of the bounding box, so when moving right the player's whole body must pass the center chunk for this method to be called)
-		if(this.position.x > this.currentGameScreenChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
-		{
-			//add column of GameScreenChunks to the left of player's new GameScreenChunk position to get rendered
-			ChunkManager.addRenderColumn("right", this, this.currentGameScreenChunkPosition);
-			
-			//update currentGameScreenChunkPosition
-			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
-		}
-		
-		//if player moves above center GameScreenChunk, add top row to be rendered
-		if(this.position.y < this.currentGameScreenChunkPosition.y)
-		{
-			//add row of GameScreenChunks above the player's new GameScreenChunk position
-			ChunkManager.addRenderRow("top", this, this.currentGameScreenChunkPosition);
-			
-			//update currentGameScreenChunkPosition
-			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
-		}
-		
-		//if player moves below center GameScreenChunk, add new bottom row to be rendered
-		if(this.position.y > this.currentGameScreenChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
-		{
-			//add row of GameScreenChunks below the player's new GameScreenChunk position
-			ChunkManager.addRenderRow("bottom", this, this.currentGameScreenChunkPosition);
-			
-			//update currentGameScreenChunkPosition
-			this.currentGameScreenChunkPosition = this.getCurrentGameScreenChunkTopLeftPosition();
-		}	
-		
-		checkWorldChunkUpdate();
-		
+		return false;
 	}
 	
 	//handle player's input
-	private void handleInput(GameContainer gc, int delta) 
+	private void handleInput(GameContainer gc, int delta, Level level, MiniMap miniMap) 
 	{
 		Input input = gc.getInput();
 		
@@ -543,72 +103,125 @@ public class Player extends Mob implements Renderable
 		}
 				
 		//space bar
-		if(input.isKeyDown(Input.KEY_SPACE) && this.attackEnabled)
+		if(input.isKeyDown(Input.KEY_SPACE))
 		{
-			this.attackEnabled = false;
-			//this.setPosition(new Vector2f(this.position.x + 50, this.position.y));
-			punch();
+
 		}
 		
-		//if not punching, set to false
-		
+		//tab to toggle minimap
+		if(input.isKeyDown(Input.KEY_TAB))
+		{
+			if(miniMap.nextDisplay == 0)
+			{
+				if(miniMap.isVisible)
+					miniMap.isVisible = false;
+				else
+					miniMap.isVisible = true;
+				
+				miniMap.nextDisplay = 20;
+			}
+			
+		}
 		
 		//move left
 		if(input.isKeyDown(Input.KEY_A))
 		{
-			move(-1, 0, delta);
+			float x = this.boundingBox().getX();
+			float yTop = this.boundingBox().getY();
+			float yBottom = this.boundingBox().getY() + this.boundingBox().getHeight();
+			
+			x -= 1 * (speed * delta);
+						
+			int xTileIndexOne = (int) (yTop / Tile.HEIGHT);
+			int xTileIndexTwo = (int) (yBottom / Tile.HEIGHT);
+			int yTileIndex = (int) (x / Tile.WIDTH);
+			
+			Tile tileTop = level.getTile(xTileIndexOne, yTileIndex);
+			Tile tileBottom = level.getTile(xTileIndexTwo, yTileIndex);
+			
+			if(!tileTop.isCollidable() && !tileBottom.isCollidable())
+				move(-1, 0, delta);
 		}
 		
 		//move right
 		if(input.isKeyDown(Input.KEY_D))
 		{
-			move(1, 0, delta);
+			float x = this.boundingBox().getX() + this.boundingBox().getWidth();
+			float yTop = this.boundingBox().getY();
+			float yBottom = this.boundingBox().getY() + this.boundingBox().getHeight();
+			
+			x += 1 * (speed * delta);
+						
+			int xTileIndexOne = (int) (yTop / Tile.HEIGHT);
+			int xTileIndexTwo = (int) (yBottom / Tile.HEIGHT);
+			int yTileIndex = (int) (x / Tile.WIDTH);
+			
+			Tile tileTop = level.getTile(xTileIndexOne, yTileIndex);
+			Tile tileBottom = level.getTile(xTileIndexTwo, yTileIndex);
+			
+			if(!tileTop.isCollidable() && !tileBottom.isCollidable())
+				move(1, 0, delta);
 		}
 		
 		//move down
 		if(input.isKeyDown(Input.KEY_S))
 		{
-			move(0, 1, delta);
+			float y = this.boundingBox().getY() + this.boundingBox().getHeight();
+			float xLeft = this.boundingBox().getX();
+			float xRight = this.boundingBox().getX() + this.boundingBox().getWidth();
+			
+			y += 1 * (speed * delta);
+						
+			int yTileIndexOne = (int) (xLeft / Tile.WIDTH);
+			int yTileIndexTwo = (int) (xRight / Tile.WIDTH);
+			int xTileIndex = (int) (y / Tile.HEIGHT);
+			
+			Tile tileLeft = level.getTile(xTileIndex, yTileIndexOne);
+			Tile tileRight = level.getTile(xTileIndex, yTileIndexTwo);
+			
+			if(!tileLeft.isCollidable() && !tileRight.isCollidable())
+				move(0, 1, delta);
 			
 		}
 		
 		//move up
 		if(input.isKeyDown(Input.KEY_W))
 		{
-			move(0, -1, delta);
+			float y = this.boundingBox().getY();
+			float xLeft = this.boundingBox().getX();
+			float xRight = this.boundingBox().getX() + this.boundingBox().getWidth();
+			
+			y -= 1 * (speed * delta);
+						
+			int yTileIndexOne = (int) (xLeft / Tile.WIDTH);
+			int yTileIndexTwo = (int) (xRight / Tile.WIDTH);
+			int xTileIndex = (int) (y / Tile.HEIGHT);
+			
+			Tile tileLeft = level.getTile(xTileIndex, yTileIndexOne);
+			Tile tileRight = level.getTile(xTileIndex, yTileIndexTwo);
+			
+			if(!tileLeft.isCollidable() && !tileRight.isCollidable())
+				move(0, -1, delta);
 			
 		}
 
-		
-		//if not moving left or right, set x direction to 0
+		//if not moving left or right, set x velocity to 0
 		if(!(input.isKeyDown(Input.KEY_A)) && !(input.isKeyDown(Input.KEY_D)))
 		{
-			this.direction.x = 0f;
+			this.velocity.x = 0f;
 		}
 		
-		//if not moving up or down, set y direction to 0
+		//if not moving up or down, set y velocity to 0
 		if(!(input.isKeyDown(Input.KEY_S)) && !(input.isKeyDown(Input.KEY_W)))
 		{
-			this.direction.y = 0f;
+			this.velocity.y = 0f;
 		}
 	}
 	
-	private void punch()
+	//box around Mob used for collision
+	public Rectangle boundingBox()
 	{
-		
-		//arm = new Rectangle(this.getX() + this.width, this.getY() + this.height / 3, 64, 32);
-		
-		
-		this.currentAttack = new BasicSwordSlashAttack(this);
-		this.currentAnimation = this.currentAttack.animation;
-		this.isAttacking = true;
-		//arm.draw(rect.getX(), rect.getY());
-	}
-
-	public void setPosition(Vector2f position)
-	{
-		this.position = position;
-		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
+		return new Rectangle(this.getX(), this.getY() + (this.height / 2), this.width, this.height / 2);
 	}
 	
 	public void move(int x, int y, int delta)
@@ -616,81 +229,28 @@ public class Player extends Mob implements Renderable
 		this.position.x += x * (speed * delta);
 		this.position.y += y * (speed * delta);
 		
-		this.direction.x = x;
-		this.direction.y = y;
-		
-		this.worldMapPosition.set(this.getX() / (GameSettings.CHUNK_PIXEL_WIDTH / GameSettings.TILE_WIDTH), this.getY() / (GameSettings.CHUNK_PIXEL_HEIGHT / GameSettings.TILE_HEIGHT));
+		this.velocity.x = x;
+		this.velocity.y = y;
 	}
 
-	//check to see if more WorldMapChunks need to be generated
-	private void checkWorldChunkUpdate()
+	public void findStartPos(Level currentLevel) 
 	{
-		//if player has moved above the center WorldMapChunk, generate more WorldMapChunks above the player
-		if(this.worldMapPosition.y < this.worldMapChunkPosition.y)
+		/*
+		Random rand = new Random();
+		
+		int xIndex;
+		int yIndex;
+		
+		do
 		{
-			ChunkManager.addWorldChunkRow("top", this, this.getWorldMapChunkPosition());
-			
-			//update worldMapChunkPosition
-			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
+			xIndex = rand.nextInt(currentLevel.getWidth());
+			yIndex = rand.nextInt(currentLevel.getHeight());
 		}
 		
-		//if player has moved below the center WorldMapChunk, generate more WorldMapChunks below the player
-		if(this.worldMapPosition.y > this.worldMapChunkPosition.y + GameSettings.CHUNK_PIXEL_HEIGHT)
-		{
-			ChunkManager.addWorldChunkRow("bottom", this, this.getWorldMapChunkPosition());
-			
-			//update worldMapChunkPosition
-			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
-		}
+		while(currentLevel.getTile(xIndex, yIndex) == Tile.water);
+		*/
 		
-		//if player has moved to the right of the center WorldMapChunk, generate more WorldMapChunks to the right of player
-		if(this.worldMapPosition.x > this.worldMapChunkPosition.x + GameSettings.CHUNK_PIXEL_WIDTH)
-		{
-			ChunkManager.addWorldChunkColumn("right", this, this.getWorldMapChunkPosition());
-			
-			//update worldMapChunkPosition
-			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
-		}
-		
-		//if player has moved to the left of the center WorldMapChunk, generate more WorldMapChunks to the left of player
-		if(this.worldMapPosition.x < this.worldMapChunkPosition.x)
-		{
-			ChunkManager.addWorldChunkColumn("left", this, this.getWorldMapChunkPosition());
-			
-			//update worldMapChunkPosition
-			this.worldMapChunkPosition = this.getWorldMapChunkPosition();
-		}
-	}
-	
-	//box around player used for fighting collision
-	public Rectangle boundingBox()
-	{
-		return new Rectangle(this.getX(), this.getY(), this.width, this.height);
-	}
-	
-	//collision box at player's feet used for movement collision
-	public Rectangle movementBox()
-	{
-		return new Rectangle(this.getX(), this.getY() + (this.height / 2), this.width, this.height / 2);
-	}
-
-	@Override
-	public void draw(float x, float y) 
-	{
-		//draw player
-		//this.image.draw(x, y);
-		this.currentAnimation.draw(x, y);
-		//this.movementCollision.draw(movementBox().getX(), movementBox().getY(), 0.5f);
-		
-	}
-	
-	@Override
-	public void draw() 
-	{
-		//draw player
-		//this.image.draw(x, y);
-		this.currentAnimation.draw(this.getX(), this.getY());
-		//this.movementCollision.draw(movementBox().getX(), movementBox().getY(), 0.5f);
-		
+		//this.position = new Vector2f(currentLevel.getX() + (yIndex * Tile.WIDTH), currentLevel.getY() + (xIndex * Tile.HEIGHT));
+		this.position = new Vector2f(0, 0);
 	}
 }

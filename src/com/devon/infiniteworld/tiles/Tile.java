@@ -3,30 +3,25 @@ package com.devon.infiniteworld.tiles;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Renderable;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
-
-import com.devon.infiniteworld.GameSettings;
-import com.devon.infiniteworld.test.NewGrassTile;
-import com.devon.infiniteworld.test.NewRockTile;
-import com.devon.infiniteworld.test.NewTile;
 
 /** 
- * SUper class that all other tiles inherit from
+ * Super class that all other tiles inherit from
  * @author Devon Guinane
  *
  */
 public abstract class Tile implements Renderable
 {
+	public static final int WIDTH = 64;
+	public static final int HEIGHT= 64;
+	
 	public static Tile[] tiles = new Tile[256]; //holds all tile types
 	public static Tile grass = new GrassTile(1);
 	public static Tile water = new WaterTile(2);
-	public static Tile snow = new SnowTile(4);
-	public static Tile lava = new LavaTile(5);
-	public static Tile cement = new CementTile(6);
-	public static Tile dirt = new DirtTile(7);
-	
-	public static final int WIDTH = GameSettings.TILE_WIDTH;
-	public static final int HEIGHT = GameSettings.TILE_HEIGHT;
+	public static Tile snow = new SnowTile(3);
+	public static Tile lava = new LavaTile(4);
+	public static Tile cement = new CementTile(5);
+	public static Tile dirt = new DirtTile(6);
+	public static Tile mountain = new MountainTile(7);
 	
 	public final int id;
 	public Image texture; //tile image
@@ -47,6 +42,11 @@ public abstract class Tile implements Renderable
 		this.getTexture().draw(x, y, 0.5f);
 	}
 	
+	public void draw(float x, float y, float scaleFactor) 
+	{
+		this.getTexture().draw(x, y, scaleFactor);
+	}
+	
 	public Image getTexture()
 	{
 		return this.texture;
@@ -65,18 +65,6 @@ public abstract class Tile implements Renderable
 		return this.position.getY();
 	}
 	*/
-
-	//get width of tile
-	public float getWidth()
-	{
-		return WIDTH;
-	}
-
-	//get height of tile
-	public float getHeight()
-	{
-		return HEIGHT;
-	}
 	
 	//get collision rectangle
 	public Rectangle getBoundingBox()
@@ -87,7 +75,7 @@ public abstract class Tile implements Renderable
 	//set tile's boundingBox
 	public void setBoundingBox(float x, float y, int width, int height)
 	{
-		this.boundingBox = new Rectangle(x, y, WIDTH, HEIGHT);
+		this.boundingBox = new Rectangle(x, y, Tile.WIDTH, Tile.HEIGHT);
 	}
 	
 	/*

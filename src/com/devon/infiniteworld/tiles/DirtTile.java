@@ -3,9 +3,6 @@ package com.devon.infiniteworld.tiles;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Vector2f;
-
-import com.devon.infiniteworld.GameSettings;
 
 public class DirtTile extends Tile
 {
@@ -14,9 +11,12 @@ public class DirtTile extends Tile
 	public DirtTile(int id)
 	{
 		super(id);
-		try {
+		try 
+		{
 			this.texture = new Image("assets/images/tiles/dirt.png");
-		} catch (SlickException e) {
+		} 
+		catch (SlickException e) 
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -26,6 +26,6 @@ public class DirtTile extends Tile
 	@Override
 	public boolean isCollidable() 
 	{
-		return true;
+		return false;
 	}
 }

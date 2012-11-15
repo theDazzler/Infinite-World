@@ -7,6 +7,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
@@ -18,29 +19,46 @@ import com.devon.infiniteworld.tiles.Tile;
 public class Player extends Mob
 {
 	private double speed;
+	Image weapon;
+	boolean isAttacking = false;
+	int attackDelay = 100;
 	
 	public Player(Vector2f position, float width, float height, Image texture)
 	{
 		super(position, width, height, texture);
 		this.speed = 0.35;
+		try {
+			this.weapon = new Image("assets/images/weapons/sword.png");
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 		
 	public void update(GameContainer gc, int delta, Level level, MiniMap miniMap) 
 	{
 		handleInput(gc, delta, level, miniMap);
 		checkCollisions(gc, delta, level);
+		if(this.attackDelay == 0)
+		{
+			this.isAttacking = false;
+			this.attackDelay = 100;
+		}
+		if(this.isAttacking)
+			this.attackDelay--;
 	}
 
 	private void checkCollisions(GameContainer gc, int delta, Level level) 
 	{
-		// TODO Auto-generated method stub
+		
+			
+			
 		
 	}
 
 	@Override
-	public void draw(float x, float y) 
-	{
-		this.texture.draw(x, y);
+	public void draw(float x, float y) {
+		// TODO Auto-generated method stub
 		
 	}
 	
@@ -48,6 +66,8 @@ public class Player extends Mob
 	{
 		this.texture.draw(this.getX(), this.getY());
 		g.drawRect(this.boundingBox().getX(), this.boundingBox().getY(), this.boundingBox().getWidth(), this.boundingBox().getHeight());
+		if(this.isAttacking)
+			this.weapon.draw(this.getX() - (this.getWidth() / 2) - 20, this.getY() + this.getHeight() / 2);
 		
 	}
 	
@@ -105,7 +125,8 @@ public class Player extends Mob
 		//space bar
 		if(input.isKeyDown(Input.KEY_SPACE))
 		{
-
+			if(!this.isAttacking)
+				this.isAttacking = true;
 		}
 		
 		//tab to toggle minimap
@@ -199,7 +220,6 @@ public class Player extends Mob
 			
 			Tile tileLeft = level.getTile(xTileIndex, yTileIndexOne);
 			Tile tileRight = level.getTile(xTileIndex, yTileIndexTwo);
-			
 			if(!tileLeft.isCollidable() && !tileRight.isCollidable())
 				move(0, -1, delta);
 			
@@ -235,7 +255,7 @@ public class Player extends Mob
 
 	public void findStartPos(Level currentLevel) 
 	{
-		/*
+		
 		Random rand = new Random();
 		
 		int xIndex;
@@ -247,10 +267,13 @@ public class Player extends Mob
 			yIndex = rand.nextInt(currentLevel.getHeight());
 		}
 		
-		while(currentLevel.getTile(xIndex, yIndex) == Tile.water);
-		*/
+		//don't allow player to spawn in water or on a collidable tile
+		while(currentLevel.getTile(xIndex, yIndex) == Tile.water || currentLevel.getTile(xIndex, yIndex).isCollidable());
 		
-		//this.position = new Vector2f(currentLevel.getX() + (yIndex * Tile.WIDTH), currentLevel.getY() + (xIndex * Tile.HEIGHT));
-		this.position = new Vector2f(0, 0);
+		this.position = new Vector2f(currentLevel.getX() + (yIndex * Tile.WIDTH), currentLevel.getY() + (xIndex * Tile.HEIGHT));
+		//this.position = new Vector2f(0, 0);
 	}
+
+	
+
 }

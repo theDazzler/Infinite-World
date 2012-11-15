@@ -1,5 +1,6 @@
 package com.devon.infiniteworld.entities;
 
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Renderable;
 import org.newdawn.slick.geom.Rectangle;

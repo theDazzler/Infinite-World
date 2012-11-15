@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Renderable;
+import org.newdawn.slick.geom.Vector2f;
+
 import com.devon.infiniteworld.entities.Entity;
 import com.devon.infiniteworld.entities.Player;
 import com.devon.infiniteworld.tiles.Tile;
 
 public abstract class Level implements Renderable
 {
-	public byte[][] map;
+	public double[][] heightMap;
+	public int[][] tiles;//holds tile data(grass, water, mountain, etc.)
 	protected int width;
 	protected int height;
 	protected float xPos; //top left x coordinate of the level
@@ -24,11 +28,9 @@ public abstract class Level implements Renderable
 		this.yPos = yPos;
 		this.width = width;
 		this.height = height;
-		
-		this.map = NoiseMap.getMap(width, height);
 	}
 	
-	public abstract void draw(float x, float y, Player player);
+	public abstract void draw(float x, float y, Player player, Graphics g);
 	
 	public void update(GameContainer gc, int delta)
 	{
@@ -37,15 +39,17 @@ public abstract class Level implements Renderable
 	
 	public Tile getTile(int x, int y)
 	{
-		byte tileValue = this.map[x][y];
+		int tileValue = this.tiles[x][y];	
 		
-		if(tileValue == Tile.water.id) return Tile.water;
+		if(tileValue == 0) return Tile.cement;
+		else if(tileValue == Tile.water.id) return Tile.water;
 		else if(tileValue == Tile.grass.id) return Tile.grass;
 		else if(tileValue == Tile.snow.id) return Tile.snow;
 		else if(tileValue == Tile.lava.id) return Tile.lava;
 		else if(tileValue == Tile.cement.id) return Tile.cement;
 		else if(tileValue == Tile.dirt.id) return Tile.dirt;
 		else if(tileValue == Tile.mountain.id) return Tile.mountain;
+		else if(tileValue == Tile.sand.id) return Tile.sand;
 		
 		else
 			return null;
@@ -91,5 +95,17 @@ public abstract class Level implements Renderable
 	 */
 	public float getY() {
 		return yPos;
+	}
+	
+	/**
+	 * input x and y position and return x and y array indices of map
+	 * @return
+	 */
+	public Vector2f getMapArrayIndices(Vector2f position)
+	{
+		int x = (int) (position.y / Tile.HEIGHT);
+		int y = (int) (position.x / Tile.WIDTH);
+
+		return new Vector2f(x, y);
 	}
 }

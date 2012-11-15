@@ -8,21 +8,20 @@ import javax.swing.JOptionPane;
 
 import org.newdawn.slick.geom.Vector2f;
 
-import com.devon.infiniteworld.tiles.Tile;
-
-public class NoiseMap
+public class TempMap
 {
 	private static final Random random = new Random();
 	public double[] values;
 	public int w, h;
 	public double[][] noiseData;
+	public Vector2f origin;
 	
-	public NoiseMap(int w, int h, int featureSize, int xCoord, int yCoord)
+	public TempMap(int w, int h, int featureSize)
 	{
 		this.w = w;
 		this.h = h;
-		
 		this.noiseData = new double[w][h];
+		
 		this.values = new double[w * h];
 		
 		for(int y = 0; y < w; y += featureSize)
@@ -76,7 +75,13 @@ public class NoiseMap
 			scaleMod *= 0.3;
 		}
 		while(stepSize > 1);
-	}	
+	}
+	
+	public void setOrigin(float xPos, float yPos)
+	{
+		this.origin = new Vector2f(xPos, yPos);
+	}
+	
 	
 	private double sample(int x, int y)
 	{
@@ -89,13 +94,11 @@ public class NoiseMap
 	}
 	
 	public static double[][] getMap(int w, int h)
-	{
+	{		
 		double [][] map = new double[w][h];
-		int xCoordinate = 0;
-		int yCoordinate = 0;
-		NoiseMap noise1 = new NoiseMap(w, h, w / 4, xCoordinate, yCoordinate);
-		NoiseMap noise2 = new NoiseMap(w, h, w / 8, xCoordinate, yCoordinate);
-		NoiseMap noise3 = new NoiseMap(w, h, w / 8, xCoordinate, yCoordinate);
+		NoiseMap noise1 = new NoiseMap(w, h, w / 4, 0, 0);
+		NoiseMap noise2 = new NoiseMap(w, h, w / 8, 0, 0);
+		NoiseMap noise3 = new NoiseMap(w, h, w / 8, 0, 0);
 		
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
@@ -106,7 +109,7 @@ public class NoiseMap
 				int i = x + y * w;
 				
 				//double val = Math.abs(noise1.values[i] - noise2.values[i]) * 4 - 1.4;
-				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 12 - 1.8;
+				double val = Math.abs(noise1.values[i] - noise2.values[i]) * 2 - 1.6;
 				//val = Math.abs(val - noise3.values[i]) * 3 - 2;
 				
 				double xd = x / (w - 1.0) * 2 - 1;
@@ -114,16 +117,24 @@ public class NoiseMap
 				if(xd < 0) xd = -xd;
 				if(yd < 0) yd = -yd;
 				double dist = xd >= yd ? xd : yd;
-				dist = dist * dist * dist * dist;
-				dist = dist * dist * dist;
 				
-
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
+				dist = dist * dist * dist * dist;
 				val = val + 1 - dist * 20;
 				
-				/*/comment this section out when testing
+				
+				/*
 				int br = val < 0 ? 0 : 255;
 				if(val < 0) map[y][x] = Tile.water.id; //water
-				else if(val < 0.4) map[y][x] = Tile.sand.id; //beach sand
+				else if(val < 0.4) map[y][x] = Tile.mountain.id; //beach sand
 				else if(val < 6.5) map[y][x] = Tile.grass.id; //grass
 				else if(val > 6.5) map[y][x] = Tile.mountain.id; //mountain
 				else
@@ -140,14 +151,14 @@ public class NoiseMap
 	
 	public static void main(String[] args)
 	{
-		for(int j = 0; j < 10; j++)
+		for(int j = 0; j < 5; j++)
 		{
 			
 			int w = 512;
 			int h = 512;
 			
 			//NoiseMap noiseMap = new NoiseMap(w, h, w/4);
-			double[][] testM = NoiseMap.getMap(w, h);
+			double[][] testM = TempMap.getMap(w, h);
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			double max = 0;
@@ -172,10 +183,14 @@ public class NoiseMap
 						max = testM[y][x];
 					//System.out.println(max);
 					
-					if(testM[y][x] < 0)pixels[i] = 0x000080;//water
-					else if(testM[y][x] < 0.4)pixels[i] = 0xe5c08c;//beach sand
-					else if(testM[y][x] < 6.5)pixels[i] = 0x208020; //grass
-					else if(testM[y][x] > 6.5)pixels[i] = 0xFFF563;//mountain
+					
+					
+					if(testM[y][x] < -0.3)pixels[i] = 0x2B05FF;//freezing
+					//else if(testM[y][x] < 0.2)pixels[i] = 0x05E6FF;//cold
+					//else if(testM[y][x] < 0.6)pixels[i] = 0x00AD00;//mild
+					else if(testM[y][x] < 0.4)pixels[i] = 0x66FF00;//average
+					else if(testM[y][x] < 1.2)pixels[i] = 0xFFFF00;//hot
+					else if(testM[y][x] > 1.2)pixels[i] = 0xFF0000;//hottest
 					//else if(testM[y][x] == 3)pixels[i] = 0xa77939;//semi-mountain
 					//else if(testM[y][x] < 3)pixels[i] = 0x404040; //dirt
 						

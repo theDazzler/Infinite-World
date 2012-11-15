@@ -19,10 +19,16 @@ public class WaterTile extends Tile
 		}
 		//this.boundingBox = new Rectangle(position.x, position.y, GameSettings.TILE_WIDTH, GameSettings.TILE_HEIGHT);
 	}
+	
+	@Override
+	public void draw(float x, float y) 
+	{
+		this.getTexture().draw(x, y);
+	}
 
 	@Override
 	public boolean isCollidable() 
 	{
-		return false;
+		return true;
 	}
 }

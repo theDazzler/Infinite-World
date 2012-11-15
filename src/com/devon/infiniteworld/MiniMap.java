@@ -34,11 +34,11 @@ public class MiniMap
 		float startX = x;
 		float startY = y;
 
-		for(int i = 0; i < level.map.length; i++)
+		for(int i = 0; i < level.tiles.length; i++)
 		{
-			for(int j = 0; j < level.map[i].length; j++)
+			for(int j = 0; j < level.tiles[i].length; j++)
 			{
-				byte tileType = level.map[i][j];		
+				double tileType = level.tiles[i][j];		
 
 				if(tileType == Tile.water.id)
 				{

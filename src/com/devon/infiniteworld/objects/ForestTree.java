@@ -1,36 +1,30 @@
-package com.devon.infiniteworld.tiles;
+package com.devon.infiniteworld.objects;
 
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
-public class MountainTile extends Tile
+public class ForestTree extends OneByOneTree
 {
-
-	public MountainTile(int id) 
+	public ForestTree(int id) 
 	{
 		super(id);
 		
 		try 
 		{
-			this.texture = new Image("assets/images/tiles/mountain.png");
+			this.texture = new Image("assets/images/objects/tree.png");
 		} 
 		catch (SlickException e) 
 		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	@Override
-	public void draw(float x, float y) 
-	{
-		this.getTexture().draw(x, y);
-	}
-
 	@Override
 	public boolean isCollidable() 
 	{
 		// TODO Auto-generated method stub
 		return true;
 	}
-
+	
 }

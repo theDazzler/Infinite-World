@@ -35,7 +35,7 @@ public class Game extends BasicGame
 	{
 		//center player and follow player around
 		g.translate((Game.SCREEN_WIDTH / 2) - (player.boundingBox().getX() + (player.boundingBox().getWidth() / 2)), (Game.SCREEN_HEIGHT / 2) - (player.boundingBox().getY() + (player.boundingBox().getHeight() / 2)));
-		
+
 		this.currentLevel.draw(this.currentLevel.getX(), this.currentLevel.getY(), player, g);
 		if(this.miniMap.isVisible)
 			this.miniMap.draw(this.miniMap.xPos, this.miniMap.yPos, this.currentLevel, this.player);
@@ -47,7 +47,7 @@ public class Game extends BasicGame
 	public void init(GameContainer gc) throws SlickException 
 	{
 		this.player = new Player(new Vector2f(Game.SCREEN_WIDTH / 2, Game.SCREEN_HEIGHT / 2), 60, 120, new Image("assets/images/sprites/player.png", new Color(34, 177, 76)));
-		this.currentLevel = new OutdoorLevel(0, 0, 1024, 1024);
+		this.currentLevel = new OutdoorLevel(0, 0, 512, 512);
 		this.miniMap = new MiniMap(player.getX(), player.getY());
 		
 		player.findStartPos(this.currentLevel);

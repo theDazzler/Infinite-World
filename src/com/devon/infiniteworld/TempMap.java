@@ -96,9 +96,9 @@ public class TempMap
 	public static double[][] getMap(int w, int h)
 	{		
 		double [][] map = new double[w][h];
-		NoiseMap noise1 = new NoiseMap(w, h, w / 4, 0, 0);
-		NoiseMap noise2 = new NoiseMap(w, h, w / 8, 0, 0);
-		NoiseMap noise3 = new NoiseMap(w, h, w / 8, 0, 0);
+		MyNoiseMap noise1 = new MyNoiseMap(w, h, w / 4, 0, 0);
+		MyNoiseMap noise2 = new MyNoiseMap(w, h, w / 8, 0, 0);
+		MyNoiseMap noise3 = new MyNoiseMap(w, h, w / 8, 0, 0);
 		
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 

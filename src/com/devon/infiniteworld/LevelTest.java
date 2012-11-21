@@ -16,7 +16,7 @@ public class LevelTest
 	
 	public LevelTest(int width, int height)
 	{
-		this.heightMap = NoiseMap.getMap(width, height);
+		this.heightMap = MyNoiseMap.getMap(width, height, 0, 0);
 		this.temperatureMap = TempMap.getMap(width, height);
 		this.width = width;
 		this.height = height;

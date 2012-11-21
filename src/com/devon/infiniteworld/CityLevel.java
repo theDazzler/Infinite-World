@@ -12,7 +12,7 @@ public class CityLevel extends Level
 {
 	City city;
 
-	public CityLevel(float xPos, float yPos, int width, int height) 
+	public CityLevel(int xPos, int yPos, int width, int height) 
 	{
 		super(xPos, yPos, width, height);
 		city = new City(37);

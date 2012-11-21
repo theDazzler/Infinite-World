@@ -11,6 +11,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 
+import com.devon.infiniteworld.Chunk;
 import com.devon.infiniteworld.Game;
 import com.devon.infiniteworld.Level;
 import com.devon.infiniteworld.MiniMap;
@@ -22,6 +23,7 @@ public class Player extends Mob
 	Image weapon;
 	boolean isAttacking = false;
 	int attackDelay = 100;
+	boolean testing = false;
 	
 	public Player(Vector2f position, float width, float height, Image texture)
 	{
@@ -46,6 +48,19 @@ public class Player extends Mob
 		}
 		if(this.isAttacking)
 			this.attackDelay--;
+		
+		if(this.getX() < level.getX() + 200)
+		{
+			
+			if(!testing)
+			{
+				level.addChunk(new Chunk((int)level.getX() - Chunk.SIZE * Tile.WIDTH, (int)level.getY(), level.tiles));
+				System.out.println(level.getChunks().size());
+				this.testing = true;
+			}
+			
+		}
+			
 	}
 
 	private void checkCollisions(GameContainer gc, int delta, Level level) 

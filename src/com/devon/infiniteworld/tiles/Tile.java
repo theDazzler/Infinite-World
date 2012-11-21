@@ -36,7 +36,7 @@ public abstract class Tile extends WorldObject implements Renderable
 	@Override
 	public void draw(float x, float y) 
 	{
-		this.getTexture().draw(x, y, 0.5f);
+		this.getTexture().draw(x, y);
 	}
 	
 	public void draw(float x, float y, float scaleFactor) 

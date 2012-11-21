@@ -29,6 +29,6 @@ public class WaterTile extends Tile
 	@Override
 	public boolean isCollidable() 
 	{
-		return true;
+		return false;
 	}
 }

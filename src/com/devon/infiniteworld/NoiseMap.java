@@ -88,11 +88,9 @@ public class NoiseMap
 		this.values[(x & (w - 1)) + (y & (h - 1)) * w] = value;
 	}
 	
-	public static double[][] getMap(int w, int h)
+	public static double[][] getMap(int w, int h, int xCoordinate, int yCoordinate)
 	{
 		double [][] map = new double[w][h];
-		int xCoordinate = 0;
-		int yCoordinate = 0;
 		NoiseMap noise1 = new NoiseMap(w, h, w / 4, xCoordinate, yCoordinate);
 		NoiseMap noise2 = new NoiseMap(w, h, w / 8, xCoordinate, yCoordinate);
 		NoiseMap noise3 = new NoiseMap(w, h, w / 8, xCoordinate, yCoordinate);
@@ -147,7 +145,7 @@ public class NoiseMap
 			int h = 512;
 			
 			//NoiseMap noiseMap = new NoiseMap(w, h, w/4);
-			double[][] testM = NoiseMap.getMap(w, h);
+			double[][] testM = NoiseMap.getMap(w, h, 0, 0);
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			double max = 0;

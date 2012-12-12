@@ -41,15 +41,16 @@ public class JLibNoisetest
 		Random rand = new Random(seed);
 		//int seed = rand.nextInt();
 		
-		/**Create mountain range type heightmap
-		RidgedMulti mountainTerrain = new RidgedMulti();
+		//Create mountain range type heightmap
+		//RidgedMulti mountainTerrain = new RidgedMulti();
+		Perlin mountainTerrain = new Perlin();
 		Billow baseFlatTerrain = new Billow();
-		baseFlatTerrain.setFrequency(2.0);
+		baseFlatTerrain.setFrequency(1.0);
 		
 		ScaleBias flatTerrain = new ScaleBias();
 		flatTerrain.SetSourceModule(0, baseFlatTerrain);
 		flatTerrain.setScale(0.125);
-		flatTerrain.setBias(-0.75);
+		flatTerrain.setBias(-0.90);
 		
 		Perlin terrainType = new Perlin();
 		terrainType.SetFrequency(0.5);
@@ -62,16 +63,17 @@ public class JLibNoisetest
 		terrainSelector.setBounds(1000.0, 0);
 		terrainSelector.setEdgeFalloff(0.125);
 		
-		Turbulence finalTerrain = new Turbulence();
-		finalTerrain.SetSourceModule(0, terrainSelector);
-		finalTerrain.setFrequency(4.0);
-		finalTerrain.setPower(0.125);
+		//Turbulence finalTerrain = new Turbulence();
+		//finalTerrain.SetSourceModule(0, terrainSelector);
+		//finalTerrain.setFrequency(4.0);
+		//finalTerrain.setPower(0.125);
+	
 		
 		NoiseMap heigthMap = new NoiseMap();
 		NoiseMapBuilderPlane heightMapBuilder = new NoiseMapBuilderPlane();
-		heightMapBuilder.SetSourceModule(finalTerrain);
+		heightMapBuilder.SetSourceModule(terrainSelector);
 		heightMapBuilder.SetDestNoiseMap(heigthMap);
-		heightMapBuilder.SetDestSize(256, 256);
+		heightMapBuilder.SetDestSize(512, 512);
 		heightMapBuilder.SetBounds(6.0, 10.0, 1.0, 5.0);
 		heightMapBuilder.Build();
 		
@@ -84,6 +86,7 @@ public class JLibNoisetest
 		renderer.AddGradientPoint (-0.25, new Color (224, 224,   0, 255)); // dirt
 		renderer.AddGradientPoint ( 0.25, new Color (128, 128, 128, 255)); // rock
 		renderer.AddGradientPoint ( 1.00, new Color (255, 255, 255, 255)); // snow		renderer.EnableLight();
+		renderer.BuildGrayscaleGradient();
 		renderer.EnableLight();
 		renderer.SetLightContrast(3.0);
 		renderer.SetLightBrightness(2.0);
@@ -91,14 +94,15 @@ public class JLibNoisetest
 		
 		WriterBMP writer = new WriterBMP();
 		writer.SetSourceImage(image);
-		writer.SetDestFilename("tutorial.jpg");
+		writer.SetDestFilename("tutorial.png");
 		try {
 			writer.WriteDestFile();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		
+		
 		
 		/**Create Earth Sphere map
 		Perlin myModule = new Perlin();
@@ -141,16 +145,20 @@ public class JLibNoisetest
 		}
 		*/
 		
+		
+		
+		/*country map
+		
 		Perlin terrainType = new Perlin();
 		terrainType.SetSeed(seed);
 		
 		
 		NoiseMap heightMap2 = new NoiseMap();
-		NoiseMapBuilderSphere heightMapBuilder2 = new NoiseMapBuilderSphere();
+		NoiseMapBuilderPlane heightMapBuilder2 = new NoiseMapBuilderPlane();
 		heightMapBuilder2.SetSourceModule(terrainType);
 		heightMapBuilder2.SetDestNoiseMap(heightMap2);
-		heightMapBuilder2.SetDestSize(1024, 512);
-		heightMapBuilder2.SetBounds(-90.0, 90.0, -180.0, 180.0);
+		heightMapBuilder2.SetDestSize(512, 512);
+		heightMapBuilder2.SetBounds(6.0, 10.0, 1.0, 5.0);
 		heightMapBuilder2.Build();
 		
 		RendererImage renderer2 = new RendererImage();
@@ -164,7 +172,7 @@ public class JLibNoisetest
 		
 		WriterBMP writer2 = new WriterBMP();
 		writer2.SetSourceImage(image2);
-		writer2.SetDestFilename("perlin.jpg");
+		writer2.SetDestFilename("perlin.png");
 		try {
 			writer2.WriteDestFile();
 		} catch (IOException e) {
@@ -248,6 +256,8 @@ public class JLibNoisetest
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
 
 		
 

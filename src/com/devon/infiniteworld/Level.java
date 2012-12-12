@@ -14,8 +14,9 @@ import com.devon.infiniteworld.tiles.Tile;
 
 public abstract class Level implements Renderable
 {
-	private ArrayList<Chunk> chunks;
-	//public double[][] heightMap;
+	//private ArrayList<Chunk> chunks;
+	public double[][] heightMap;
+	int[][] objects;
 	public int[][] tiles;//holds tile data(grass, water, mountain, etc.)
 	protected int width;
 	protected int height;
@@ -25,7 +26,8 @@ public abstract class Level implements Renderable
 	
 	public Level(float xPos, float yPos, int width, int height)
 	{
-		this.chunks = new ArrayList<Chunk>();
+		//this.chunks = new ArrayList<Chunk>();
+		this.objects = new int[width][height];
 		this.xPos = xPos;
 		this.yPos = yPos;
 		this.width = width;
@@ -41,12 +43,13 @@ public abstract class Level implements Renderable
 	
 	public void addChunk(Chunk chunk)
 	{
-		this.chunks.add(chunk);
+		//this.chunks.add(chunk);
 	}
 	
 	public ArrayList<Chunk> getChunks()
 	{
-		return this.chunks;
+		return null;
+		//return this.chunks;
 	}
 	
 	public Tile getTile(int x, int y)

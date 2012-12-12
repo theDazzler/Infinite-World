@@ -47,7 +47,7 @@ public class Game extends BasicGame
 	public void init(GameContainer gc) throws SlickException 
 	{
 		this.player = new Player(new Vector2f(Game.SCREEN_WIDTH / 2, Game.SCREEN_HEIGHT / 2), 60, 120, new Image("assets/images/sprites/player.png", new Color(34, 177, 76)));
-		this.currentLevel = new OutdoorLevel(0, 0, 128, 128);
+		this.currentLevel = new OutdoorLevel(0, 0, 512, 512);
 		this.miniMap = new MiniMap(player.getX(), player.getY());
 		
 		player.findStartPos(this.currentLevel);
